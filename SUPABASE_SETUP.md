@@ -291,22 +291,20 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ### Storage Errors
 
 **Error: "must be owner of relation objects"** (Migration 012)
-- **This is a known issue** with storage policy creation via SQL
-- **Solution 1** (Recommended): Use the fixed migration file with `IF NOT EXISTS` clauses
-- **Solution 2**: Create buckets only via SQL, then add policies through Supabase Dashboard UI:
-  1. Run `012_storage_buckets_ALTERNATIVE.sql` instead (only creates buckets)
-  2. Go to **Storage** → Select bucket → **Policies** tab
-  3. Click **"New Policy"** and add each policy manually using the templates in the ALTERNATIVE file
-- **Solution 3**: Skip migration 012 entirely and set up storage through the Supabase Dashboard:
-  1. Go to **Storage** → **New bucket**
-  2. Create "avatars" and "content_assets" buckets manually
-  3. Configure policies through the UI
+- This migration should work as-is with the `IF NOT EXISTS` clauses
+- If it still fails, the issue is likely permissions-related in your Supabase project
+- **Workaround**: Create the buckets manually through Supabase Dashboard:
+  1. Go to **Storage** → Click **"New bucket"**
+  2. Create "avatars" bucket (public, 5MB limit, image types only)
+  3. Create "content_assets" bucket (public, 10MB limit, image types + SVG)
+  4. Go to each bucket → **Policies** tab → Add the policies from the migration file
+- Note: Once set up (via SQL or UI), storage works perfectly!
 
 **Error: "The resource already exists"**
-- Solution: Buckets already created. Verify in Storage dashboard.
+- Solution: Buckets already created. Skip this migration or verify in Storage dashboard.
 
 **Error: "Bucket not found"**
-- Solution: Run migration `012_storage_buckets.sql` again
+- Solution: The migration didn't run successfully. Try running it again or use the manual workaround above.
 
 ---
 
