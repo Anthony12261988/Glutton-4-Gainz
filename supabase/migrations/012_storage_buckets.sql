@@ -1,11 +1,12 @@
 -- Migration 012: Storage Buckets Configuration
 -- Sets up storage for avatars and content assets
+-- NOTE: Run this migration via the Supabase Dashboard SQL Editor
 
 -- ============================================================================
 -- BUCKET: avatars (User profile pictures)
 -- ============================================================================
 
--- Create avatars bucket
+-- Create avatars bucket (public bucket for user avatars)
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES (
   'avatars',
@@ -16,8 +17,11 @@ VALUES (
 )
 ON CONFLICT (id) DO NOTHING;
 
+-- Enable RLS on storage.objects (should already be enabled, but ensure it)
+ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+
 -- Policy: Authenticated users can upload to their own folder
-CREATE POLICY "Users can upload own avatar"
+CREATE POLICY IF NOT EXISTS "Users can upload own avatar"
   ON storage.objects FOR INSERT
   TO authenticated
   WITH CHECK (
@@ -26,7 +30,7 @@ CREATE POLICY "Users can upload own avatar"
   );
 
 -- Policy: Authenticated users can update their own files
-CREATE POLICY "Users can update own avatar"
+CREATE POLICY IF NOT EXISTS "Users can update own avatar"
   ON storage.objects FOR UPDATE
   TO authenticated
   USING (
@@ -39,7 +43,7 @@ CREATE POLICY "Users can update own avatar"
   );
 
 -- Policy: Authenticated users can delete their own files
-CREATE POLICY "Users can delete own avatar"
+CREATE POLICY IF NOT EXISTS "Users can delete own avatar"
   ON storage.objects FOR DELETE
   TO authenticated
   USING (
@@ -48,7 +52,7 @@ CREATE POLICY "Users can delete own avatar"
   );
 
 -- Policy: Anyone can view avatars (public read)
-CREATE POLICY "Anyone can view avatars"
+CREATE POLICY IF NOT EXISTS "Anyone can view avatars"
   ON storage.objects FOR SELECT
   TO public
   USING (bucket_id = 'avatars');
@@ -57,7 +61,7 @@ CREATE POLICY "Anyone can view avatars"
 -- BUCKET: content_assets (Recipe images, badges, etc.)
 -- ============================================================================
 
--- Create content_assets bucket
+-- Create content_assets bucket (public bucket for coaches to upload content)
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES (
   'content_assets',
@@ -69,26 +73,26 @@ VALUES (
 ON CONFLICT (id) DO NOTHING;
 
 -- Policy: Only coaches can upload content assets
-CREATE POLICY "Coaches can upload content assets"
+CREATE POLICY IF NOT EXISTS "Coaches can upload content assets"
   ON storage.objects FOR INSERT
   TO authenticated
   WITH CHECK (
     bucket_id = 'content_assets'
     AND EXISTS (
-      SELECT 1 FROM profiles
+      SELECT 1 FROM public.profiles
       WHERE id = auth.uid()
       AND role = 'coach'
     )
   );
 
 -- Policy: Only coaches can update content assets
-CREATE POLICY "Coaches can update content assets"
+CREATE POLICY IF NOT EXISTS "Coaches can update content assets"
   ON storage.objects FOR UPDATE
   TO authenticated
   USING (
     bucket_id = 'content_assets'
     AND EXISTS (
-      SELECT 1 FROM profiles
+      SELECT 1 FROM public.profiles
       WHERE id = auth.uid()
       AND role = 'coach'
     )
@@ -96,37 +100,27 @@ CREATE POLICY "Coaches can update content assets"
   WITH CHECK (
     bucket_id = 'content_assets'
     AND EXISTS (
-      SELECT 1 FROM profiles
+      SELECT 1 FROM public.profiles
       WHERE id = auth.uid()
       AND role = 'coach'
     )
   );
 
 -- Policy: Only coaches can delete content assets
-CREATE POLICY "Coaches can delete content assets"
+CREATE POLICY IF NOT EXISTS "Coaches can delete content assets"
   ON storage.objects FOR DELETE
   TO authenticated
   USING (
     bucket_id = 'content_assets'
     AND EXISTS (
-      SELECT 1 FROM profiles
+      SELECT 1 FROM public.profiles
       WHERE id = auth.uid()
       AND role = 'coach'
     )
   );
 
 -- Policy: Anyone can view content assets (public read)
-CREATE POLICY "Anyone can view content assets"
+CREATE POLICY IF NOT EXISTS "Anyone can view content assets"
   ON storage.objects FOR SELECT
   TO public
   USING (bucket_id = 'content_assets');
-
--- ============================================================================
--- COMMENTS
--- ============================================================================
-
-COMMENT ON POLICY "Users can upload own avatar" ON storage.objects
-  IS 'Users can upload avatars to their own folder (uid/*)';
-
-COMMENT ON POLICY "Coaches can upload content assets" ON storage.objects
-  IS 'Only coaches can upload recipe images, badges, and other content';
