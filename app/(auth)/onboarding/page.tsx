@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,12 +22,70 @@ export default function OnboardingPage() {
   const { toast } = useToast();
   const router = useRouter();
   const [step, setStep] = useState<Step>("intro");
+  const [checkingInvite, setCheckingInvite] = useState(true);
   const [pushups, setPushups] = useState<number>(0);
   const [squats, setSquats] = useState<number>(0);
   const [plankSeconds, setPlankSeconds] = useState<number>(0);
   const [assignedTier, setAssignedTier] = useState<string>("");
   const [loading, setLoading] = useState(false);
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const interceptInvite = async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (!isMounted || !user?.email) {
+          setCheckingInvite(false);
+          return;
+        }
+
+        const { data: invite } = await supabase
+          .from("coach_invites")
+          .select("id")
+          .eq("email", user.email)
+          .eq("status", "pending")
+          .maybeSingle();
+
+        if (!isMounted) return;
+
+        if (!invite) {
+          setCheckingInvite(false);
+          return;
+        }
+
+        await supabase
+          .from("coach_invites")
+          .update({ status: "accepted" })
+          .eq("id", invite.id);
+
+        await supabase.from("profiles").update({ role: "coach" }).eq("id", user.id);
+
+        toast({
+          title: "Commission Accepted. Welcome to the Barracks.",
+          description: "Redirecting to your officer dashboard.",
+        });
+
+        router.replace("/barracks");
+        router.refresh();
+      } catch (error) {
+        console.error("Error checking coach invite:", error);
+        if (isMounted) {
+          setCheckingInvite(false);
+        }
+      }
+    };
+
+    interceptInvite();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [router, supabase, toast]);
 
   const handleStartTest = () => {
     setStep("pushups");
@@ -86,6 +144,24 @@ export default function OnboardingPage() {
     router.push("/dashboard");
     router.refresh();
   };
+
+  if (checkingInvite) {
+    return (
+      <div className="flex min-h-[420px] flex-col items-center justify-center space-y-4 text-center">
+        <div className="rounded-sm border-2 border-radar-green bg-radar-green/10 p-4">
+          <Shield className="h-10 w-10 text-radar-green" strokeWidth={2.5} />
+        </div>
+        <div>
+          <p className="font-heading text-2xl font-bold uppercase tracking-wider text-high-vis">
+            Checking Orders
+          </p>
+          <p className="mt-2 text-sm text-muted-text">
+            Scanning for officer commissions tied to your email...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (step === "intro") {
     return (

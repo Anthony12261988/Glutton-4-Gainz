@@ -136,9 +136,8 @@ glutton4gainz/
 
 ## Documentation
 
-- **[Quick Start Guide](./QUICK_START.md)** - Get up and running in 5 minutes
+- **[Development & Testing Playbook](./DEV_TESTING_GUIDE.md)** - Local setup, migrations, roles, and critical test scenarios
 - **[Project Status](./PROJECT_STATUS.md)** - Detailed progress report and roadmap
-- **[Supabase Setup Guide](./SUPABASE_SETUP.md)** - Step-by-step Supabase configuration
 - **[Task Breakdown](./TASKS.md)** - Complete 12-phase task list (200+ tasks)
 - **[Product Requirements Document](./GLUTTON4GAMES_PRD.md)** - Full product specification
 - **[Design System](./G4G_Design_System.md)** - Visual design specifications

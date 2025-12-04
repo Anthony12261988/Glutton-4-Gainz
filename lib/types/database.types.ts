@@ -85,6 +85,41 @@ export type Database = {
           },
         ]
       }
+      coach_invites: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          invited_by: string | null
+          status: "accepted" | "pending"
+          token: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          invited_by?: string | null
+          status?: "accepted" | "pending"
+          token?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          invited_by?: string | null
+          status?: "accepted" | "pending"
+          token?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coach_invites_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       meal_plans: {
         Row: {
           assigned_date: string
@@ -169,39 +204,45 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          banned: boolean
           coach_id: string | null
           created_at: string
           current_streak: number
           email: string
           id: string
           last_active: string
-          role: string
+          role: "admin" | "coach" | "soldier" | "user"
+          stripe_customer_id: string | null
           tier: string
           updated_at: string
           xp: number
         }
         Insert: {
           avatar_url?: string | null
+          banned?: boolean
           coach_id?: string | null
           created_at?: string
           current_streak?: number
           email: string
           id: string
           last_active?: string
-          role?: string
+          role?: "admin" | "coach" | "soldier" | "user"
+          stripe_customer_id?: string | null
           tier?: string
           updated_at?: string
           xp?: number
         }
         Update: {
           avatar_url?: string | null
+          banned?: boolean
           coach_id?: string | null
           created_at?: string
           current_streak?: number
           email?: string
           id?: string
           last_active?: string
-          role?: string
+          role?: "admin" | "coach" | "soldier" | "user"
+          stripe_customer_id?: string | null
           tier?: string
           updated_at?: string
           xp?: number
