@@ -4,6 +4,8 @@ import { stripe } from "@/lib/stripe/stripe-client";
 import {
   handleCheckoutSessionCompleted,
   handleSubscriptionDeleted,
+  handleSubscriptionUpdated,
+  handleInvoicePaymentFailed,
 } from "@/lib/stripe/webhook-handlers";
 import Stripe from "stripe";
 
@@ -30,10 +32,22 @@ export async function POST(request: Request) {
         const session = event.data.object as Stripe.CheckoutSession;
         await handleCheckoutSessionCompleted(session);
         break;
+
       case "customer.subscription.deleted":
-        const subscription = event.data.object as Stripe.Subscription;
-        await handleSubscriptionDeleted(subscription);
+        const deletedSub = event.data.object as Stripe.Subscription;
+        await handleSubscriptionDeleted(deletedSub);
         break;
+
+      case "customer.subscription.updated":
+        const updatedSub = event.data.object as Stripe.Subscription;
+        await handleSubscriptionUpdated(updatedSub);
+        break;
+
+      case "invoice.payment_failed":
+        const invoice = event.data.object as Stripe.Invoice;
+        await handleInvoicePaymentFailed(invoice);
+        break;
+
       default:
         console.log(`Unhandled event type ${event.type}`);
     }

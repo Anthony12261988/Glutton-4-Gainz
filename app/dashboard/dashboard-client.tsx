@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { MissionCard, type Exercise } from "@/components/ui/mission-card";
 import { useToast } from "@/hooks/use-toast";
@@ -8,6 +8,8 @@ import { createClient } from "@/lib/supabase/client";
 import { Shield, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CompleteMissionModal } from "@/components/workouts/complete-mission-modal";
+import { BadgeEarnedToast } from "@/components/gamification/badge-earned-toast";
+import { checkForNewBadges, type Badge } from "@/lib/utils/badge-detector";
 
 interface DashboardClientProps {
   user: any;
@@ -29,11 +31,45 @@ export default function DashboardClient({
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
+  // Badge notification state
+  const [newBadges, setNewBadges] = useState<Badge[]>([]);
+  const [currentBadgeIndex, setCurrentBadgeIndex] = useState(0);
+  const [showBadgeNotification, setShowBadgeNotification] = useState(false);
+
+  // Show badges one at a time
+  useEffect(() => {
+    if (newBadges.length > 0 && currentBadgeIndex < newBadges.length) {
+      setShowBadgeNotification(true);
+    }
+  }, [newBadges, currentBadgeIndex]);
+
+  const handleBadgeClose = () => {
+    setShowBadgeNotification(false);
+    // After a short delay, show the next badge if available
+    setTimeout(() => {
+      if (currentBadgeIndex < newBadges.length - 1) {
+        setCurrentBadgeIndex(currentBadgeIndex + 1);
+      } else {
+        // Reset for next time
+        setNewBadges([]);
+        setCurrentBadgeIndex(0);
+      }
+    }, 500);
+  };
+
   const handleComplete = async (duration: number, notes: string) => {
     if (!todaysWorkout) return;
     setLoading(true);
 
     try {
+      // Get badge count before workout completion
+      const { data: badgesBefore } = await supabase
+        .from("badges")
+        .select("id")
+        .eq("user_id", user.id);
+
+      const previousBadgeCount = badgesBefore?.length || 0;
+
       // Insert log; DB trigger will handle XP, streak, badges.
       const { error: logError } = await supabase.from("user_logs").insert({
         user_id: user.id,
@@ -49,6 +85,16 @@ export default function DashboardClient({
         title: "MISSION ACCOMPLISHED",
         description: "Log saved. XP and streak updated.",
       });
+
+      // Check for newly earned badges after a short delay
+      // (give the database trigger time to process)
+      setTimeout(async () => {
+        const earnedBadges = await checkForNewBadges(user.id, previousBadgeCount);
+        if (earnedBadges.length > 0) {
+          setNewBadges(earnedBadges);
+          setCurrentBadgeIndex(0);
+        }
+      }, 1000);
 
       setShowModal(false);
       router.refresh();
@@ -154,6 +200,15 @@ export default function DashboardClient({
         onSubmit={handleComplete}
         loading={loading}
       />
+
+      {/* Badge Notification */}
+      {newBadges.length > 0 && (
+        <BadgeEarnedToast
+          badge={newBadges[currentBadgeIndex]}
+          isVisible={showBadgeNotification}
+          onClose={handleBadgeClose}
+        />
+      )}
     </div>
   );
 }
