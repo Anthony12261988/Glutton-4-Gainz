@@ -1,65 +1,119 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { useToast } from '@/hooks/use-toast'
-import { Shield, Mail, Lock, User, Chrome } from 'lucide-react'
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { Shield, Mail, Lock, User, Chrome } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function SignupPage() {
-  const { toast } = useToast()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [loading, setLoading] = useState(false)
+  const { toast } = useToast();
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const supabase = createClient();
 
   const handleEmailSignup = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     // Validation
     if (password !== confirmPassword) {
       toast({
-        title: 'PASSWORD MISMATCH',
-        description: 'Passwords do not match. Try again, soldier.',
-        variant: 'destructive',
-      })
-      return
+        title: "PASSWORD MISMATCH",
+        description: "Passwords do not match. Try again, soldier.",
+        variant: "destructive",
+      });
+      return;
     }
 
     if (password.length < 8) {
       toast({
-        title: 'WEAK PASSWORD',
-        description: 'Password must be at least 8 characters.',
-        variant: 'destructive',
-      })
-      return
+        title: "WEAK PASSWORD",
+        description: "Password must be at least 8 characters.",
+        variant: "destructive",
+      });
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
-    // TODO: Phase 3 - Implement Supabase auth
-    // const { data, error } = await supabase.auth.signUp({ email, password })
-    // if (!error) navigate to /onboarding
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
 
-    // Placeholder for now
-    setTimeout(() => {
+      if (error) {
+        toast({
+          title: "REGISTRATION FAILED",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else if (data.user && data.session) {
+        // User is signed in automatically (if email confirmation is disabled or not required for login)
+        toast({
+          title: "ENLISTMENT SUCCESSFUL",
+          description: "Welcome to the unit.",
+        });
+        router.push("/onboarding");
+        router.refresh();
+      } else {
+        // Email confirmation required
+        toast({
+          title: "CHECK YOUR COMMS",
+          description: "Verification email sent. Confirm to proceed.",
+        });
+      }
+    } catch (error) {
       toast({
-        title: 'REGISTRATION SUCCESSFUL',
-        description: 'Phase 3 will redirect to Day Zero Test',
-      })
-      setLoading(false)
-    }, 1000)
-  }
+        title: "ERROR",
+        description: "An unexpected error occurred.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleGoogleSignup = async () => {
-    // TODO: Phase 3 - Implement Google OAuth
-    toast({
-      title: 'AUTHENTICATION REQUIRED',
-      description: 'Google OAuth will be implemented in Phase 3',
-    })
-  }
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (error) {
+        toast({
+          title: "REGISTRATION FAILED",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "ERROR",
+        description: "An unexpected error occurred.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -73,7 +127,9 @@ export default function SignupPage() {
         <h1 className="font-heading text-3xl font-bold uppercase tracking-wider text-tactical-red">
           ENLIST NOW
         </h1>
-        <p className="mt-2 text-sm text-muted-text">Join the tactical fitness revolution</p>
+        <p className="mt-2 text-sm text-muted-text">
+          Join the tactical fitness revolution
+        </p>
       </div>
 
       {/* Signup Card */}
@@ -107,7 +163,10 @@ export default function SignupPage() {
           {/* Email/Password Form */}
           <form onSubmit={handleEmailSignup} className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="email" className="text-xs font-bold uppercase tracking-wide text-muted-text">
+              <label
+                htmlFor="email"
+                className="text-xs font-bold uppercase tracking-wide text-muted-text"
+              >
                 Email
               </label>
               <div className="relative">
@@ -125,7 +184,10 @@ export default function SignupPage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="password" className="text-xs font-bold uppercase tracking-wide text-muted-text">
+              <label
+                htmlFor="password"
+                className="text-xs font-bold uppercase tracking-wide text-muted-text"
+              >
                 Password
               </label>
               <div className="relative">
@@ -144,7 +206,10 @@ export default function SignupPage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="confirmPassword" className="text-xs font-bold uppercase tracking-wide text-muted-text">
+              <label
+                htmlFor="confirmPassword"
+                className="text-xs font-bold uppercase tracking-wide text-muted-text"
+              >
                 Confirm Password
               </label>
               <div className="relative">
@@ -162,13 +227,13 @@ export default function SignupPage() {
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'ENLISTING...' : 'SIGN UP'}
+              {loading ? "ENLISTING..." : "SIGN UP"}
             </Button>
           </form>
 
           {/* Terms */}
           <p className="text-center text-xs text-steel">
-            By signing up, you agree to our{' '}
+            By signing up, you agree to our{" "}
             <Link href="/terms" className="text-tactical-red hover:underline">
               Terms of Service
             </Link>
@@ -178,11 +243,14 @@ export default function SignupPage() {
 
       {/* Login Link */}
       <div className="text-center text-sm text-muted-text">
-        Already enlisted?{' '}
-        <Link href="/login" className="font-bold text-tactical-red hover:underline">
+        Already enlisted?{" "}
+        <Link
+          href="/login"
+          className="font-bold text-tactical-red hover:underline"
+        >
           Login here
         </Link>
       </div>
     </div>
-  )
+  );
 }

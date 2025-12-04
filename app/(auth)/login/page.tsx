@@ -1,45 +1,88 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { useToast } from '@/hooks/use-toast'
-import { Shield, Mail, Lock, Chrome } from 'lucide-react'
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { Shield, Mail, Lock, Chrome } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
-  const { toast } = useToast()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
+  const { toast } = useToast();
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const supabase = createClient();
 
   const handleEmailLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
 
-    // TODO: Phase 3 - Implement Supabase auth
-    // const { error } = await supabase.auth.signInWithPassword({ email, password })
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    // Placeholder for now
-    setTimeout(() => {
+      if (error) {
+        toast({
+          title: "LOGIN FAILED",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "ACCESS GRANTED",
+          description: "Welcome back, soldier.",
+        });
+        router.push("/dashboard");
+        router.refresh();
+      }
+    } catch (error) {
       toast({
-        title: 'AUTHENTICATION REQUIRED',
-        description: 'Supabase auth will be implemented in Phase 3',
-      })
-      setLoading(false)
-    }, 1000)
-  }
+        title: "ERROR",
+        description: "An unexpected error occurred.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleGoogleLogin = async () => {
-    // TODO: Phase 3 - Implement Google OAuth
-    // const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' })
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
 
-    toast({
-      title: 'AUTHENTICATION REQUIRED',
-      description: 'Google OAuth will be implemented in Phase 3',
-    })
-  }
+      if (error) {
+        toast({
+          title: "LOGIN FAILED",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "ERROR",
+        description: "An unexpected error occurred.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -53,14 +96,18 @@ export default function LoginPage() {
         <h1 className="font-heading text-3xl font-bold uppercase tracking-wider text-tactical-red">
           GLUTTON4GAMES
         </h1>
-        <p className="mt-2 text-sm text-muted-text">Tactical Fitness Training System</p>
+        <p className="mt-2 text-sm text-muted-text">
+          Tactical Fitness Training System
+        </p>
       </div>
 
       {/* Login Card */}
       <Card>
         <CardHeader>
           <CardTitle>LOGIN</CardTitle>
-          <CardDescription>Enter your credentials to access your account</CardDescription>
+          <CardDescription>
+            Enter your credentials to access your account
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Google OAuth Button */}
@@ -87,7 +134,10 @@ export default function LoginPage() {
           {/* Email/Password Form */}
           <form onSubmit={handleEmailLogin} className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="email" className="text-xs font-bold uppercase tracking-wide text-muted-text">
+              <label
+                htmlFor="email"
+                className="text-xs font-bold uppercase tracking-wide text-muted-text"
+              >
                 Email
               </label>
               <div className="relative">
@@ -105,7 +155,10 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="password" className="text-xs font-bold uppercase tracking-wide text-muted-text">
+              <label
+                htmlFor="password"
+                className="text-xs font-bold uppercase tracking-wide text-muted-text"
+              >
                 Password
               </label>
               <div className="relative">
@@ -123,7 +176,7 @@ export default function LoginPage() {
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'AUTHENTICATING...' : 'LOGIN'}
+              {loading ? "AUTHENTICATING..." : "LOGIN"}
             </Button>
           </form>
 
@@ -141,11 +194,14 @@ export default function LoginPage() {
 
       {/* Signup Link */}
       <div className="text-center text-sm text-muted-text">
-        New recruit?{' '}
-        <Link href="/signup" className="font-bold text-tactical-red hover:underline">
+        New recruit?{" "}
+        <Link
+          href="/signup"
+          className="font-bold text-tactical-red hover:underline"
+        >
           Sign up for deployment
         </Link>
       </div>
     </div>
-  )
+  );
 }

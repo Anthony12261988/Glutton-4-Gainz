@@ -30,6 +30,7 @@ This guide will walk you through setting up Supabase for the Glutton4Games PWA. 
 
 1. In your Supabase project dashboard, go to **Settings** → **API**
 2. You'll need these values:
+
    - **Project URL** (looks like `https://xxxxxxxxxxxxx.supabase.co`)
    - **`anon` `public`** key (safe to use in client-side code)
    - **`service_role` `secret`** key (NEVER expose publicly, server-side only)
@@ -105,6 +106,7 @@ supabase db push
 4. Click **"Run"**
 
 This will populate:
+
 - 4 sample workouts (one for each tier, scheduled for today)
 - 8 sample recipes with macros
 
@@ -149,6 +151,7 @@ Storage buckets are created via the migration in Step 3, but you can verify:
 
 1. Go to **Storage** in your Supabase dashboard
 2. You should see two buckets:
+
    - **avatars** (public, 5MB limit, images only)
    - **content_assets** (public, 10MB limit, coaches only)
 
@@ -187,28 +190,29 @@ Create a test file to verify your setup:
 
 ```typescript
 // test-db.ts
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-const supabase = createClient(supabaseUrl, supabaseKey)
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function testConnection() {
-  const { data, error } = await supabase.from('workouts').select('*').limit(1)
+  const { data, error } = await supabase.from("workouts").select("*").limit(1);
 
   if (error) {
-    console.error('❌ Database connection failed:', error)
+    console.error("❌ Database connection failed:", error);
   } else {
-    console.log('✅ Database connection successful!')
-    console.log('Sample workout:', data)
+    console.log("✅ Database connection successful!");
+    console.log("Sample workout:", data);
   }
 }
 
-testConnection()
+testConnection();
 ```
 
 Run it:
+
 ```bash
 npx tsx test-db.ts
 ```
@@ -217,6 +221,7 @@ npx tsx test-db.ts
 
 1. Go to **Table Editor**
 2. You should see all 9 tables:
+
    - profiles
    - workouts
    - user_logs
@@ -258,17 +263,21 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ### Migration Errors
 
 **Error: "relation already exists"**
+
 - Solution: You've already run this migration. Skip it or drop the table first.
 
 **Error: "permission denied"**
+
 - Solution: Make sure you're running migrations as the Postgres user. Use the SQL Editor in Supabase dashboard.
 
 **Error: "function already exists"**
+
 - Solution: Use `CREATE OR REPLACE FUNCTION` (already in our migrations)
 
 ### RLS Policy Errors
 
 **Error: "new row violates row-level security policy"**
+
 - Solution:
   1. Check if RLS is enabled on the table
   2. Verify the policy matches your auth.uid()
@@ -280,9 +289,11 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ### Authentication Errors
 
 **Error: "Invalid API key"**
+
 - Solution: Double-check your `.env.local` file has the correct `anon` key
 
 **Error: "Email not confirmed"**
+
 - Solution:
   1. Go to Authentication → Users
   2. Find the user and click the menu → "Confirm email"
@@ -291,6 +302,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ### Storage Errors
 
 **Error: "must be owner of relation objects"** (Migration 012)
+
 - This migration should work as-is with the `IF NOT EXISTS` clauses
 - If it still fails, the issue is likely permissions-related in your Supabase project
 - **Workaround**: Create the buckets manually through Supabase Dashboard:
@@ -301,9 +313,11 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 - Note: Once set up (via SQL or UI), storage works perfectly!
 
 **Error: "The resource already exists"**
+
 - Solution: Buckets already created. Skip this migration or verify in Storage dashboard.
 
 **Error: "Bucket not found"**
+
 - Solution: The migration didn't run successfully. Try running it again or use the manual workaround above.
 
 ---

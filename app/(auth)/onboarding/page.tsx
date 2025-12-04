@@ -1,71 +1,110 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { useToast } from '@/hooks/use-toast'
-import { Shield, ChevronRight, Target, Zap, Flame } from 'lucide-react'
-import { assignTier, TIERS } from '@/lib/constants/tiers'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { Shield, ChevronRight, Target, Zap, Flame } from "lucide-react";
+import { assignTier, TIERS } from "@/lib/constants/tiers";
+import { createClient } from "@/lib/supabase/client";
 
-type Step = 'intro' | 'pushups' | 'squats' | 'core' | 'results'
+type Step = "intro" | "pushups" | "squats" | "core" | "results";
 
 export default function OnboardingPage() {
-  const { toast } = useToast()
-  const [step, setStep] = useState<Step>('intro')
-  const [pushups, setPushups] = useState<number>(0)
-  const [squats, setSquats] = useState<number>(0)
-  const [plankSeconds, setPlankSeconds] = useState<number>(0)
-  const [assignedTier, setAssignedTier] = useState<string>('')
+  const { toast } = useToast();
+  const router = useRouter();
+  const [step, setStep] = useState<Step>("intro");
+  const [pushups, setPushups] = useState<number>(0);
+  const [squats, setSquats] = useState<number>(0);
+  const [plankSeconds, setPlankSeconds] = useState<number>(0);
+  const [assignedTier, setAssignedTier] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+  const supabase = createClient();
 
   const handleStartTest = () => {
-    setStep('pushups')
-  }
+    setStep("pushups");
+  };
 
   const handlePushupsSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setStep('squats')
-  }
+    e.preventDefault();
+    setStep("squats");
+  };
 
   const handleSquatsSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setStep('core')
-  }
+    e.preventDefault();
+    setStep("core");
+  };
 
-  const handleCoreSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleCoreSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
 
     // Calculate tier based on pushups (primary metric)
-    const tier = assignTier(pushups)
-    setAssignedTier(tier)
+    const tier = assignTier(pushups);
+    setAssignedTier(tier);
 
-    // TODO: Phase 3 - Update Supabase profile with tier
-    // await supabase.from('profiles').update({ tier }).eq('id', user.id)
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-    setStep('results')
-  }
+      if (user) {
+        const { error } = await supabase
+          .from("profiles")
+          .update({ tier })
+          .eq("id", user.id);
+
+        if (error) throw error;
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast({
+        title: "ERROR SAVING RESULTS",
+        description:
+          "Your tier was calculated but not saved. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+      setStep("results");
+    }
+  };
 
   const handleComplete = () => {
     toast({
-      title: 'PROFILE CREATED',
-      description: 'Phase 3 will redirect to main app',
-    })
-    // TODO: Phase 3 - Navigate to /app
-  }
+      title: "PROFILE UPDATED",
+      description: "Redirecting to your dashboard...",
+    });
+    router.push("/dashboard");
+    router.refresh();
+  };
 
-  if (step === 'intro') {
+  if (step === "intro") {
     return (
       <div className="space-y-6">
         <div className="text-center">
           <div className="mb-4 flex justify-center">
             <div className="rounded-sm border-2 border-tactical-red bg-gunmetal p-4">
-              <Shield className="h-12 w-12 text-tactical-red" strokeWidth={2.5} />
+              <Shield
+                className="h-12 w-12 text-tactical-red"
+                strokeWidth={2.5}
+              />
             </div>
           </div>
           <h1 className="font-heading text-3xl font-bold uppercase tracking-wider text-tactical-red">
             DAY ZERO TEST
           </h1>
-          <p className="mt-2 text-sm text-muted-text">Assess your combat readiness</p>
+          <p className="mt-2 text-sm text-muted-text">
+            Assess your combat readiness
+          </p>
         </div>
 
         <Card>
@@ -124,7 +163,8 @@ export default function OnboardingPage() {
               <p className="text-center text-xs text-radar-green">
                 <strong>Your performance determines your tier:</strong>
                 <br />
-                {TIERS.NOVICE} • {TIERS.INTERMEDIATE} • {TIERS.ADVANCED} • {TIERS.ELITE}
+                {TIERS.NOVICE} • {TIERS.INTERMEDIATE} • {TIERS.ADVANCED} •{" "}
+                {TIERS.ELITE}
               </p>
             </div>
 
@@ -135,10 +175,10 @@ export default function OnboardingPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
-  if (step === 'pushups') {
+  if (step === "pushups") {
     return (
       <div className="space-y-6">
         <div className="text-center">
@@ -151,12 +191,17 @@ export default function OnboardingPage() {
         <Card>
           <CardHeader>
             <CardTitle>PUSHUPS</CardTitle>
-            <CardDescription>Enter the total number of pushups completed</CardDescription>
+            <CardDescription>
+              Enter the total number of pushups completed
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handlePushupsSubmit} className="space-y-4">
               <div className="space-y-2">
-                <label htmlFor="pushups" className="text-xs font-bold uppercase tracking-wide text-muted-text">
+                <label
+                  htmlFor="pushups"
+                  className="text-xs font-bold uppercase tracking-wide text-muted-text"
+                >
                   Reps Completed
                 </label>
                 <Input
@@ -165,7 +210,7 @@ export default function OnboardingPage() {
                   min="0"
                   max="500"
                   placeholder="0"
-                  value={pushups || ''}
+                  value={pushups || ""}
                   onChange={(e) => setPushups(Number(e.target.value))}
                   className="text-2xl font-bold"
                   required
@@ -181,10 +226,10 @@ export default function OnboardingPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
-  if (step === 'squats') {
+  if (step === "squats") {
     return (
       <div className="space-y-6">
         <div className="text-center">
@@ -197,12 +242,17 @@ export default function OnboardingPage() {
         <Card>
           <CardHeader>
             <CardTitle>JUMP SQUATS</CardTitle>
-            <CardDescription>Enter the total number of jump squats completed</CardDescription>
+            <CardDescription>
+              Enter the total number of jump squats completed
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSquatsSubmit} className="space-y-4">
               <div className="space-y-2">
-                <label htmlFor="squats" className="text-xs font-bold uppercase tracking-wide text-muted-text">
+                <label
+                  htmlFor="squats"
+                  className="text-xs font-bold uppercase tracking-wide text-muted-text"
+                >
                   Reps Completed
                 </label>
                 <Input
@@ -211,7 +261,7 @@ export default function OnboardingPage() {
                   min="0"
                   max="500"
                   placeholder="0"
-                  value={squats || ''}
+                  value={squats || ""}
                   onChange={(e) => setSquats(Number(e.target.value))}
                   className="text-2xl font-bold"
                   required
@@ -227,10 +277,10 @@ export default function OnboardingPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
-  if (step === 'core') {
+  if (step === "core") {
     return (
       <div className="space-y-6">
         <div className="text-center">
@@ -243,12 +293,17 @@ export default function OnboardingPage() {
         <Card>
           <CardHeader>
             <CardTitle>PLANK HOLD</CardTitle>
-            <CardDescription>Enter the total seconds held in plank position</CardDescription>
+            <CardDescription>
+              Enter the total seconds held in plank position
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleCoreSubmit} className="space-y-4">
               <div className="space-y-2">
-                <label htmlFor="plank" className="text-xs font-bold uppercase tracking-wide text-muted-text">
+                <label
+                  htmlFor="plank"
+                  className="text-xs font-bold uppercase tracking-wide text-muted-text"
+                >
                   Seconds Held
                 </label>
                 <Input
@@ -257,7 +312,7 @@ export default function OnboardingPage() {
                   min="0"
                   max="600"
                   placeholder="0"
-                  value={plankSeconds || ''}
+                  value={plankSeconds || ""}
                   onChange={(e) => setPlankSeconds(Number(e.target.value))}
                   className="text-2xl font-bold"
                   required
@@ -273,17 +328,19 @@ export default function OnboardingPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
-  if (step === 'results') {
+  if (step === "results") {
     return (
       <div className="space-y-6">
         <div className="text-center">
           <h1 className="font-heading text-3xl font-bold uppercase tracking-wider text-radar-green">
             ASSESSMENT COMPLETE
           </h1>
-          <p className="mt-2 text-sm text-muted-text">Your tier has been assigned</p>
+          <p className="mt-2 text-sm text-muted-text">
+            Your tier has been assigned
+          </p>
         </div>
 
         <Card className="border-2 border-radar-green shadow-[0_0_20px_rgba(16,185,129,0.3)]">
@@ -295,15 +352,21 @@ export default function OnboardingPage() {
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center">
                 <p className="text-xs text-muted-text">PUSHUPS</p>
-                <p className="font-heading text-2xl font-bold text-high-vis">{pushups}</p>
+                <p className="font-heading text-2xl font-bold text-high-vis">
+                  {pushups}
+                </p>
               </div>
               <div className="text-center">
                 <p className="text-xs text-muted-text">SQUATS</p>
-                <p className="font-heading text-2xl font-bold text-high-vis">{squats}</p>
+                <p className="font-heading text-2xl font-bold text-high-vis">
+                  {squats}
+                </p>
               </div>
               <div className="text-center">
                 <p className="text-xs text-muted-text">PLANK</p>
-                <p className="font-heading text-2xl font-bold text-high-vis">{plankSeconds}s</p>
+                <p className="font-heading text-2xl font-bold text-high-vis">
+                  {plankSeconds}s
+                </p>
               </div>
             </div>
 
@@ -318,10 +381,14 @@ export default function OnboardingPage() {
             {/* Tier Description */}
             <div className="space-y-2 text-center">
               <p className="text-sm text-muted-text">
-                {assignedTier === TIERS.NOVICE && 'Foundation phase. Master the basics and build consistency.'}
-                {assignedTier === TIERS.INTERMEDIATE && 'Solid foundation. Ready for increased intensity.'}
-                {assignedTier === TIERS.ADVANCED && 'Strong performance. Elite-level workouts unlocked.'}
-                {assignedTier === TIERS.ELITE && 'Exceptional readiness. Maximum difficulty unlocked.'}
+                {assignedTier === TIERS.NOVICE &&
+                  "Foundation phase. Master the basics and build consistency."}
+                {assignedTier === TIERS.INTERMEDIATE &&
+                  "Solid foundation. Ready for increased intensity."}
+                {assignedTier === TIERS.ADVANCED &&
+                  "Strong performance. Elite-level workouts unlocked."}
+                {assignedTier === TIERS.ELITE &&
+                  "Exceptional readiness. Maximum difficulty unlocked."}
               </p>
             </div>
 
@@ -331,8 +398,8 @@ export default function OnboardingPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
-  return null
+  return null;
 }

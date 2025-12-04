@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { inter, oswald } from '@/lib/fonts'
 import { Toaster } from '@/components/ui/toaster'
+import { ServiceWorkerRegister } from '@/components/pwa/service-worker-register'
+import { InstallPrompt } from '@/components/pwa/install-prompt'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -26,6 +28,8 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.variable} ${oswald.variable} font-sans antialiased`}>
+        <ServiceWorkerRegister />
+        <InstallPrompt />
         {children}
         <Toaster />
       </body>
