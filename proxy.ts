@@ -1,23 +1,9 @@
-import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { updateSession } from '@/lib/supabase/middleware'
 
-export default function proxy(request: NextRequest) {
-  // For now, this is a placeholder. Will be fully implemented in Phase 3 (Authentication)
-  // when we add auth check logic with Supabase
-
-  const { pathname } = request.nextUrl
-
-  // Protected routes patterns
-  const protectedRoutes = ['/app', '/coach', '/profile', '/stats', '/nutrition']
-  const authRoutes = ['/login', '/signup', '/onboarding']
-
-  // Check if the current path matches any protected route
-  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
-  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route))
-
-  // TODO: Phase 3 - Add actual session check here
-  // For now, allow all routes
-  return NextResponse.next()
+export default async function proxy(request: NextRequest) {
+  // Keep Supabase auth cookies in sync for all matched routes
+  return updateSession(request)
 }
 
 export const config = {

@@ -10,7 +10,8 @@ export default function OfflinePage() {
         Comms Down
       </h1>
       <p className="text-steel mb-8 max-w-md">
-        You are currently offline. Check your connection to re-establish contact with HQ.
+        You are currently offline. Check your connection to re-establish contact
+        with HQ.
       </p>
       <Link href="/">
         <Button className="bg-tactical-red hover:bg-red-700 font-bold tracking-wider">

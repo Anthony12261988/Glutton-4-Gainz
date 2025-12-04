@@ -7,7 +7,9 @@ import { useToast } from "@/components/ui/use-toast";
 import { loadStripe } from "@stripe/stripe-js";
 import { useRouter } from "next/navigation";
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+);
 
 export default function PricingPage() {
   const { user, profile, loading } = useUser();
@@ -64,11 +66,11 @@ export default function PricingPage() {
       const response = await fetch("/api/create-portal-session", {
         method: "POST",
       });
-      
+
       const { url, error } = await response.json();
-      
+
       if (error) throw new Error(error);
-      
+
       window.location.href = url;
     } catch (error: any) {
       toast({
@@ -80,7 +82,19 @@ export default function PricingPage() {
     }
   };
 
-  const isSoldier = profile?.role === 'soldier' || profile?.role === 'coach';
+  const isSoldier = profile?.role === "soldier" || profile?.role === "coach";
+
+  if (loading) {
+    return (
+      <div className="container max-w-6xl mx-auto py-12 px-4">
+        <div className="h-8 w-48 bg-gunmetal animate-pulse rounded-sm mb-6" />
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="h-80 rounded-sm border border-steel/30 bg-gunmetal animate-pulse" />
+          <div className="h-80 rounded-sm border border-steel/30 bg-gunmetal animate-pulse" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container max-w-6xl mx-auto py-12 px-4">
@@ -89,7 +103,8 @@ export default function PricingPage() {
           Choose Your <span className="text-tactical-red">Loadout</span>
         </h1>
         <p className="text-xl text-steel max-w-2xl mx-auto">
-          Upgrade to Soldier tier to unlock advanced analytics, meal planning, and priority support.
+          Upgrade to Soldier tier to unlock advanced analytics, meal planning,
+          and priority support.
         </p>
       </div>
 
@@ -130,7 +145,7 @@ export default function PricingPage() {
           ]}
         />
       </div>
-      
+
       <div className="mt-16 text-center">
         <p className="text-steel text-sm">
           Secure payment processing by Stripe. Cancel anytime.

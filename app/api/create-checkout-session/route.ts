@@ -1,7 +1,7 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe/stripe-client';
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+import { stripe } from "@/lib/stripe/stripe-client";
 
 export async function POST(request: Request) {
   const cookieStore = cookies();
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
           cookieStore.set({ name, value, ...options });
         },
         remove(name: string, options: CookieOptions) {
-          cookieStore.set({ name, value: '', ...options });
+          cookieStore.set({ name, value: "", ...options });
         },
       },
     }
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
   if (!user) {
     return NextResponse.json(
-      { error: 'You must be logged in to upgrade.' },
+      { error: "You must be logged in to upgrade." },
       { status: 401 }
     );
   }
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
 
   if (!priceId) {
     return NextResponse.json(
-      { error: 'Stripe price ID not configured.' },
+      { error: "Stripe price ID not configured." },
       { status: 500 }
     );
   }
@@ -47,8 +47,8 @@ export async function POST(request: Request) {
   try {
     // Create Checkout Session
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      billing_address_collection: 'auto',
+      payment_method_types: ["card"],
+      billing_address_collection: "auto",
       customer_email: user.email,
       line_items: [
         {
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
           quantity: 1,
         },
       ],
-      mode: 'subscription',
+      mode: "subscription",
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing`,
       metadata: {
@@ -66,10 +66,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ sessionId: session.id });
   } catch (err: any) {
-    console.error('Error creating checkout session:', err);
-    return NextResponse.json(
-      { error: err.message },
-      { status: 500 }
-    );
+    console.error("Error creating checkout session:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

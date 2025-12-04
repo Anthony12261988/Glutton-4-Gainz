@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { createClient } from "@/lib/supabase/client";
 import { Shield, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CompleteMissionModal } from "@/components/workouts/complete-mission-modal";
 
 interface DashboardClientProps {
   user: any;
@@ -26,43 +27,30 @@ export default function DashboardClient({
   const supabase = createClient();
   const [isCompleted, setIsCompleted] = useState(initialCompleted);
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
-  const handleCompleteMission = async () => {
+  const handleComplete = async (duration: number, notes: string) => {
     if (!todaysWorkout) return;
     setLoading(true);
 
     try {
-      // 1. Log the workout
+      // Insert log; DB trigger will handle XP, streak, badges.
       const { error: logError } = await supabase.from("user_logs").insert({
         user_id: user.id,
         workout_id: todaysWorkout.id,
-        duration: 45, // Default duration, could be input
-        notes: "Mission Accomplished",
+        duration,
+        notes,
       });
 
       if (logError) throw logError;
 
-      // 2. Update Profile (XP and Streak)
-      // Note: Triggers might handle some of this, but let's be explicit or rely on triggers if they exist.
-      // The migration 011 has calculate_streak function but not an auto-update trigger for XP on log insert.
-      // Let's update XP manually for now as per requirements "Wire up 'Complete Mission' -> Save to user_logs -> Add 100XP"
-
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .update({
-          xp: (profile.xp || 0) + 100,
-          last_active: new Date().toISOString(),
-        })
-        .eq("id", user.id);
-
-      if (profileError) throw profileError;
-
       setIsCompleted(true);
       toast({
         title: "MISSION ACCOMPLISHED",
-        description: "100 XP Awarded. Strong work, soldier.",
+        description: "Log saved. XP and streak updated.",
       });
 
+      setShowModal(false);
       router.refresh();
     } catch (error: any) {
       toast({
@@ -124,7 +112,7 @@ export default function DashboardClient({
             videoUrl={todaysWorkout.video_url}
             exercises={todaysWorkout.sets_reps as Exercise[]}
             isCompleted={isCompleted}
-            onComplete={!isCompleted ? handleCompleteMission : undefined}
+            onComplete={!isCompleted ? () => setShowModal(true) : undefined}
           />
 
           {isCompleted && (
@@ -141,10 +129,10 @@ export default function DashboardClient({
           {!isCompleted && (
             <Button
               className="w-full py-6 text-lg"
-              onClick={handleCompleteMission}
+              onClick={() => setShowModal(true)}
               disabled={loading}
             >
-              {loading ? "LOGGING..." : "COMPLETE MISSION"}
+              COMPLETE MISSION
             </Button>
           )}
         </div>
@@ -159,6 +147,13 @@ export default function DashboardClient({
           </p>
         </div>
       )}
+
+      <CompleteMissionModal
+        open={showModal}
+        onClose={() => setShowModal(false)}
+        onSubmit={handleComplete}
+        loading={loading}
+      />
     </div>
   );
 }

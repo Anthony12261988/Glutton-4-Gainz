@@ -14,17 +14,21 @@ export default async function StatsPage() {
     redirect("/login");
   }
 
+  const today = new Date();
+  const start = new Date();
+  start.setDate(today.getDate() - 27); // last 4 weeks
+  const startDate = start.toISOString().split("T")[0];
+
   // Fetch User Logs for Consistency
-  // We want to group by week. For simplicity in this MVP, let's fetch last 30 days logs
-  // and process them on the client or here.
+  // Only last 4 weeks
   const { data: logs } = await supabase
     .from("user_logs")
     .select("date")
     .eq("user_id", user.id)
+    .gte("date", startDate)
     .order("date", { ascending: true });
 
   // Process logs into weekly consistency
-  // This is a simplified implementation. In a real app, use a DB view or more robust date math.
   const consistencyMap = new Map<string, number>();
   logs?.forEach((log) => {
     const date = new Date(log.date);
@@ -46,6 +50,20 @@ export default async function StatsPage() {
       workouts,
     })
   );
+
+  // XP progression (cumulative, 100 per log)
+  let cumulative = 0;
+  const xpData =
+    logs?.map((log) => {
+      cumulative += 100;
+      return {
+        date: new Date(log.date).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        }),
+        xp: cumulative,
+      };
+    }) || [];
 
   // Fetch Body Metrics
   const { data: metrics } = await supabase
@@ -69,7 +87,8 @@ export default async function StatsPage() {
         <StatsClient
           consistencyData={consistencyData}
           weightData={weightData}
-          xpData={[]}
+          xpData={xpData}
+          userId={user.id}
         />
       </div>
       <Navigation />

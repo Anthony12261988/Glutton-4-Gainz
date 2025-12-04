@@ -17,13 +17,18 @@ interface RecipeFormProps {
   isEditing?: boolean;
 }
 
-export function RecipeForm({ initialData, isEditing = false }: RecipeFormProps) {
+export function RecipeForm({
+  initialData,
+  isEditing = false,
+}: RecipeFormProps) {
   const router = useRouter();
   const supabase = createClient();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string>(initialData?.image_url || "");
+  const [previewUrl, setPreviewUrl] = useState<string>(
+    initialData?.image_url || ""
+  );
 
   const [formData, setFormData] = useState({
     title: initialData?.title || "",
@@ -65,15 +70,15 @@ export function RecipeForm({ initialData, isEditing = false }: RecipeFormProps) 
           .eq("id", initialData.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase
-          .from("recipes")
-          .insert([recipeData]);
+        const { error } = await supabase.from("recipes").insert([recipeData]);
         if (error) throw error;
       }
 
       toast({
         title: "Success",
-        description: `Recipe ${isEditing ? "updated" : "created"} successfully.`,
+        description: `Recipe ${
+          isEditing ? "updated" : "created"
+        } successfully.`,
       });
 
       router.push("/barracks/content/recipes");
@@ -98,7 +103,9 @@ export function RecipeForm({ initialData, isEditing = false }: RecipeFormProps) 
             <Input
               id="title"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
               required
               className="bg-gunmetal border-steel/30"
             />
@@ -147,7 +154,12 @@ export function RecipeForm({ initialData, isEditing = false }: RecipeFormProps) 
                 id="calories"
                 type="number"
                 value={formData.calories}
-                onChange={(e) => setFormData({ ...formData, calories: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    calories: parseInt(e.target.value),
+                  })
+                }
                 required
                 className="bg-gunmetal border-steel/30"
               />
@@ -158,7 +170,12 @@ export function RecipeForm({ initialData, isEditing = false }: RecipeFormProps) 
                 id="protein"
                 type="number"
                 value={formData.protein}
-                onChange={(e) => setFormData({ ...formData, protein: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    protein: parseInt(e.target.value),
+                  })
+                }
                 required
                 className="bg-gunmetal border-steel/30"
               />
@@ -169,7 +186,9 @@ export function RecipeForm({ initialData, isEditing = false }: RecipeFormProps) 
                 id="carbs"
                 type="number"
                 value={formData.carbs}
-                onChange={(e) => setFormData({ ...formData, carbs: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({ ...formData, carbs: parseInt(e.target.value) })
+                }
                 required
                 className="bg-gunmetal border-steel/30"
               />
@@ -180,7 +199,9 @@ export function RecipeForm({ initialData, isEditing = false }: RecipeFormProps) 
                 id="fat"
                 type="number"
                 value={formData.fat}
-                onChange={(e) => setFormData({ ...formData, fat: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({ ...formData, fat: parseInt(e.target.value) })
+                }
                 required
                 className="bg-gunmetal border-steel/30"
               />
@@ -192,7 +213,9 @@ export function RecipeForm({ initialData, isEditing = false }: RecipeFormProps) 
             <Textarea
               id="instructions"
               value={formData.instructions}
-              onChange={(e) => setFormData({ ...formData, instructions: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, instructions: e.target.value })
+              }
               required
               className="bg-gunmetal border-steel/30 min-h-[200px]"
             />
@@ -200,8 +223,13 @@ export function RecipeForm({ initialData, isEditing = false }: RecipeFormProps) 
         </div>
       </div>
 
-      <Button type="submit" className="w-full bg-tactical-red hover:bg-red-700" disabled={loading}>
-        <Save className="mr-2 h-4 w-4" /> {loading ? "Saving..." : "Save Recipe"}
+      <Button
+        type="submit"
+        className="w-full bg-tactical-red hover:bg-red-700"
+        disabled={loading}
+      >
+        <Save className="mr-2 h-4 w-4" />{" "}
+        {loading ? "Saving..." : "Save Recipe"}
       </Button>
     </form>
   );

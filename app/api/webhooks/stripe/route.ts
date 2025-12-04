@@ -1,12 +1,15 @@
-import { headers } from 'next/headers';
-import { NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe/stripe-client';
-import { handleCheckoutSessionCompleted, handleSubscriptionDeleted } from '@/lib/stripe/webhook-handlers';
-import Stripe from 'stripe';
+import { headers } from "next/headers";
+import { NextResponse } from "next/server";
+import { stripe } from "@/lib/stripe/stripe-client";
+import {
+  handleCheckoutSessionCompleted,
+  handleSubscriptionDeleted,
+} from "@/lib/stripe/webhook-handlers";
+import Stripe from "stripe";
 
 export async function POST(request: Request) {
   const body = await request.text();
-  const signature = headers().get('stripe-signature') as string;
+  const signature = headers().get("stripe-signature") as string;
 
   let event: Stripe.Event;
 
@@ -23,11 +26,11 @@ export async function POST(request: Request) {
 
   try {
     switch (event.type) {
-      case 'checkout.session.completed':
+      case "checkout.session.completed":
         const session = event.data.object as Stripe.CheckoutSession;
         await handleCheckoutSessionCompleted(session);
         break;
-      case 'customer.subscription.deleted':
+      case "customer.subscription.deleted":
         const subscription = event.data.object as Stripe.Subscription;
         await handleSubscriptionDeleted(subscription);
         break;
@@ -36,7 +39,10 @@ export async function POST(request: Request) {
     }
   } catch (err: any) {
     console.error(`Error handling webhook: ${err.message}`);
-    return NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 });
+    return NextResponse.json(
+      { error: "Webhook handler failed" },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json({ received: true });

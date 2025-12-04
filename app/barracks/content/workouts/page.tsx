@@ -21,7 +21,7 @@ export default async function WorkoutManagerPage() {
     .eq("id", user.id)
     .single();
 
-  if (profile?.role !== "coach") redirect("/");
+  if (profile?.role !== "coach") redirect("/dashboard");
 
   const { data: workouts } = await supabase
     .from("workouts")
@@ -33,7 +33,10 @@ export default async function WorkoutManagerPage() {
       <div className="container mx-auto px-4 py-6">
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <Link href="/barracks" className="flex items-center text-steel hover:text-white mb-2">
+            <Link
+              href="/barracks"
+              className="flex items-center text-steel hover:text-white mb-2"
+            >
               <ArrowLeft className="mr-2 h-4 w-4" /> Back to Barracks
             </Link>
             <h1 className="font-heading text-3xl font-bold uppercase tracking-wider text-high-vis">
@@ -67,7 +70,10 @@ export default async function WorkoutManagerPage() {
               <CardContent>
                 <div className="flex justify-between text-sm text-steel">
                   <span>Tier: {workout.tier}</span>
-                  <span>Date: {new Date(workout.scheduled_date).toLocaleDateString()}</span>
+                  <span>
+                    Date:{" "}
+                    {new Date(workout.scheduled_date).toLocaleDateString()}
+                  </span>
                 </div>
               </CardContent>
             </Card>

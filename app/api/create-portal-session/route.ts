@@ -1,7 +1,7 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe/stripe-client';
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+import { stripe } from "@/lib/stripe/stripe-client";
 
 export async function POST(request: Request) {
   const cookieStore = cookies();
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
           cookieStore.set({ name, value, ...options });
         },
         remove(name: string, options: CookieOptions) {
-          cookieStore.set({ name, value: '', ...options });
+          cookieStore.set({ name, value: "", ...options });
         },
       },
     }
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
   if (!user || !user.email) {
     return NextResponse.json(
-      { error: 'You must be logged in.' },
+      { error: "You must be logged in." },
       { status: 401 }
     );
   }
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
 
     if (customers.data.length === 0) {
       return NextResponse.json(
-        { error: 'No subscription found.' },
+        { error: "No subscription found." },
         { status: 404 }
       );
     }
@@ -59,10 +59,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ url: session.url });
   } catch (err: any) {
-    console.error('Error creating portal session:', err);
-    return NextResponse.json(
-      { error: err.message },
-      { status: 500 }
-    );
+    console.error("Error creating portal session:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

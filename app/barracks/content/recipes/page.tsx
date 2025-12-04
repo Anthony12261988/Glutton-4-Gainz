@@ -22,7 +22,7 @@ export default async function RecipeManagerPage() {
     .eq("id", user.id)
     .single();
 
-  if (profile?.role !== "coach") redirect("/");
+  if (profile?.role !== "coach") redirect("/dashboard");
 
   const { data: recipes } = await supabase
     .from("recipes")
@@ -34,7 +34,10 @@ export default async function RecipeManagerPage() {
       <div className="container mx-auto px-4 py-6">
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <Link href="/barracks" className="flex items-center text-steel hover:text-white mb-2">
+            <Link
+              href="/barracks"
+              className="flex items-center text-steel hover:text-white mb-2"
+            >
               <ArrowLeft className="mr-2 h-4 w-4" /> Back to Barracks
             </Link>
             <h1 className="font-heading text-3xl font-bold uppercase tracking-wider text-high-vis">
@@ -51,7 +54,10 @@ export default async function RecipeManagerPage() {
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {recipes?.map((recipe) => (
-            <Card key={recipe.id} className="border-steel/20 bg-gunmetal overflow-hidden">
+            <Card
+              key={recipe.id}
+              className="border-steel/20 bg-gunmetal overflow-hidden"
+            >
               <div className="relative h-48 w-full">
                 {recipe.image_url ? (
                   <Image
@@ -77,7 +83,10 @@ export default async function RecipeManagerPage() {
                   <span>P: {recipe.protein}g</span>
                 </div>
                 <Link href={`/barracks/content/recipes/${recipe.id}`}>
-                  <Button variant="outline" className="w-full border-steel/30 hover:bg-steel/20 text-white">
+                  <Button
+                    variant="outline"
+                    className="w-full border-steel/30 hover:bg-steel/20 text-white"
+                  >
                     <Edit className="mr-2 h-4 w-4" /> Edit Recipe
                   </Button>
                 </Link>

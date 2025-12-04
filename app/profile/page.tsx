@@ -4,7 +4,9 @@ import { Navigation } from "@/components/ui/navigation";
 import { BuddySystem } from "@/components/social/buddy-system";
 import { Shield, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { BadgeDisplay } from "@/components/ui/badge-display";
+import { BadgeDisplay, type Badge } from "@/components/ui/badge-display";
+import { RankBadge } from "@/components/ui/rank-badge";
+import { Award, Target, Trophy } from "lucide-react";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -24,24 +26,49 @@ export default async function ProfilePage() {
     .eq("id", user.id)
     .single();
 
+  // Fetch Badges
+  const { data: badges } = await supabase
+    .from("user_badges")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("earned_at", { ascending: true });
+
   // Fetch Buddies
   // We want to find rows where user is sender OR receiver
   // Supabase JS client doesn't support OR across different columns easily in one go with joins for different relations
   // So let's just fetch where user_id = me (I added them) for now to keep it simple for MVP Phase 6
   // Or we can do two queries.
 
-  const { data: sentRequests } = await supabase
+  const { data: buddyRelations } = await supabase
     .from("buddies")
     .select(
       `
-      *,
+      id,
+      status,
+      user_id,
+      buddy_id,
+      user_profile:profiles!user_id(*),
       buddy_profile:profiles!buddy_id(*)
     `
     )
-    .eq("user_id", user.id);
+    .or(`user_id.eq.${user.id},buddy_id.eq.${user.id}`);
 
-  // Normalize for the component
-  const buddies = sentRequests || [];
+  const buddies = buddyRelations || [];
+
+  const badgeIcons: Record<string, JSX.Element> = {
+    "First Blood": <Award className="h-6 w-6" />,
+    "Iron Week": <Target className="h-6 w-6" />,
+    Century: <Trophy className="h-6 w-6" />,
+  };
+
+  const badgeDisplay: Badge[] =
+    badges?.map((b) => ({
+      name: b.badge_name.toUpperCase(),
+      description: b.badge_name,
+      icon: badgeIcons[b.badge_name] || <Award className="h-6 w-6" />,
+      isUnlocked: true,
+      earnedAt: b.earned_at ? new Date(b.earned_at) : undefined,
+    })) || [];
 
   return (
     <div className="min-h-screen bg-camo-black pb-24">
@@ -79,6 +106,25 @@ export default async function ProfilePage() {
               {profile?.current_streak}
             </p>
           </div>
+        </div>
+
+        {/* Rank */}
+        <div className="mb-8 flex justify-center">
+          <RankBadge xp={profile?.xp || 0} showProgress size="md" />
+        </div>
+
+        {/* Badges */}
+        <div className="mb-8">
+          <h3 className="mb-3 font-heading text-sm font-bold uppercase text-muted-text">
+            ACHIEVEMENTS
+          </h3>
+          {badgeDisplay.length > 0 ? (
+            <BadgeDisplay badges={badgeDisplay} columns={2} />
+          ) : (
+            <p className="text-center text-sm text-muted-text">
+              No badges earned yet. Complete missions to unlock.
+            </p>
+          )}
         </div>
 
         {/* Buddy System */}

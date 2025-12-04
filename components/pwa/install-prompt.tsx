@@ -31,7 +31,7 @@ export function InstallPrompt() {
 
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    
+
     if (outcome === "accepted") {
       setDeferredPrompt(null);
       setShowPrompt(false);
@@ -53,17 +53,18 @@ export function InstallPrompt() {
             Install App
           </h3>
           <p className="text-sm text-steel mb-3">
-            Add G4G to your home screen for quick access and offline capabilities.
+            Add G4G to your home screen for quick access and offline
+            capabilities.
           </p>
-          <Button 
+          <Button
             onClick={handleInstall}
-            size="sm" 
+            size="sm"
             className="bg-tactical-red hover:bg-red-700 w-full"
           >
             <Download className="mr-2 h-4 w-4" /> INSTALL NOW
           </Button>
         </div>
-        <button 
+        <button
           onClick={handleDismiss}
           className="text-steel hover:text-white ml-2"
         >

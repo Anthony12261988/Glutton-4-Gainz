@@ -14,6 +14,18 @@ export default async function RationsPage() {
     redirect("/login");
   }
 
+  // Fetch Profile to enforce premium access
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  // Only premium (soldier/coach) can access meal planner
+  if (profile?.role !== "soldier" && profile?.role !== "coach") {
+    redirect("/pricing");
+  }
+
   // Fetch Recipes
   const { data: recipes } = await supabase
     .from("recipes")
