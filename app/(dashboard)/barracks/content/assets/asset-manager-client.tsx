@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Upload, Copy, Check } from "lucide-react";
 import { uploadImage } from "@/lib/utils/image-upload";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 

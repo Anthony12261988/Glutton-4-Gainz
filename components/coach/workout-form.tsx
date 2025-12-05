@@ -16,7 +16,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Plus, Trash2, Save } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface WorkoutFormProps {
   initialData?: any;
