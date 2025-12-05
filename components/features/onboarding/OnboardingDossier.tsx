@@ -44,7 +44,7 @@ const EQUIPMENT_OPTIONS = [
   "Bench",
   "Squat Rack",
   "Cable Machine",
-  "None (Bodyweight Only)",
+  "Bodyweight Only",
 ];
 
 export function OnboardingDossier({
@@ -232,13 +232,13 @@ export function OnboardingDossier({
                 What equipment do you have access to?
               </label>
               <p className="text-xs text-muted-text">Select all that apply</p>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {EQUIPMENT_OPTIONS.map((item) => (
                   <Button
                     key={item}
                     type="button"
                     variant={equipment.includes(item) ? "default" : "outline"}
-                    className={`justify-start ${
+                    className={`justify-center text-center h-auto py-3 px-2 text-xs sm:text-sm whitespace-normal ${
                       equipment.includes(item)
                         ? "bg-tactical-red hover:bg-tactical-red/90"
                         : "border-steel/30"

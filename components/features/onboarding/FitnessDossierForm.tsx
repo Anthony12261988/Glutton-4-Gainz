@@ -69,7 +69,7 @@ const EQUIPMENT_OPTIONS = [
   "Cable Machine",
   "Treadmill",
   "Rowing Machine",
-  "None (Bodyweight Only)",
+  "Bodyweight Only",
 ];
 
 const GENDER_OPTIONS = [
