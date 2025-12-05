@@ -9,9 +9,10 @@ import { createClient } from "@/lib/supabase/client";
 import { OnboardingIntro } from "@/components/features/onboarding/OnboardingIntro";
 import { FitnessTestStep } from "@/components/features/onboarding/FitnessTestStep";
 import { OnboardingResults } from "@/components/features/onboarding/OnboardingResults";
+import { OnboardingDossier } from "@/components/features/onboarding/OnboardingDossier";
 import { TOAST_MESSAGES } from "@/lib/dictionary";
 
-type Step = "intro" | "pushups" | "squats" | "core" | "results";
+type Step = "intro" | "pushups" | "squats" | "core" | "results" | "dossier";
 
 export default function OnboardingPage() {
   const { toast } = useToast();
@@ -22,6 +23,7 @@ export default function OnboardingPage() {
   const [squats, setSquats] = useState<number>(0);
   const [plankSeconds, setPlankSeconds] = useState<number>(0);
   const [assignedTier, setAssignedTier] = useState<string>("");
+  const [userId, setUserId] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const supabase = useMemo(() => createClient(), []);
 
@@ -110,6 +112,7 @@ export default function OnboardingPage() {
       } = await supabase.auth.getUser();
 
       if (user) {
+        setUserId(user.id);
         const { error } = await supabase
           .from("profiles")
           .update({ tier })
@@ -130,10 +133,24 @@ export default function OnboardingPage() {
     }
   };
 
-  const handleComplete = () => {
+  const handleResultsContinue = () => {
+    // Go to dossier step instead of dashboard
+    setStep("dossier");
+  };
+
+  const handleDossierComplete = () => {
     toast({
       title: TOAST_MESSAGES.workout.profileUpdated.title,
       description: TOAST_MESSAGES.workout.profileUpdated.description,
+    });
+    router.push("/dashboard");
+    router.refresh();
+  };
+
+  const handleDossierSkip = () => {
+    toast({
+      title: "DOSSIER SKIPPED",
+      description: "You can complete it later from your profile.",
     });
     router.push("/dashboard");
     router.refresh();
@@ -215,7 +232,17 @@ export default function OnboardingPage() {
         squats={squats}
         plankSeconds={plankSeconds}
         assignedTier={assignedTier}
-        onComplete={handleComplete}
+        onComplete={handleResultsContinue}
+      />
+    );
+  }
+
+  if (step === "dossier") {
+    return (
+      <OnboardingDossier
+        userId={userId}
+        onComplete={handleDossierComplete}
+        onSkip={handleDossierSkip}
       />
     );
   }

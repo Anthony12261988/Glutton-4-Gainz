@@ -14,6 +14,7 @@ import { TOAST_MESSAGES, BUTTON_LABELS, EMPTY_STATES } from "@/lib/dictionary";
 import { DailyRation } from "@/components/nutrition/daily-ration";
 import { DailyBriefingDisplay } from "@/components/gamification/daily-briefing-display";
 import { IntroVideoModal } from "@/components/gamification/intro-video-modal";
+import { DossierPromptCard } from "@/components/gamification/dossier-prompt-card";
 import { fireWorkoutComplete } from "@/lib/utils/confetti";
 import Link from "next/link";
 
@@ -185,6 +186,9 @@ export default function DashboardClient({
 
       {/* Commander's Briefing */}
       <DailyBriefingDisplay />
+
+      {/* Dossier Prompt (if not complete) */}
+      {!profile.dossier_complete && <DossierPromptCard />}
 
       {/* Mission Card */}
       {todaysWorkout ? (
