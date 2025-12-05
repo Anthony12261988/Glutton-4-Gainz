@@ -1,60 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Save, ArrowLeft } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Save, ArrowLeft, AlertCircle } from "lucide-react";
 import Link from "next/link";
 
 export function BriefingManagerClient() {
-  const supabase = createClient();
-  const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
   const [content, setContent] = useState("");
 
-  useEffect(() => {
-    const fetchBriefing = async () => {
-      const { data } = await supabase
-        .from("daily_briefings")
-        .select("content")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .single();
-
-      if (data) {
-        setContent(data.content);
-      }
-    };
-
-    fetchBriefing();
-  }, [supabase]);
+  // TODO: Implement daily_briefings table in Supabase
+  // Table schema needed:
+  // - id (uuid, primary key)
+  // - content (text)
+  // - created_at (timestamp)
+  // - created_by (uuid, foreign key to profiles)
 
   const handleSave = async () => {
-    setLoading(true);
-    try {
-      const { error } = await supabase
-        .from("daily_briefings")
-        .insert([{ content }]);
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Daily briefing updated.",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
+    // Placeholder until table is created
+    alert("Daily Briefing feature coming soon! The database table needs to be created first.");
   };
 
   return (
@@ -71,7 +37,22 @@ export function BriefingManagerClient() {
           Daily Briefing
         </h1>
 
-        <Card className="bg-gunmetal border-steel/20">
+        {/* Feature Coming Soon Notice */}
+        <Card className="bg-tactical-red/10 border-tactical-red/30 mb-6">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-tactical-red flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-heading font-bold text-tactical-red mb-1">FEATURE IN DEVELOPMENT</h3>
+                <p className="text-sm text-muted-text">
+                  The Daily Briefing feature requires database setup. Contact your admin to create the <code className="text-tactical-red">daily_briefings</code> table.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gunmetal border-steel/20 opacity-60">
           <CardHeader>
             <CardTitle className="text-white">Update Briefing</CardTitle>
           </CardHeader>
@@ -84,15 +65,16 @@ export function BriefingManagerClient() {
                 onChange={(e) => setContent(e.target.value)}
                 className="bg-black/20 border-steel/30 min-h-[200px] text-lg"
                 placeholder="Enter today's motivational message..."
+                disabled
               />
             </div>
 
             <Button
               onClick={handleSave}
               className="w-full bg-tactical-red hover:bg-red-700"
-              disabled={loading}
+              disabled
             >
-              <Save className="mr-2 h-4 w-4" /> {loading ? "Publishing..." : "Publish Briefing"}
+              <Save className="mr-2 h-4 w-4" /> Publish Briefing (Coming Soon)
             </Button>
           </CardContent>
         </Card>

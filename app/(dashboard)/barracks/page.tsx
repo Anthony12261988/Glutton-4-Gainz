@@ -53,7 +53,7 @@ export default async function BarracksPage() {
         </p>
       </div>
 
-      <CoachDashboard coachId={user.id} initialTrainees={trainees || []} />
+      <CoachDashboard coachId={user.id} initialTrainees={(trainees || []) as any} />
     </div>
   );
 }

@@ -8,7 +8,7 @@ export default async function SpyModePage({
 }: {
   params: { userId: string };
 }) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -22,7 +22,7 @@ export default async function SpyModePage({
           cookieStore.set({ name, value, ...options });
         },
         remove(name: string, options: CookieOptions) {
-          cookieStore.set({ name, value, ...options });
+          cookieStore.set({ name, value: "", ...options });
         },
       },
     }

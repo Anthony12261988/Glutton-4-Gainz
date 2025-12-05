@@ -43,9 +43,9 @@ export default async function CommandCenterPage() {
     <div className="container mx-auto px-4 py-8 md:max-w-7xl">
       <CommandCenterClient
         currentUserId={user.id}
-        troops={troops ?? []}
-        coaches={coaches ?? []}
-        invites={invites ?? []}
+        troops={(troops ?? []) as any}
+        coaches={(coaches ?? []) as any}
+        invites={(invites ?? []) as any}
       />
     </div>
   );
