@@ -73,7 +73,12 @@ export default function PricingPage() {
     }
   };
 
-  const isSoldier = profile?.role === "soldier" || profile?.role === "coach";
+  const isSoldier =
+    profile?.role === "soldier" ||
+    profile?.role === "coach" ||
+    profile?.role === "admin";
+  const isAdmin = profile?.role === "admin";
+  const isCoach = profile?.role === "coach";
 
   if (loading) {
     return (
@@ -121,10 +126,24 @@ export default function PricingPage() {
           title="Soldier"
           price="$9.99"
           description="Full tactical advantage for serious gains."
-          buttonText={isSoldier ? "MANAGE SUBSCRIPTION" : "UPGRADE NOW"}
+          buttonText={
+            isAdmin
+              ? "ADMIN ACCESS"
+              : isCoach
+              ? "COACH ACCESS"
+              : isSoldier
+              ? "MANAGE SUBSCRIPTION"
+              : "UPGRADE NOW"
+          }
           isPopular={true}
           isLoading={isProcessing}
-          onButtonClick={isSoldier ? handleManageSubscription : handleUpgrade}
+          onButtonClick={
+            isAdmin || isCoach
+              ? () => {}
+              : isSoldier
+              ? handleManageSubscription
+              : handleUpgrade
+          }
           features={[
             { text: "All Tier Workouts", included: true },
             { text: "Advanced Stats & Charts", included: true },

@@ -34,7 +34,7 @@ export function IntroVideoModal({ userId, onComplete }: IntroVideoModalProps) {
         const { data: videoData } = supabase.storage
           .from("videos")
           .getPublicUrl(INTRO_VIDEO_PATH);
-        
+
         const { data: posterData } = supabase.storage
           .from("videos")
           .getPublicUrl(INTRO_POSTER_PATH);
@@ -85,7 +85,8 @@ export function IntroVideoModal({ userId, onComplete }: IntroVideoModalProps) {
 
   const handleTimeUpdate = () => {
     if (videoRef.current) {
-      const percent = (videoRef.current.currentTime / videoRef.current.duration) * 100;
+      const percent =
+        (videoRef.current.currentTime / videoRef.current.duration) * 100;
       setProgress(percent);
     }
   };
@@ -100,7 +101,7 @@ export function IntroVideoModal({ userId, onComplete }: IntroVideoModalProps) {
 
   const markVideoWatched = async () => {
     setIsClosing(true);
-    
+
     try {
       await supabase
         .from("profiles")
@@ -109,7 +110,7 @@ export function IntroVideoModal({ userId, onComplete }: IntroVideoModalProps) {
     } catch (error) {
       console.error("Error marking video as watched:", error);
     }
-    
+
     // Small delay for animation
     setTimeout(() => {
       onComplete();
@@ -117,12 +118,12 @@ export function IntroVideoModal({ userId, onComplete }: IntroVideoModalProps) {
   };
 
   return (
-    <div 
+    <div
       className={`fixed inset-0 z-50 flex items-center justify-center bg-black/90 transition-opacity duration-300 ${
         isClosing ? "opacity-0" : "opacity-100"
       }`}
     >
-      <div 
+      <div
         className={`relative w-full max-w-4xl mx-4 transform transition-all duration-300 ${
           isClosing ? "scale-95 opacity-0" : "scale-100 opacity-100"
         }`}
@@ -160,11 +161,16 @@ export function IntroVideoModal({ userId, onComplete }: IntroVideoModalProps) {
           {videoError ? (
             <div className="w-full aspect-video bg-camo-dark flex flex-col items-center justify-center text-center p-8">
               <AlertCircle className="w-12 h-12 text-tactical-red mb-4" />
-              <p className="text-high-vis font-heading mb-2">VIDEO UNAVAILABLE</p>
+              <p className="text-high-vis font-heading mb-2">
+                VIDEO UNAVAILABLE
+              </p>
               <p className="text-muted-text text-sm mb-4">
                 The intro video hasn't been uploaded yet.
               </p>
-              <Button onClick={handleSkip} className="bg-tactical-green hover:bg-tactical-green/80">
+              <Button
+                onClick={handleSkip}
+                className="bg-tactical-green hover:bg-tactical-green/80"
+              >
                 Continue to Dashboard
               </Button>
             </div>
@@ -187,7 +193,7 @@ export function IntroVideoModal({ userId, onComplete }: IntroVideoModalProps) {
 
           {/* Play overlay (shown when paused and video is available) */}
           {!isPlaying && !videoError && videoUrl && (
-            <div 
+            <div
               className="absolute inset-0 flex items-center justify-center bg-black/50 cursor-pointer"
               onClick={handlePlay}
             >
@@ -201,7 +207,7 @@ export function IntroVideoModal({ userId, onComplete }: IntroVideoModalProps) {
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
             {/* Progress bar */}
             <div className="w-full h-1 bg-gray-600 rounded-full mb-3 overflow-hidden">
-              <div 
+              <div
                 className="h-full bg-tactical-green transition-all duration-150"
                 style={{ width: `${progress}%` }}
               />
@@ -251,7 +257,8 @@ export function IntroVideoModal({ userId, onComplete }: IntroVideoModalProps) {
         {/* Message */}
         <div className="mt-6 text-center">
           <p className="text-muted-text text-sm">
-            Your training begins now. Watch this briefing to understand your mission.
+            Your training begins now. Watch this briefing to understand your
+            mission.
           </p>
           {!canSkip && (
             <p className="text-muted-text/60 text-xs mt-2">

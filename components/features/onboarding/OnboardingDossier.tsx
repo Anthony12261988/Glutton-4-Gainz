@@ -22,7 +22,11 @@ interface OnboardingDossierProps {
 
 const EXPERIENCE_LEVELS = [
   { value: "beginner", label: "Beginner", desc: "New to fitness (0-6 months)" },
-  { value: "intermediate", label: "Intermediate", desc: "Some experience (6-24 months)" },
+  {
+    value: "intermediate",
+    label: "Intermediate",
+    desc: "Some experience (6-24 months)",
+  },
   { value: "advanced", label: "Advanced", desc: "Experienced (2-5 years)" },
   { value: "athlete", label: "Athlete", desc: "Elite level (5+ years)" },
 ];
@@ -78,7 +82,9 @@ export function OnboardingDossier({
       // Ensure we have a userId - fallback to fetching from auth if not provided
       let currentUserId = userId;
       if (!currentUserId) {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         if (!user) {
           throw new Error("No authenticated user found");
         }
@@ -144,8 +150,12 @@ export function OnboardingDossier({
       {/* Progress */}
       <div className="max-w-md mx-auto">
         <div className="flex justify-between mb-2">
-          <span className="text-sm text-muted-text">Step {step} of {totalSteps}</span>
-          <span className="text-sm text-tactical-red">{Math.round((step / totalSteps) * 100)}%</span>
+          <span className="text-sm text-muted-text">
+            Step {step} of {totalSteps}
+          </span>
+          <span className="text-sm text-tactical-red">
+            {Math.round((step / totalSteps) * 100)}%
+          </span>
         </div>
         <div className="h-2 bg-gunmetal rounded-full overflow-hidden">
           <div

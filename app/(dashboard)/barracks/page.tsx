@@ -14,21 +14,25 @@ export default async function BarracksPage() {
     redirect("/login");
   }
 
-  // Verify Coach Role
+  // Verify Coach or Admin Role
   const { data: profile } = await supabase
     .from("profiles")
     .select("role")
     .eq("id", user.id)
     .single();
 
-  if (profile?.role !== "coach") {
+  const isCoachOrAdmin = profile?.role === "coach" || profile?.role === "admin";
+
+  if (!isCoachOrAdmin) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-camo-black p-4 text-center">
         <ShieldAlert className="mb-4 h-16 w-16 text-tactical-red" />
         <h1 className="font-heading text-3xl text-tactical-red">
           RESTRICTED AREA
         </h1>
-        <p className="text-muted-text">Clearance Level: COACH required.</p>
+        <p className="text-muted-text">
+          Clearance Level: COACH or ADMIN required.
+        </p>
         <p className="mt-2 text-sm text-steel">Return to base immediately.</p>
       </div>
     );
@@ -53,7 +57,10 @@ export default async function BarracksPage() {
         </p>
       </div>
 
-      <CoachDashboard coachId={user.id} initialTrainees={(trainees || []) as any} />
+      <CoachDashboard
+        coachId={user.id}
+        initialTrainees={(trainees || []) as any}
+      />
     </div>
   );
 }

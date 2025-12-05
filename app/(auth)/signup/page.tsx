@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -27,11 +27,24 @@ import {
 export default function SignupPage() {
   const { toast } = useToast();
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const searchParams = useSearchParams();
+
+  // Get invite token and email from URL params
+  const inviteToken = searchParams.get("invite");
+  const inviteEmail = searchParams.get("email");
+
+  const [email, setEmail] = useState(inviteEmail || "");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const supabase = createClient();
+
+  // Update email if invite email changes
+  useEffect(() => {
+    if (inviteEmail) {
+      setEmail(inviteEmail);
+    }
+  }, [inviteEmail]);
 
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,11 +71,16 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
+      // Determine redirect URL based on invite
+      const redirectUrl = inviteToken
+        ? `${window.location.origin}/auth/callback?invite=${inviteToken}`
+        : `${window.location.origin}/auth/callback`;
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: redirectUrl,
         },
       });
 
@@ -73,12 +91,44 @@ export default function SignupPage() {
           variant: "destructive",
         });
       } else if (data.user && data.session) {
-        // User is signed in automatically (if email confirmation is disabled or not required for login)
+        // User is signed in automatically
         toast({
           title: TOAST_MESSAGES.auth.registrationSuccess.title,
           description: TOAST_MESSAGES.auth.registrationSuccess.description,
         });
-        router.push("/onboarding");
+
+        // If there's an invite token, accept it now
+        if (inviteToken) {
+          try {
+            const acceptResponse = await fetch("/api/accept-coach-invite", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                token: inviteToken,
+                userId: data.user.id,
+                email: data.user.email,
+              }),
+            });
+
+            const acceptResult = await acceptResponse.json();
+
+            if (acceptResult.success) {
+              toast({
+                title: "COMMISSION ACCEPTED",
+                description: "Welcome to the officer corps, Coach!",
+              });
+              router.push("/barracks");
+            } else {
+              console.error("Failed to accept invite:", acceptResult.error);
+              router.push("/onboarding");
+            }
+          } catch (err) {
+            console.error("Error accepting invite:", err);
+            router.push("/onboarding");
+          }
+        } else {
+          router.push("/onboarding");
+        }
         router.refresh();
       } else {
         // Email confirmation required
@@ -100,10 +150,15 @@ export default function SignupPage() {
 
   const handleGoogleSignup = async () => {
     try {
+      // Include invite token in redirect if present
+      const redirectUrl = inviteToken
+        ? `${window.location.origin}/auth/callback?invite=${inviteToken}`
+        : `${window.location.origin}/auth/callback`;
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: redirectUrl,
         },
       });
 
@@ -125,10 +180,15 @@ export default function SignupPage() {
 
   const handleFacebookSignup = async () => {
     try {
+      // Include invite token in redirect if present
+      const redirectUrl = inviteToken
+        ? `${window.location.origin}/auth/callback?invite=${inviteToken}`
+        : `${window.location.origin}/auth/callback`;
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "facebook",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: redirectUrl,
         },
       });
 

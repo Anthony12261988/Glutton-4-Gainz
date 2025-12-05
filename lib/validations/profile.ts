@@ -26,9 +26,7 @@ export const updateProfileSchema = z.object({
     .max(100, "Name is too long")
     .trim()
     .optional(),
-  tier: z
-    .enum([".223", ".556", ".762", ".50 Cal"])
-    .optional(),
+  tier: z.enum([".223", ".556", ".762", ".50 Cal"]).optional(),
   bio: z
     .string()
     .max(500, "Bio cannot exceed 500 characters")

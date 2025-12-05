@@ -123,7 +123,9 @@ export function FitnessDossierForm({
     existingData?.target_weight?.toString() || ""
   );
   const [dob, setDob] = useState<Date | undefined>(
-    existingData?.date_of_birth ? new Date(existingData.date_of_birth) : undefined
+    existingData?.date_of_birth
+      ? new Date(existingData.date_of_birth)
+      : undefined
   );
   const [gender, setGender] = useState(existingData?.gender || "");
 

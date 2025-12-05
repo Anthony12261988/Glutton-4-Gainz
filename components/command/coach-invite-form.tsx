@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/database.types";
 import { Loader2, MailPlus } from "lucide-react";
 
@@ -19,7 +18,6 @@ export default function CoachInviteForm({
   invitedBy,
   onInviteCreated,
 }: CoachInviteFormProps) {
-  const supabase = createClient();
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,66 +29,6 @@ export default function CoachInviteForm({
 
     setLoading(true);
     try {
-      const { data: existingProfile } = await supabase
-        .from("profiles")
-        .select("id, role")
-        .eq("email", targetEmail)
-        .maybeSingle();
-
-      if (existingProfile) {
-        toast({
-          title: "ALREADY ENLISTED",
-          description: "That recruit is already in the ranks.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      const { data: existingInvite } = await supabase
-        .from("coach_invites")
-        .select("*")
-        .eq("email", targetEmail)
-        .maybeSingle();
-
-      if (existingInvite?.status === "accepted") {
-        toast({
-          title: "COMMISSION ACCEPTED",
-          description: "This officer already accepted their orders.",
-        });
-        return;
-      }
-
-      let inviteRecord = existingInvite ?? null;
-
-      if (!inviteRecord) {
-        const { data, error } = await supabase
-          .from("coach_invites")
-          .insert({
-            email: targetEmail,
-            status: "pending",
-            invited_by: invitedBy,
-          })
-          .select("*")
-          .single();
-
-        if (error) throw error;
-        inviteRecord = data;
-      } else if (inviteRecord.invited_by !== invitedBy) {
-        const { data } = await supabase
-          .from("coach_invites")
-          .update({ invited_by: invitedBy })
-          .eq("id", inviteRecord.id)
-          .select("*")
-          .single();
-
-        inviteRecord = data ?? inviteRecord;
-      }
-
-      const inviteToken = inviteRecord?.token ?? inviteRecord?.id;
-      if (!inviteToken) {
-        throw new Error("Invite token missing for this record.");
-      }
-
       const response = await fetch("/api/invite-coach", {
         method: "POST",
         headers: {
@@ -98,18 +36,20 @@ export default function CoachInviteForm({
         },
         body: JSON.stringify({
           email: targetEmail,
-          invite_token: inviteToken,
+          invited_by: invitedBy,
         }),
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        const body = await response.json().catch(() => ({}));
-        throw new Error(body.error || "Failed to dispatch invite.");
+        throw new Error(result.error || "Failed to send invite.");
       }
 
       setEmail("");
-      if (inviteRecord) {
-        onInviteCreated?.(inviteRecord);
+
+      if (result.invite) {
+        onInviteCreated?.(result.invite);
       }
 
       toast({
@@ -117,6 +57,7 @@ export default function CoachInviteForm({
         description: `${targetEmail} has been pinged with orders.`,
       });
     } catch (error: any) {
+      console.error("[CoachInvite] Error:", error);
       toast({
         title: "TRANSMISSION FAILED",
         description: error.message || "Unable to send invite.",

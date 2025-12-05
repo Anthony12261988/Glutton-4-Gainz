@@ -60,10 +60,7 @@ export type RecipeInput = z.infer<typeof recipeSchema>;
  * Meal plan assignment validation schema
  */
 export const assignMealSchema = z.object({
-  recipe_id: z
-    .string()
-    .uuid("Invalid recipe ID")
-    .min(1, "Recipe is required"),
+  recipe_id: z.string().uuid("Invalid recipe ID").min(1, "Recipe is required"),
   date: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)")

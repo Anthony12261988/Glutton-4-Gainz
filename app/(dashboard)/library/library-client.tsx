@@ -27,12 +27,20 @@ interface WorkoutLibraryClientProps {
   workouts: Workout[];
   userTier: string;
   tiers: string[];
+  isPremium?: boolean; // Admin/Coach override
 }
 
 // Tier hierarchy for access control
 const TIER_ORDER = [".223", ".308", ".50 Cal"];
 
-function canAccessTier(userTier: string, workoutTier: string): boolean {
+function canAccessTier(
+  userTier: string,
+  workoutTier: string,
+  isPremium?: boolean
+): boolean {
+  // Admin/Coach can access all tiers
+  if (isPremium) return true;
+
   const userIndex = TIER_ORDER.indexOf(userTier);
   const workoutIndex = TIER_ORDER.indexOf(workoutTier);
   // User can access their tier and below
@@ -43,6 +51,7 @@ export function WorkoutLibraryClient({
   workouts,
   userTier,
   tiers,
+  isPremium = false,
 }: WorkoutLibraryClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
@@ -164,7 +173,7 @@ export function WorkoutLibraryClient({
         const tierWorkouts = groupedWorkouts[tier];
         if (!tierWorkouts || tierWorkouts.length === 0) return null;
 
-        const canAccess = canAccessTier(userTier, tier);
+        const canAccess = canAccessTier(userTier, tier, isPremium);
 
         return (
           <div key={tier} className="space-y-4">

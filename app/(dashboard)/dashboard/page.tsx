@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import DashboardClient from "./dashboard-client";
+import { hasPremiumAccess } from "@/lib/utils/premium-access";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -81,8 +82,8 @@ export default async function DashboardPage() {
     .eq("assigned_date", today)
     .maybeSingle();
 
-  // Check if user is premium (not .223 tier)
-  const isPremium = profile.tier !== ".223";
+  // Check if user is premium (role-based or tier-based)
+  const isPremium = hasPremiumAccess(profile);
 
   return (
     <div className="container mx-auto max-w-md px-4 py-6 md:max-w-4xl lg:max-w-7xl">

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -27,7 +27,13 @@ import {
 export default function LoginPage() {
   const { toast } = useToast();
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const searchParams = useSearchParams();
+
+  // Get invite token from URL if present
+  const inviteToken = searchParams.get("invite");
+  const inviteEmail = searchParams.get("email");
+
+  const [email, setEmail] = useState(inviteEmail || "");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const supabase = createClient();
@@ -37,7 +43,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -48,12 +54,44 @@ export default function LoginPage() {
           description: error.message,
           variant: "destructive",
         });
-      } else {
+      } else if (data.user) {
         toast({
           title: TOAST_MESSAGES.auth.loginSuccess.title,
           description: TOAST_MESSAGES.auth.loginSuccess.description,
         });
-        router.push("/dashboard");
+
+        // If there's an invite token, accept it
+        if (inviteToken) {
+          try {
+            const acceptResponse = await fetch("/api/accept-coach-invite", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                token: inviteToken,
+                userId: data.user.id,
+                email: data.user.email,
+              }),
+            });
+
+            const acceptResult = await acceptResponse.json();
+
+            if (acceptResult.success) {
+              toast({
+                title: "COMMISSION ACCEPTED",
+                description: "Welcome to the officer corps, Coach!",
+              });
+              router.push("/barracks");
+            } else {
+              console.error("Failed to accept invite:", acceptResult.error);
+              router.push("/dashboard");
+            }
+          } catch (err) {
+            console.error("Error accepting invite:", err);
+            router.push("/dashboard");
+          }
+        } else {
+          router.push("/dashboard");
+        }
         router.refresh();
       }
     } catch (error) {
@@ -69,10 +107,15 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     try {
+      // Include invite token in redirect if present
+      const redirectUrl = inviteToken
+        ? `${window.location.origin}/auth/callback?invite=${inviteToken}`
+        : `${window.location.origin}/auth/callback`;
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: redirectUrl,
         },
       });
 
@@ -94,10 +137,15 @@ export default function LoginPage() {
 
   const handleFacebookLogin = async () => {
     try {
+      // Include invite token in redirect if present
+      const redirectUrl = inviteToken
+        ? `${window.location.origin}/auth/callback?invite=${inviteToken}`
+        : `${window.location.origin}/auth/callback`;
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "facebook",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: redirectUrl,
         },
       });
 
@@ -238,7 +286,13 @@ export default function LoginPage() {
       <div className="text-center text-sm text-muted-text">
         {NAV_LINKS.newRecruit}{" "}
         <Link
-          href="/signup"
+          href={
+            inviteToken
+              ? `/signup?invite=${inviteToken}&email=${encodeURIComponent(
+                  inviteEmail || ""
+                )}`
+              : "/signup"
+          }
           className="font-bold text-tactical-red hover:underline"
         >
           {NAV_LINKS.signUpLink}

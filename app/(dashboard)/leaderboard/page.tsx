@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { LeaderboardClient } from "./leaderboard-client";
+import { hasPremiumAccess } from "@/lib/utils/premium-access";
 
 export default async function LeaderboardPage() {
   const supabase = await createClient();
@@ -16,11 +17,11 @@ export default async function LeaderboardPage() {
   // Check if user is premium (only premium can access leaderboard)
   const { data: profile } = await supabase
     .from("profiles")
-    .select("tier, xp")
+    .select("tier, xp, role")
     .eq("id", user.id)
     .single();
 
-  const isPremium = profile?.tier !== ".223";
+  const isPremium = hasPremiumAccess(profile);
 
   // Fetch top 50 users by XP
   const { data: leaderboard } = await supabase

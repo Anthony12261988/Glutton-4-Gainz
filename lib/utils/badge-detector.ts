@@ -95,7 +95,9 @@ export async function detectNewBadges(
     return [];
   }
 
-  const earnedBadgeNames = new Set(earnedBadges?.map((b) => b.badge_name) || []);
+  const earnedBadgeNames = new Set(
+    earnedBadges?.map((b) => b.badge_name) || []
+  );
 
   // Check each badge definition
   for (const badge of BADGE_DEFINITIONS) {
@@ -158,7 +160,9 @@ export async function checkForNewBadges(
   if (badges.length > previousBadgeCount) {
     const newCount = badges.length - previousBadgeCount;
     return badges.slice(0, newCount).map((b) => {
-      const definition = BADGE_DEFINITIONS.find((def) => def.name === b.badge_name);
+      const definition = BADGE_DEFINITIONS.find(
+        (def) => def.name === b.badge_name
+      );
       return {
         name: b.badge_name,
         description: definition?.description || "Badge earned!",

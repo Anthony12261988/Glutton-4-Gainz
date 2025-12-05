@@ -12,10 +12,10 @@ First, run migration `035_videos_storage_bucket.sql` in Supabase Dashboard SQL E
 
 Upload the following files to the `videos` bucket:
 
-| File | Path in Bucket | Specs |
-|------|----------------|-------|
-| Welcome Video | `intro/welcome.mp4` | MP4 (H.264), 1080p or 720p, under 50MB |
-| Poster Image | `intro/welcome-poster.jpg` | JPG, match video resolution, under 200KB |
+| File          | Path in Bucket             | Specs                                    |
+| ------------- | -------------------------- | ---------------------------------------- |
+| Welcome Video | `intro/welcome.mp4`        | MP4 (H.264), 1080p or 720p, under 50MB   |
+| Poster Image  | `intro/welcome-poster.jpg` | JPG, match video resolution, under 200KB |
 
 ### How to Upload
 
@@ -27,12 +27,14 @@ Upload the following files to the `videos` bucket:
 ## Video Specs
 
 **Recommended video settings:**
+
 - Format: MP4 (H.264 codec)
 - Resolution: 1920x1080 (1080p) or 1280x720 (720p)
 - Duration: 30-90 seconds
 - File size: Under 50MB (bucket limit is 100MB)
 
 **Poster image:**
+
 - Format: JPG or PNG
 - Resolution: Match video resolution
 - File size: Under 200KB
@@ -40,6 +42,7 @@ Upload the following files to the `videos` bucket:
 ## Content Suggestions
 
 The intro video should include:
+
 1. Welcome message from the trainer
 2. Brief overview of the app features
 3. Motivational call-to-action
@@ -52,6 +55,7 @@ If no video is uploaded, the modal shows a friendly message and "Continue to Das
 ## Testing
 
 Users see the intro video only once (on first login). To test again:
+
 1. In Supabase, set `intro_video_watched` to `false` for your user
 2. Or create a new test account
 

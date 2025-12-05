@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import RationsClient from "./rations-client";
+import { hasPremiumAccess } from "@/lib/utils/premium-access";
 
 export default async function RationsPage() {
   const supabase = await createClient();
@@ -16,12 +17,12 @@ export default async function RationsPage() {
   // Fetch Profile to enforce premium access
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, tier")
     .eq("id", user.id)
     .single();
 
-  // Only premium (soldier/coach) can access meal planner
-  if (profile?.role !== "soldier" && profile?.role !== "coach") {
+  // Only premium (soldier/coach/admin or paid tier) can access meal planner
+  if (!hasPremiumAccess(profile)) {
     redirect("/pricing");
   }
 

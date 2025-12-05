@@ -25,7 +25,8 @@ function Calendar({
         month_caption: "flex justify-center pt-1 relative items-center h-10",
         caption_label: "text-sm font-medium text-high-vis hidden",
         dropdowns: "flex gap-2 justify-center",
-        dropdown: "bg-gunmetal border border-steel/30 rounded px-2 py-1 text-sm text-high-vis focus:outline-none focus:ring-1 focus:ring-tactical-red",
+        dropdown:
+          "bg-gunmetal border border-steel/30 rounded px-2 py-1 text-sm text-high-vis focus:outline-none focus:ring-1 focus:ring-tactical-red",
         nav: "flex items-center gap-1",
         button_previous: cn(
           "absolute left-1 h-7 w-7 bg-transparent p-0 opacity-70 hover:opacity-100 border border-steel/30 rounded inline-flex items-center justify-center hover:bg-steel/20 text-high-vis"
@@ -44,7 +45,8 @@ function Calendar({
         range_end: "day-range-end",
         selected: "bg-tactical-red text-white hover:bg-tactical-red/90",
         today: "bg-olive-drab/30 text-high-vis",
-        outside: "text-muted-text/50 aria-selected:bg-tactical-red/50 aria-selected:text-white/80",
+        outside:
+          "text-muted-text/50 aria-selected:bg-tactical-red/50 aria-selected:text-white/80",
         disabled: "text-muted-text/30 cursor-not-allowed",
         range_middle: "aria-selected:bg-tactical-red/20",
         hidden: "invisible",

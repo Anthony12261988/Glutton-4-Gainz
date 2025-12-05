@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { WorkoutLibraryClient } from "./library-client";
+import { hasPremiumAccess } from "@/lib/utils/premium-access";
 
 export default async function WorkoutLibraryPage() {
   const supabase = await createClient();
@@ -13,12 +14,15 @@ export default async function WorkoutLibraryPage() {
     redirect("/login");
   }
 
-  // Fetch user's profile for tier
+  // Fetch user's profile for tier and role
   const { data: profile } = await supabase
     .from("profiles")
-    .select("tier")
+    .select("tier, role")
     .eq("id", user.id)
     .single();
+
+  // Check premium access (role-based or tier-based)
+  const isPremium = hasPremiumAccess(profile);
 
   // Fetch all workouts
   const { data: workouts } = await supabase
@@ -35,6 +39,7 @@ export default async function WorkoutLibraryPage() {
         workouts={workouts || []}
         userTier={profile?.tier || ".223"}
         tiers={tiers}
+        isPremium={isPremium}
       />
     </div>
   );

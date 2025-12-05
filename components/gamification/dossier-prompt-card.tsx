@@ -18,7 +18,9 @@ export function DossierPromptCard({ className }: DossierPromptCardProps) {
   }
 
   return (
-    <Card className={`border-amber-500/30 bg-amber-500/5 relative ${className}`}>
+    <Card
+      className={`border-amber-500/30 bg-amber-500/5 relative ${className}`}
+    >
       <Button
         variant="ghost"
         size="sm"
@@ -37,11 +39,14 @@ export function DossierPromptCard({ className }: DossierPromptCardProps) {
               Complete Your Dossier
             </h3>
             <p className="text-sm text-muted-text">
-              Help us personalize your training by completing your fitness profile. 
-              It only takes 2 minutes.
+              Help us personalize your training by completing your fitness
+              profile. It only takes 2 minutes.
             </p>
             <Link href="/dossier">
-              <Button size="sm" className="bg-amber-500 hover:bg-amber-600 text-black">
+              <Button
+                size="sm"
+                className="bg-amber-500 hover:bg-amber-600 text-black"
+              >
                 Complete Now
                 <ChevronRight className="ml-1 h-4 w-4" />
               </Button>
