@@ -15,7 +15,14 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Shield, Mail, Lock, Chrome, Facebook } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { TOAST_MESSAGES, LOADING_TEXT, BUTTON_LABELS, PLACEHOLDERS, PAGE_TITLES, NAV_LINKS } from "@/lib/dictionary";
+import {
+  TOAST_MESSAGES,
+  LOADING_TEXT,
+  BUTTON_LABELS,
+  PLACEHOLDERS,
+  PAGE_TITLES,
+  NAV_LINKS,
+} from "@/lib/dictionary";
 
 export default function LoginPage() {
   const { toast } = useToast();
@@ -131,9 +138,7 @@ export default function LoginPage() {
       <Card>
         <CardHeader>
           <CardTitle>{PAGE_TITLES.login.title}</CardTitle>
-          <CardDescription>
-            {PAGE_TITLES.login.description}
-          </CardDescription>
+          <CardDescription>{PAGE_TITLES.login.description}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Google OAuth Button */}

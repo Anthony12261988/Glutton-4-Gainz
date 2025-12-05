@@ -69,7 +69,7 @@ export async function detectNewBadges(
   // Fetch current profile stats
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("workout_count, current_streak")
+    .select("current_streak")
     .eq("id", userId)
     .single();
 
@@ -77,6 +77,12 @@ export async function detectNewBadges(
     console.error("Error fetching profile for badge detection:", profileError);
     return [];
   }
+
+  // Get workout count from user_logs
+  const { count: workoutCount } = await supabase
+    .from("user_logs")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", userId);
 
   // Fetch already earned badges
   const { data: earnedBadges, error: badgeError } = await supabase
@@ -102,9 +108,10 @@ export async function detectNewBadges(
 
     // Check if badge should be earned based on requirement
     if (badge.requirement.type === "workouts") {
+      const currentCount = workoutCount || 0;
       const crossed =
         previousWorkoutCount < badge.requirement.count &&
-        profile.workout_count >= badge.requirement.count;
+        currentCount >= badge.requirement.count;
       shouldEarn = crossed;
     } else if (badge.requirement.type === "streak") {
       const crossed =
@@ -137,8 +144,8 @@ export async function checkForNewBadges(
 
   // Get current badge count
   const { data: badges, error } = await supabase
-    .from("badges")
-    .select("name, earned_at")
+    .from("user_badges")
+    .select("badge_name, earned_at")
     .eq("user_id", userId)
     .order("earned_at", { ascending: false });
 
@@ -151,9 +158,9 @@ export async function checkForNewBadges(
   if (badges.length > previousBadgeCount) {
     const newCount = badges.length - previousBadgeCount;
     return badges.slice(0, newCount).map((b) => {
-      const definition = BADGE_DEFINITIONS.find((def) => def.name === b.name);
+      const definition = BADGE_DEFINITIONS.find((def) => def.name === b.badge_name);
       return {
-        name: b.name,
+        name: b.badge_name,
         description: definition?.description || "Badge earned!",
         icon: definition?.icon || "award",
       };

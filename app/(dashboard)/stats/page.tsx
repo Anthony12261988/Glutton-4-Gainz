@@ -28,21 +28,26 @@ export default async function StatsPage() {
     .order("date", { ascending: true });
 
   // Fetch workout titles for the logs
-  const workoutIds = [...new Set(logs?.map((l) => l.workout_id).filter(Boolean) || [])];
-  const { data: workoutsData } = workoutIds.length > 0
-    ? await supabase
-        .from("workouts")
-        .select("id, title")
-        .in("id", workoutIds)
-    : { data: [] };
+  const workoutIds = [
+    ...new Set(logs?.map((l) => l.workout_id).filter(Boolean) || []),
+  ];
+  const { data: workoutsData } =
+    workoutIds.length > 0
+      ? await supabase.from("workouts").select("id, title").in("id", workoutIds)
+      : { data: [] };
 
-  const workoutTitleMap = new Map(workoutsData?.map((w) => [w.id, w.title]) || []);
+  const workoutTitleMap = new Map(
+    workoutsData?.map((w) => [w.id, w.title]) || []
+  );
 
   // Raw logs for history
-  const rawLogs = logs?.map((log) => ({
-    ...log,
-    workout_title: log.workout_id ? workoutTitleMap.get(log.workout_id) || "Unknown" : "Unknown",
-  })) || [];
+  const rawLogs =
+    logs?.map((log) => ({
+      ...log,
+      workout_title: log.workout_id
+        ? workoutTitleMap.get(log.workout_id) || "Unknown"
+        : "Unknown",
+    })) || [];
 
   // Process logs into weekly consistency
   const consistencyMap = new Map<string, number>();

@@ -8,7 +8,16 @@ import { RecipeCard, type Recipe } from "@/components/nutrition/recipe-card";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Utensils, Loader2, Search, X, Flame, Beef, Wheat, Droplet } from "lucide-react";
+import {
+  Utensils,
+  Loader2,
+  Search,
+  X,
+  Flame,
+  Beef,
+  Wheat,
+  Droplet,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MealPlan {
@@ -40,10 +49,30 @@ export default function RationsClient({
 
   // Filter options
   const filters = [
-    { id: "high-protein", label: "High Protein", icon: Beef, check: (r: Recipe) => r.protein >= 30 },
-    { id: "low-carb", label: "Low Carb", icon: Wheat, check: (r: Recipe) => r.carbs <= 20 },
-    { id: "low-cal", label: "Low Cal", icon: Flame, check: (r: Recipe) => r.calories <= 400 },
-    { id: "low-fat", label: "Low Fat", icon: Droplet, check: (r: Recipe) => r.fat <= 15 },
+    {
+      id: "high-protein",
+      label: "High Protein",
+      icon: Beef,
+      check: (r: Recipe) => r.protein >= 30,
+    },
+    {
+      id: "low-carb",
+      label: "Low Carb",
+      icon: Wheat,
+      check: (r: Recipe) => r.carbs <= 20,
+    },
+    {
+      id: "low-cal",
+      label: "Low Cal",
+      icon: Flame,
+      check: (r: Recipe) => r.calories <= 400,
+    },
+    {
+      id: "low-fat",
+      label: "Low Fat",
+      icon: Droplet,
+      check: (r: Recipe) => r.fat <= 15,
+    },
   ];
 
   // Filter and search recipes
@@ -226,7 +255,8 @@ export default function RationsClient({
         {/* Results Count */}
         {(searchQuery || activeFilter) && (
           <p className="text-xs text-steel">
-            {filteredRecipes.length} recipe{filteredRecipes.length !== 1 ? "s" : ""} found
+            {filteredRecipes.length} recipe
+            {filteredRecipes.length !== 1 ? "s" : ""} found
           </p>
         )}
 

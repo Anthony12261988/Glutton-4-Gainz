@@ -1,10 +1,20 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { BuddySystem } from "@/components/social/buddy-system";
-import { Shield, LogOut, Award, Target, Trophy } from "lucide-react";
+import {
+  Shield,
+  LogOut,
+  Award,
+  Target,
+  Trophy,
+  ClipboardList,
+  Dumbbell,
+  Medal,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BadgeDisplay, type Badge } from "@/components/ui/badge-display";
 import { RankBadge } from "@/components/ui/rank-badge";
+import Link from "next/link";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -108,6 +118,28 @@ export default async function ProfilePage() {
       {/* Rank */}
       <div className="mb-8 flex justify-center">
         <RankBadge xp={profile?.xp || 0} showProgress size="md" />
+      </div>
+
+      {/* Quick Links */}
+      <div className="mb-8 grid grid-cols-3 gap-3">
+        <Link href="/dossier">
+          <div className="rounded-sm border border-steel/30 bg-gunmetal p-3 text-center hover:border-tactical-red/50 transition-colors">
+            <ClipboardList className="mx-auto mb-1 h-5 w-5 text-tactical-red" />
+            <p className="text-xs text-muted-text">Dossier</p>
+          </div>
+        </Link>
+        <Link href="/records">
+          <div className="rounded-sm border border-steel/30 bg-gunmetal p-3 text-center hover:border-tactical-red/50 transition-colors">
+            <Medal className="mx-auto mb-1 h-5 w-5 text-tactical-red" />
+            <p className="text-xs text-muted-text">PRs</p>
+          </div>
+        </Link>
+        <Link href="/leaderboard">
+          <div className="rounded-sm border border-steel/30 bg-gunmetal p-3 text-center hover:border-tactical-red/50 transition-colors">
+            <Trophy className="mx-auto mb-1 h-5 w-5 text-tactical-red" />
+            <p className="text-xs text-muted-text">Ranks</p>
+          </div>
+        </Link>
       </div>
 
       {/* Badges */}

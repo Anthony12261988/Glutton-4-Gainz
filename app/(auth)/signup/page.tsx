@@ -15,7 +15,14 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Shield, Mail, Lock, User, Chrome, Facebook } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { TOAST_MESSAGES, LOADING_TEXT, BUTTON_LABELS, PLACEHOLDERS, PAGE_TITLES, NAV_LINKS } from "@/lib/dictionary";
+import {
+  TOAST_MESSAGES,
+  LOADING_TEXT,
+  BUTTON_LABELS,
+  PLACEHOLDERS,
+  PAGE_TITLES,
+  NAV_LINKS,
+} from "@/lib/dictionary";
 
 export default function SignupPage() {
   const { toast } = useToast();

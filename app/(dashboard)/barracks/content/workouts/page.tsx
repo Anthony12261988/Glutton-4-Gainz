@@ -65,7 +65,11 @@ export default async function WorkoutManagerPage() {
                       <Edit className="h-4 w-4 text-steel" />
                     </Button>
                   </Link>
-                  <DeleteButton id={workout.id} table="workouts" title={workout.title} />
+                  <DeleteButton
+                    id={workout.id}
+                    table="workouts"
+                    title={workout.title}
+                  />
                 </div>
               </CardHeader>
               <CardContent>

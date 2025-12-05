@@ -5,14 +5,16 @@ import { useRouter } from "next/navigation";
 import { MissionCard, type Exercise } from "@/components/ui/mission-card";
 import { useToast } from "@/hooks/use-toast";
 import { createClient } from "@/lib/supabase/client";
-import { Shield, AlertTriangle } from "lucide-react";
+import { Shield, AlertTriangle, Dumbbell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CompleteMissionModal } from "@/components/workouts/complete-mission-modal";
 import { BadgeEarnedToast } from "@/components/gamification/badge-earned-toast";
 import { checkForNewBadges, type Badge } from "@/lib/utils/badge-detector";
 import { TOAST_MESSAGES, BUTTON_LABELS, EMPTY_STATES } from "@/lib/dictionary";
 import { DailyRation } from "@/components/nutrition/daily-ration";
+import { DailyBriefingDisplay } from "@/components/gamification/daily-briefing-display";
 import { fireWorkoutComplete } from "@/lib/utils/confetti";
+import Link from "next/link";
 
 interface Recipe {
   id: string;
@@ -99,10 +101,10 @@ export default function DashboardClient({
       if (logError) throw logError;
 
       setIsCompleted(true);
-      
+
       // Fire confetti celebration
       fireWorkoutComplete();
-      
+
       toast({
         title: TOAST_MESSAGES.workout.missionComplete.title,
         description: TOAST_MESSAGES.workout.missionComplete.description,
@@ -111,7 +113,10 @@ export default function DashboardClient({
       // Check for newly earned badges after a short delay
       // (give the database trigger time to process)
       setTimeout(async () => {
-        const earnedBadges = await checkForNewBadges(user.id, previousBadgeCount);
+        const earnedBadges = await checkForNewBadges(
+          user.id,
+          previousBadgeCount
+        );
         if (earnedBadges.length > 0) {
           setNewBadges(earnedBadges);
           setCurrentBadgeIndex(0);
@@ -123,7 +128,8 @@ export default function DashboardClient({
     } catch (error: any) {
       toast({
         title: TOAST_MESSAGES.workout.missionFailed.title,
-        description: error.message || TOAST_MESSAGES.workout.missionFailed.description,
+        description:
+          error.message || TOAST_MESSAGES.workout.missionFailed.description,
         variant: "destructive",
       });
     } finally {
@@ -171,6 +177,9 @@ export default function DashboardClient({
         </div>
       </div>
 
+      {/* Commander's Briefing */}
+      <DailyBriefingDisplay />
+
       {/* Mission Card */}
       {todaysWorkout ? (
         <div className="space-y-4">
@@ -203,6 +212,14 @@ export default function DashboardClient({
               {BUTTON_LABELS.completeMission}
             </Button>
           )}
+
+          {/* Browse Library Link */}
+          <Link href="/library">
+            <Button variant="outline" className="w-full border-steel/30 mt-3">
+              <Dumbbell className="mr-2 h-4 w-4" />
+              Browse Workout Library
+            </Button>
+          </Link>
         </div>
       ) : (
         <div className="rounded-sm border border-steel bg-gunmetal p-8 text-center">
@@ -213,6 +230,12 @@ export default function DashboardClient({
           <p className="mt-2 text-muted-text">
             {EMPTY_STATES.noMission.description}
           </p>
+          <Link href="/library">
+            <Button className="mt-4 bg-tactical-red hover:bg-red-700">
+              <Dumbbell className="mr-2 h-4 w-4" />
+              Browse Workout Library
+            </Button>
+          </Link>
         </div>
       )}
 

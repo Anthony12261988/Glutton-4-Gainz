@@ -55,7 +55,11 @@ export function DeleteButton({ id, table, title }: DeleteButtonProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-red-500 hover:text-red-400 hover:bg-red-500/10">
+        <Button
+          size="sm"
+          variant="ghost"
+          className="h-8 w-8 p-0 text-red-500 hover:text-red-400 hover:bg-red-500/10"
+        >
           <Trash2 className="h-4 w-4" />
         </Button>
       </DialogTrigger>
@@ -63,11 +67,16 @@ export function DeleteButton({ id, table, title }: DeleteButtonProps) {
         <DialogHeader>
           <DialogTitle className="text-high-vis">Confirm Delete</DialogTitle>
           <DialogDescription className="text-steel">
-            Are you sure you want to delete "{title}"? This action cannot be undone.
+            Are you sure you want to delete "{title}"? This action cannot be
+            undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)} disabled={deleting}>
+          <Button
+            variant="outline"
+            onClick={() => setOpen(false)}
+            disabled={deleting}
+          >
             Cancel
           </Button>
           <Button

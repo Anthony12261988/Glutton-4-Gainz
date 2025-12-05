@@ -6,7 +6,16 @@ import {
   XPChart,
 } from "@/components/ui/stats-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, TrendingUp, Activity, Sparkles, Trash2, Edit2, Loader2, Dumbbell } from "lucide-react";
+import {
+  BarChart3,
+  TrendingUp,
+  Activity,
+  Sparkles,
+  Trash2,
+  Edit2,
+  Loader2,
+  Dumbbell,
+} from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -121,7 +130,9 @@ export default function StatsClient({
       if (error) throw error;
 
       setMetrics((prev) =>
-        prev.map((m) => (m.id === editingMetric.id ? { ...m, weight: value } : m))
+        prev.map((m) =>
+          m.id === editingMetric.id ? { ...m, weight: value } : m
+        )
       );
       toast({
         title: "Weight updated",
@@ -143,7 +154,10 @@ export default function StatsClient({
   const handleDeleteMetric = async (id: string) => {
     setActionId(id);
     try {
-      const { error } = await supabase.from("body_metrics").delete().eq("id", id);
+      const { error } = await supabase
+        .from("body_metrics")
+        .delete()
+        .eq("id", id);
       if (error) throw error;
 
       setMetrics((prev) => prev.filter((m) => m.id !== id));
@@ -183,7 +197,11 @@ export default function StatsClient({
       setLogs((prev) =>
         prev.map((l) =>
           l.id === editingLog.id
-            ? { ...l, duration: Number(editDuration) || l.duration, notes: editNotes }
+            ? {
+                ...l,
+                duration: Number(editDuration) || l.duration,
+                notes: editNotes,
+              }
             : l
         )
       );
@@ -313,13 +331,18 @@ export default function StatsClient({
                     className="flex items-center justify-between border-b border-steel/20 pb-2 last:border-0"
                   >
                     <div>
-                      <p className="font-bold text-high-vis">{metric.weight} lbs</p>
+                      <p className="font-bold text-high-vis">
+                        {metric.weight} lbs
+                      </p>
                       <p className="text-xs text-muted-text">
-                        {new Date(metric.recorded_at).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
+                        {new Date(metric.recorded_at).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          }
+                        )}
                       </p>
                     </div>
                     <div className="flex gap-1">
@@ -362,18 +385,26 @@ export default function StatsClient({
       </div>
 
       {/* Edit Weight Dialog */}
-      <Dialog open={!!editingMetric} onOpenChange={() => setEditingMetric(null)}>
+      <Dialog
+        open={!!editingMetric}
+        onOpenChange={() => setEditingMetric(null)}
+      >
         <DialogContent className="bg-gunmetal border-steel/20">
           <DialogHeader>
-            <DialogTitle className="text-high-vis">Edit Weight Entry</DialogTitle>
+            <DialogTitle className="text-high-vis">
+              Edit Weight Entry
+            </DialogTitle>
             <DialogDescription className="text-steel">
               Update weight for{" "}
               {editingMetric &&
-                new Date(editingMetric.recorded_at).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
+                new Date(editingMetric.recorded_at).toLocaleDateString(
+                  "en-US",
+                  {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  }
+                )}
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
@@ -436,7 +467,9 @@ export default function StatsClient({
                     className="flex items-center justify-between border-b border-steel/20 pb-2 last:border-0"
                   >
                     <div className="flex-1">
-                      <p className="font-bold text-high-vis">{log.workout_title}</p>
+                      <p className="font-bold text-high-vis">
+                        {log.workout_title}
+                      </p>
                       <div className="flex gap-4 text-xs text-muted-text">
                         <span>
                           {new Date(log.date).toLocaleDateString("en-US", {
@@ -503,7 +536,9 @@ export default function StatsClient({
       <Dialog open={!!editingLog} onOpenChange={() => setEditingLog(null)}>
         <DialogContent className="bg-gunmetal border-steel/20">
           <DialogHeader>
-            <DialogTitle className="text-high-vis">Edit Workout Log</DialogTitle>
+            <DialogTitle className="text-high-vis">
+              Edit Workout Log
+            </DialogTitle>
             <DialogDescription className="text-steel">
               Update log for {editingLog?.workout_title} on{" "}
               {editingLog &&
@@ -516,7 +551,9 @@ export default function StatsClient({
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="text-sm text-muted-text">Duration (minutes)</label>
+              <label className="text-sm text-muted-text">
+                Duration (minutes)
+              </label>
               <Input
                 type="number"
                 placeholder="Duration"

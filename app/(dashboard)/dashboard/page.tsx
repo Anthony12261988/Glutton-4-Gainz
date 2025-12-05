@@ -26,8 +26,13 @@ export default async function DashboardPage() {
     return (
       <div className="min-h-screen bg-camo-black flex items-center justify-center p-4">
         <div className="text-center space-y-4">
-          <h1 className="text-tactical-red font-heading text-2xl">Profile Loading Error</h1>
-          <p className="text-muted-text">We're having trouble loading your profile. Please try refreshing the page or contact support if the issue persists.</p>
+          <h1 className="text-tactical-red font-heading text-2xl">
+            Profile Loading Error
+          </h1>
+          <p className="text-muted-text">
+            We're having trouble loading your profile. Please try refreshing the
+            page or contact support if the issue persists.
+          </p>
           {/* Optionally, log the error for debugging: console.error(profileError) */}
         </div>
       </div>
@@ -66,10 +71,12 @@ export default async function DashboardPage() {
   // Fetch Today's Meal (for Daily Ration)
   const { data: mealPlan } = await supabase
     .from("meal_plans")
-    .select(`
+    .select(
+      `
       *,
       recipe:recipes(*)
-    `)
+    `
+    )
     .eq("user_id", user.id)
     .eq("assigned_date", today)
     .maybeSingle();

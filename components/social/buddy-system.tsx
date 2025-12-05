@@ -45,7 +45,8 @@ export function BuddySystem({ userId, initialBuddies }: BuddySystemProps) {
         return {
           id: relation.id,
           status: relation.status,
-          isIncoming: relation.status === "pending" && relation.buddy_id === userId,
+          isIncoming:
+            relation.status === "pending" && relation.buddy_id === userId,
           other,
         };
       })

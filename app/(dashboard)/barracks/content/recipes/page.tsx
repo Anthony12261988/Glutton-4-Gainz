@@ -84,7 +84,10 @@ export default async function RecipeManagerPage() {
                   <span>P: {recipe.protein}g</span>
                 </div>
                 <div className="flex gap-2">
-                  <Link href={`/barracks/content/recipes/${recipe.id}`} className="flex-1">
+                  <Link
+                    href={`/barracks/content/recipes/${recipe.id}`}
+                    className="flex-1"
+                  >
                     <Button
                       variant="outline"
                       className="w-full border-steel/30 hover:bg-steel/20 text-white"
@@ -92,7 +95,11 @@ export default async function RecipeManagerPage() {
                       <Edit className="mr-2 h-4 w-4" /> Edit
                     </Button>
                   </Link>
-                  <DeleteButton id={recipe.id} table="recipes" title={recipe.title} />
+                  <DeleteButton
+                    id={recipe.id}
+                    table="recipes"
+                    title={recipe.title}
+                  />
                 </div>
               </CardContent>
             </Card>

@@ -5,10 +5,7 @@ import { z } from "zod";
  */
 export const completeMissionSchema = z.object({
   duration: z
-    .number({
-      required_error: "Duration is required",
-      invalid_type_error: "Duration must be a number",
-    })
+    .number({ message: "Duration must be a valid number" })
     .min(1, "Duration must be at least 1 minute")
     .max(600, "Duration cannot exceed 10 hours (600 minutes)")
     .int("Duration must be a whole number"),
@@ -36,7 +33,7 @@ export const createWorkoutSchema = z.object({
     .max(500, "Description is too long")
     .trim(),
   tier: z.enum([".223", ".556", ".762", ".50 Cal"], {
-    errorMap: () => ({ message: "Invalid tier selected" }),
+    message: "Invalid tier selected",
   }),
   video_url: z
     .string()

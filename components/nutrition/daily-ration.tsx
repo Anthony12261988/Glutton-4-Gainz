@@ -2,7 +2,15 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Utensils, Flame, Beef, Wheat, Droplet, ChevronRight, Lock } from "lucide-react";
+import {
+  Utensils,
+  Flame,
+  Beef,
+  Wheat,
+  Droplet,
+  ChevronRight,
+  Lock,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -29,7 +37,9 @@ export function DailyRation({ recipe, isPremium = false }: DailyRationProps) {
       <Card className="relative overflow-hidden border-steel/30 bg-gunmetal/50">
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-10 flex flex-col items-center justify-center">
           <Lock className="h-8 w-8 text-steel mb-2" />
-          <p className="text-sm text-steel font-heading uppercase">Premium Feature</p>
+          <p className="text-sm text-steel font-heading uppercase">
+            Premium Feature
+          </p>
           <Link href="/pricing">
             <Button size="sm" className="mt-3 bg-tactical-red hover:bg-red-700">
               Upgrade to Unlock
@@ -62,7 +72,9 @@ export function DailyRation({ recipe, isPremium = false }: DailyRationProps) {
         <CardContent>
           <div className="flex flex-col items-center justify-center py-6 text-center">
             <Utensils className="h-10 w-10 text-steel mb-3" />
-            <p className="text-sm text-muted-text">No ration assigned for today.</p>
+            <p className="text-sm text-muted-text">
+              No ration assigned for today.
+            </p>
             <Link href="/rations">
               <Button variant="outline" size="sm" className="mt-3">
                 Plan Your Meals
@@ -83,7 +95,11 @@ export function DailyRation({ recipe, isPremium = false }: DailyRationProps) {
             DAILY RATION
           </CardTitle>
           <Link href="/rations">
-            <Button variant="ghost" size="sm" className="text-steel hover:text-white">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-steel hover:text-white"
+            >
               View All <ChevronRight className="h-4 w-4 ml-1" />
             </Button>
           </Link>

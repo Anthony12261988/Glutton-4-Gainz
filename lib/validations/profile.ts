@@ -10,7 +10,7 @@ export const onboardingSchema = z.object({
     .max(100, "Name is too long")
     .trim(),
   tier: z.enum([".223", ".556", ".762", ".50 Cal"], {
-    errorMap: () => ({ message: "Please select a tier" }),
+    message: "Please select a tier",
   }),
 });
 
@@ -44,17 +44,12 @@ export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
  */
 export const bodyMetricsSchema = z.object({
   weight_lbs: z
-    .number({
-      required_error: "Weight is required",
-      invalid_type_error: "Weight must be a number",
-    })
+    .number({ message: "Weight must be a valid number" })
     .min(50, "Weight must be at least 50 lbs")
     .max(500, "Weight cannot exceed 500 lbs")
     .positive("Weight must be positive"),
   body_fat_percentage: z
-    .number({
-      invalid_type_error: "Body fat percentage must be a number",
-    })
+    .number({ message: "Body fat percentage must be a number" })
     .min(3, "Body fat percentage must be at least 3%")
     .max(60, "Body fat percentage cannot exceed 60%")
     .positive("Body fat percentage must be positive")
