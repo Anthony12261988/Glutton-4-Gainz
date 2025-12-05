@@ -14,12 +14,26 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  // Fetch Profile
-  const { data: profile } = await supabase
+  // Fetch Profile with error handling
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", user.id)
     .single();
+
+  // If there's an RLS error, don't redirect - show error instead
+  if (profileError) {
+    // Don't redirect on error - this prevents infinite loops
+    return (
+      <div className="min-h-screen bg-camo-black flex items-center justify-center p-4">
+        <div className="text-center space-y-4">
+          <h1 className="text-tactical-red font-heading text-2xl">Profile Loading Error</h1>
+          <p className="text-muted-text">We're having trouble loading your profile. Please try refreshing the page or contact support if the issue persists.</p>
+          {/* Optionally, log the error for debugging: console.error(profileError) */}
+        </div>
+      </div>
+    );
+  }
 
   if (!profile) {
     redirect("/onboarding");
