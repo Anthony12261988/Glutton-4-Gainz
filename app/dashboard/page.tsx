@@ -14,12 +14,26 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  // Fetch Profile
-  const { data: profile } = await supabase
+  // Fetch Profile with error handling
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", user.id)
     .single();
+
+  // If there's an RLS error, don't redirect - show error instead
+  if (profileError) {
+    // Don't redirect on error - this prevents infinite loops
+    return (
+      <div className="min-h-screen bg-camo-black flex items-center justify-center p-4">
+        <div className="text-center space-y-4">
+          <h1 className="text-tactical-red font-heading text-2xl">DATABASE ERROR</h1>
+          <p className="text-muted-text">Error: {profileError.message}</p>
+          <p className="text-muted-text text-sm">Please check your Supabase RLS policies.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!profile) {
     redirect("/onboarding");

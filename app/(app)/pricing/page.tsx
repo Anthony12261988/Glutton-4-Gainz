@@ -3,13 +3,8 @@
 import { useState } from "react";
 import { PricingCard } from "@/components/pricing/pricing-card";
 import { useUser } from "@/hooks/use-user";
-import { useToast } from "@/components/ui/use-toast";
-import { loadStripe } from "@stripe/stripe-js";
+import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
-);
 
 export default function PricingPage() {
   const { user, profile, loading } = useUser();
@@ -33,21 +28,15 @@ export default function PricingPage() {
         },
       });
 
-      const { sessionId, error } = await response.json();
+      const { url, error } = await response.json();
 
       if (error) {
         throw new Error(error);
       }
 
-      const stripe = await stripePromise;
-      if (!stripe) throw new Error("Stripe failed to load");
-
-      const { error: stripeError } = await stripe.redirectToCheckout({
-        sessionId,
-      });
-
-      if (stripeError) {
-        throw new Error(stripeError.message);
+      // Redirect to Stripe Checkout
+      if (url) {
+        window.location.href = url;
       }
     } catch (error: any) {
       console.error("Payment error:", error);
