@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* React Day Picker custom styles */
+.rdp-root {
+  --rdp-accent-color: #dc2626;
+  --rdp-accent-background-color: rgba(220, 38, 38, 0.2);
+}
+
 @layer base {
   * {
     @apply border-border;

@@ -20,37 +20,33 @@ function Calendar({
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
       classNames={{
-        months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
-        month: "space-y-4",
-        caption: "flex justify-center pt-1 relative items-center",
-        caption_label: "text-sm font-medium text-high-vis",
-        nav: "space-x-1 flex items-center",
+        months: "flex flex-col sm:flex-row gap-4",
+        month: "flex flex-col gap-4",
+        month_caption: "flex justify-center pt-1 relative items-center h-10",
+        caption_label: "text-sm font-medium text-high-vis hidden",
+        dropdowns: "flex gap-2 justify-center",
+        dropdown: "bg-gunmetal border border-steel/30 rounded px-2 py-1 text-sm text-high-vis focus:outline-none focus:ring-1 focus:ring-tactical-red",
+        nav: "flex items-center gap-1",
         button_previous: cn(
-          buttonVariants({ variant: "outline" }),
-          "absolute left-1 h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 border-steel/30"
+          "absolute left-1 h-7 w-7 bg-transparent p-0 opacity-70 hover:opacity-100 border border-steel/30 rounded inline-flex items-center justify-center hover:bg-steel/20 text-high-vis"
         ),
         button_next: cn(
-          buttonVariants({ variant: "outline" }),
-          "absolute right-1 h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 border-steel/30"
+          "absolute right-1 h-7 w-7 bg-transparent p-0 opacity-70 hover:opacity-100 border border-steel/30 rounded inline-flex items-center justify-center hover:bg-steel/20 text-high-vis"
         ),
-        month_grid: "w-full border-collapse space-y-1",
+        month_grid: "w-full border-collapse",
         weekdays: "flex",
-        weekday: "text-muted-text rounded-md w-9 font-normal text-[0.8rem]",
+        weekday: "text-muted-text w-9 font-normal text-[0.8rem] text-center",
         week: "flex w-full mt-2",
-        day: "h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-tactical-red/50 [&:has([aria-selected])]:bg-tactical-red/20 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+        day: "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-tactical-red/20 [&:has([aria-selected])]:rounded-md",
         day_button: cn(
-          buttonVariants({ variant: "ghost" }),
-          "h-9 w-9 p-0 font-normal aria-selected:opacity-100 text-high-vis hover:bg-steel/20"
+          "h-9 w-9 p-0 font-normal rounded-md inline-flex items-center justify-center text-high-vis hover:bg-steel/20 focus:outline-none focus:ring-1 focus:ring-tactical-red aria-selected:bg-tactical-red aria-selected:text-white aria-selected:hover:bg-tactical-red/90"
         ),
         range_end: "day-range-end",
-        selected:
-          "bg-tactical-red text-white hover:bg-tactical-red hover:text-white focus:bg-tactical-red focus:text-white rounded-md",
-        today: "bg-steel/20 text-high-vis rounded-md",
-        outside:
-          "day-outside text-muted-text opacity-50 aria-selected:bg-tactical-red/50 aria-selected:text-white aria-selected:opacity-30",
-        disabled: "text-muted-text opacity-50",
-        range_middle:
-          "aria-selected:bg-tactical-red/20 aria-selected:text-high-vis",
+        selected: "bg-tactical-red text-white hover:bg-tactical-red/90",
+        today: "bg-olive-drab/30 text-high-vis",
+        outside: "text-muted-text/50 aria-selected:bg-tactical-red/50 aria-selected:text-white/80",
+        disabled: "text-muted-text/30 cursor-not-allowed",
+        range_middle: "aria-selected:bg-tactical-red/20",
         hidden: "invisible",
         ...classNames,
       }}
