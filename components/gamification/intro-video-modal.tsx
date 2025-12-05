@@ -1,9 +1,13 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { X, Play, Volume2, VolumeX, SkipForward } from "lucide-react";
+import { Play, Volume2, VolumeX, SkipForward, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
+
+// Video files in Supabase Storage bucket "videos"
+const INTRO_VIDEO_PATH = "intro/welcome.mp4";
+const INTRO_POSTER_PATH = "intro/welcome-poster.jpg";
 
 interface IntroVideoModalProps {
   userId: string;
@@ -16,8 +20,39 @@ export function IntroVideoModal({ userId, onComplete }: IntroVideoModalProps) {
   const [progress, setProgress] = useState(0);
   const [canSkip, setCanSkip] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [posterUrl, setPosterUrl] = useState<string | null>(null);
+  const [videoError, setVideoError] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const supabase = createClient();
+
+  // Fetch video URLs from Supabase Storage
+  useEffect(() => {
+    const fetchVideoUrls = async () => {
+      try {
+        // Get public URLs for the video and poster
+        const { data: videoData } = supabase.storage
+          .from("videos")
+          .getPublicUrl(INTRO_VIDEO_PATH);
+        
+        const { data: posterData } = supabase.storage
+          .from("videos")
+          .getPublicUrl(INTRO_POSTER_PATH);
+
+        if (videoData?.publicUrl) {
+          setVideoUrl(videoData.publicUrl);
+        }
+        if (posterData?.publicUrl) {
+          setPosterUrl(posterData.publicUrl);
+        }
+      } catch (error) {
+        console.error("Error fetching video URLs:", error);
+        setVideoError(true);
+      }
+    };
+
+    fetchVideoUrls();
+  }, [supabase.storage]);
 
   // Allow skip after 5 seconds
   useEffect(() => {
@@ -122,29 +157,36 @@ export function IntroVideoModal({ userId, onComplete }: IntroVideoModalProps) {
           <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-tactical-green z-10" />
 
           {/* Video element */}
-          <video
-            ref={videoRef}
-            className="w-full aspect-video bg-black"
-            onTimeUpdate={handleTimeUpdate}
-            onEnded={handleVideoEnd}
-            onPlay={() => setIsPlaying(true)}
-            onPause={() => setIsPlaying(false)}
-            playsInline
-            poster="/images/intro-video-poster.jpg"
-          >
-            {/* 
-              Replace this with your actual video source.
-              Options:
-              1. Self-hosted: /videos/intro.mp4
-              2. YouTube embed (would need different component)
-              3. Vimeo, Cloudflare Stream, etc.
-            */}
-            <source src="/videos/intro.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+          {videoError ? (
+            <div className="w-full aspect-video bg-camo-dark flex flex-col items-center justify-center text-center p-8">
+              <AlertCircle className="w-12 h-12 text-tactical-red mb-4" />
+              <p className="text-high-vis font-heading mb-2">VIDEO UNAVAILABLE</p>
+              <p className="text-muted-text text-sm mb-4">
+                The intro video hasn't been uploaded yet.
+              </p>
+              <Button onClick={handleSkip} className="bg-tactical-green hover:bg-tactical-green/80">
+                Continue to Dashboard
+              </Button>
+            </div>
+          ) : (
+            <video
+              ref={videoRef}
+              className="w-full aspect-video bg-black"
+              onTimeUpdate={handleTimeUpdate}
+              onEnded={handleVideoEnd}
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+              onError={() => setVideoError(true)}
+              playsInline
+              poster={posterUrl || undefined}
+              src={videoUrl || undefined}
+            >
+              Your browser does not support the video tag.
+            </video>
+          )}
 
-          {/* Play overlay (shown when paused) */}
-          {!isPlaying && (
+          {/* Play overlay (shown when paused and video is available) */}
+          {!isPlaying && !videoError && videoUrl && (
             <div 
               className="absolute inset-0 flex items-center justify-center bg-black/50 cursor-pointer"
               onClick={handlePlay}

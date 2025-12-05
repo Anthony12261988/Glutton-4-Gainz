@@ -1,38 +1,41 @@
 # Intro Video Setup
 
-## Required Files
+## Supabase Storage Setup
 
-Place the following files in the `public` directory:
+The intro video is stored in Supabase Storage bucket called `videos`.
 
-### 1. Video File
-- **Path**: `/public/videos/intro.mp4`
-- **Recommended specs**:
-  - Format: MP4 (H.264 codec)
-  - Resolution: 1920x1080 (1080p) or 1280x720 (720p)
-  - Duration: 30-90 seconds recommended
-  - File size: Keep under 20MB for fast loading
+### 1. Run the Migration
 
-### 2. Poster Image (Thumbnail)
-- **Path**: `/public/images/intro-video-poster.jpg`
-- **Recommended specs**:
-  - Format: JPG or PNG
-  - Resolution: Match video resolution (1920x1080 or 1280x720)
-  - File size: Under 200KB
+First, run migration `035_videos_storage_bucket.sql` in Supabase Dashboard SQL Editor to create the bucket.
 
-## Alternative: External Video Hosting
+### 2. Upload Files
 
-For better performance, consider hosting the video on:
-- **Cloudflare Stream** - Best for performance
-- **Vercel Blob** - If using Vercel
-- **YouTube** (unlisted) - Free, but requires embedding changes
-- **Vimeo** - Professional option
+Upload the following files to the `videos` bucket:
 
-To use external hosting, modify the video source in:
-`/components/gamification/intro-video-modal.tsx`
+| File | Path in Bucket | Specs |
+|------|----------------|-------|
+| Welcome Video | `intro/welcome.mp4` | MP4 (H.264), 1080p or 720p, under 50MB |
+| Poster Image | `intro/welcome-poster.jpg` | JPG, match video resolution, under 200KB |
 
-```tsx
-<source src="https://your-cdn.com/intro.mp4" type="video/mp4" />
-```
+### How to Upload
+
+1. Go to Supabase Dashboard → Storage
+2. Select the `videos` bucket
+3. Create folder `intro`
+4. Upload `welcome.mp4` and `welcome-poster.jpg`
+
+## Video Specs
+
+**Recommended video settings:**
+- Format: MP4 (H.264 codec)
+- Resolution: 1920x1080 (1080p) or 1280x720 (720p)
+- Duration: 30-90 seconds
+- File size: Under 50MB (bucket limit is 100MB)
+
+**Poster image:**
+- Format: JPG or PNG
+- Resolution: Match video resolution
+- File size: Under 200KB
 
 ## Content Suggestions
 
@@ -42,8 +45,17 @@ The intro video should include:
 3. Motivational call-to-action
 4. Military/tactical theme consistent with app branding
 
+## Error Handling
+
+If no video is uploaded, the modal shows a friendly message and "Continue to Dashboard" button.
+
 ## Testing
 
 Users see the intro video only once (on first login). To test again:
 1. In Supabase, set `intro_video_watched` to `false` for your user
 2. Or create a new test account
+
+## Access Control
+
+- **Upload/Edit/Delete**: Only admins and coaches
+- **View**: Anyone (public read access)
