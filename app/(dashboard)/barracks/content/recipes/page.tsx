@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Edit, ArrowLeft } from "lucide-react";
 import Image from "next/image";
+import { DeleteButton } from "@/components/coach/delete-button";
 
 export default async function RecipeManagerPage() {
   const supabase = await createClient();
@@ -82,14 +83,17 @@ export default async function RecipeManagerPage() {
                   <span>{recipe.calories} kcal</span>
                   <span>P: {recipe.protein}g</span>
                 </div>
-                <Link href={`/barracks/content/recipes/${recipe.id}`}>
-                  <Button
-                    variant="outline"
-                    className="w-full border-steel/30 hover:bg-steel/20 text-white"
-                  >
-                    <Edit className="mr-2 h-4 w-4" /> Edit Recipe
-                  </Button>
-                </Link>
+                <div className="flex gap-2">
+                  <Link href={`/barracks/content/recipes/${recipe.id}`} className="flex-1">
+                    <Button
+                      variant="outline"
+                      className="w-full border-steel/30 hover:bg-steel/20 text-white"
+                    >
+                      <Edit className="mr-2 h-4 w-4" /> Edit
+                    </Button>
+                  </Link>
+                  <DeleteButton id={recipe.id} table="recipes" title={recipe.title} />
+                </div>
               </CardContent>
             </Card>
           ))}

@@ -15,6 +15,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Shield, Mail, Lock, User, Chrome } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { TOAST_MESSAGES, LOADING_TEXT, BUTTON_LABELS, PLACEHOLDERS, PAGE_TITLES, NAV_LINKS } from "@/lib/dictionary";
 
 export default function SignupPage() {
   const { toast } = useToast();
@@ -31,8 +32,8 @@ export default function SignupPage() {
     // Validation
     if (password !== confirmPassword) {
       toast({
-        title: "PASSWORD MISMATCH",
-        description: "Passwords do not match. Try again, soldier.",
+        title: TOAST_MESSAGES.auth.passwordMismatch.title,
+        description: TOAST_MESSAGES.auth.passwordMismatch.description,
         variant: "destructive",
       });
       return;
@@ -40,8 +41,8 @@ export default function SignupPage() {
 
     if (password.length < 8) {
       toast({
-        title: "WEAK PASSWORD",
-        description: "Password must be at least 8 characters.",
+        title: TOAST_MESSAGES.auth.weakPassword.title,
+        description: TOAST_MESSAGES.auth.weakPassword.description,
         variant: "destructive",
       });
       return;
@@ -60,29 +61,29 @@ export default function SignupPage() {
 
       if (error) {
         toast({
-          title: "REGISTRATION FAILED",
+          title: TOAST_MESSAGES.auth.registrationFailed.title,
           description: error.message,
           variant: "destructive",
         });
       } else if (data.user && data.session) {
         // User is signed in automatically (if email confirmation is disabled or not required for login)
         toast({
-          title: "ENLISTMENT SUCCESSFUL",
-          description: "Welcome to the unit.",
+          title: TOAST_MESSAGES.auth.registrationSuccess.title,
+          description: TOAST_MESSAGES.auth.registrationSuccess.description,
         });
         router.push("/onboarding");
         router.refresh();
       } else {
         // Email confirmation required
         toast({
-          title: "CHECK YOUR COMMS",
-          description: "Verification email sent. Confirm to proceed.",
+          title: TOAST_MESSAGES.auth.verificationEmailSent.title,
+          description: TOAST_MESSAGES.auth.verificationEmailSent.description,
         });
       }
     } catch (error) {
       toast({
-        title: "ERROR",
-        description: "An unexpected error occurred.",
+        title: TOAST_MESSAGES.auth.registrationError.title,
+        description: TOAST_MESSAGES.auth.registrationError.description,
         variant: "destructive",
       });
     } finally {
@@ -101,15 +102,15 @@ export default function SignupPage() {
 
       if (error) {
         toast({
-          title: "REGISTRATION FAILED",
+          title: TOAST_MESSAGES.auth.registrationFailed.title,
           description: error.message,
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "ERROR",
-        description: "An unexpected error occurred.",
+        title: TOAST_MESSAGES.auth.registrationError.title,
+        description: TOAST_MESSAGES.auth.registrationError.description,
         variant: "destructive",
       });
     }
@@ -135,8 +136,8 @@ export default function SignupPage() {
       {/* Signup Card */}
       <Card>
         <CardHeader>
-          <CardTitle>CREATE ACCOUNT</CardTitle>
-          <CardDescription>Sign up and complete Day Zero Test</CardDescription>
+          <CardTitle>{PAGE_TITLES.signup.title}</CardTitle>
+          <CardDescription>{PAGE_TITLES.signup.description}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Google OAuth Button */}
@@ -147,7 +148,7 @@ export default function SignupPage() {
             type="button"
           >
             <Chrome className="mr-2 h-4 w-4" />
-            Continue with Google
+            {BUTTON_LABELS.continueWithGoogle}
           </Button>
 
           {/* Divider */}
@@ -167,14 +168,14 @@ export default function SignupPage() {
                 htmlFor="email"
                 className="text-xs font-bold uppercase tracking-wide text-muted-text"
               >
-                Email
+                Soldier ID (Email)
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-steel" />
                 <Input
                   id="email"
                   type="email"
-                  placeholder="soldier@example.com"
+                  placeholder={PLACEHOLDERS.email}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10"
@@ -188,14 +189,14 @@ export default function SignupPage() {
                 htmlFor="password"
                 className="text-xs font-bold uppercase tracking-wide text-muted-text"
               >
-                Password
+                Clearance Code
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-steel" />
                 <Input
                   id="password"
                   type="password"
-                  placeholder="••••••••"
+                  placeholder={PLACEHOLDERS.password}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10"
@@ -210,14 +211,14 @@ export default function SignupPage() {
                 htmlFor="confirmPassword"
                 className="text-xs font-bold uppercase tracking-wide text-muted-text"
               >
-                Confirm Password
+                Confirm Clearance Code
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-steel" />
                 <Input
                   id="confirmPassword"
                   type="password"
-                  placeholder="••••••••"
+                  placeholder={PLACEHOLDERS.confirmPassword}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="pl-10"
@@ -227,7 +228,7 @@ export default function SignupPage() {
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "ENLISTING..." : "SIGN UP"}
+              {loading ? LOADING_TEXT.enlisting : BUTTON_LABELS.signup}
             </Button>
           </form>
 
@@ -243,12 +244,12 @@ export default function SignupPage() {
 
       {/* Login Link */}
       <div className="text-center text-sm text-muted-text">
-        Already enlisted?{" "}
+        {NAV_LINKS.alreadyEnlisted}{" "}
         <Link
           href="/login"
           className="font-bold text-tactical-red hover:underline"
         >
-          Login here
+          {NAV_LINKS.loginLink}
         </Link>
       </div>
     </div>

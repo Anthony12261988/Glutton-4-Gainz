@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Mail, Shield, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { TOAST_MESSAGES, LOADING_TEXT, PLACEHOLDERS, PAGE_TITLES } from "@/lib/dictionary";
 
 export default function ForgotPasswordPage() {
   const { toast } = useToast();
@@ -37,14 +38,14 @@ export default function ForgotPasswordPage() {
       }
 
       toast({
-        title: "CHECK YOUR COMMS",
-        description: "Password reset link sent. Follow the link to continue.",
+        title: TOAST_MESSAGES.auth.resetLinkSent.title,
+        description: TOAST_MESSAGES.auth.resetLinkSent.description,
       });
       router.push("/login");
     } catch (error: any) {
       toast({
-        title: "REQUEST FAILED",
-        description: error.message || "Could not send reset email.",
+        title: TOAST_MESSAGES.auth.resetRequestFailed.title,
+        description: error.message || TOAST_MESSAGES.auth.resetRequestFailed.description,
         variant: "destructive",
       });
     } finally {
@@ -61,17 +62,17 @@ export default function ForgotPasswordPage() {
           </div>
         </div>
         <h1 className="font-heading text-3xl font-bold uppercase tracking-wider text-tactical-red">
-          RESET ACCESS
+          {PAGE_TITLES.forgotPassword.title}
         </h1>
         <p className="mt-2 text-sm text-muted-text">
-          Enter your email to receive reset instructions.
+          {PAGE_TITLES.forgotPassword.description}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>PASSWORD RESET</CardTitle>
-          <CardDescription>We’ll send a secure reset link to your inbox.</CardDescription>
+          <CardTitle>{PAGE_TITLES.forgotPassword.title}</CardTitle>
+          <CardDescription>{PAGE_TITLES.forgotPassword.description}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -80,14 +81,14 @@ export default function ForgotPasswordPage() {
                 htmlFor="email"
                 className="text-xs font-bold uppercase tracking-wide text-muted-text"
               >
-                Email
+                Soldier ID (Email)
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-steel" />
                 <Input
                   id="email"
                   type="email"
-                  placeholder="soldier@example.com"
+                  placeholder={PLACEHOLDERS.email}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10"
@@ -97,7 +98,7 @@ export default function ForgotPasswordPage() {
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "SENDING..." : "SEND RESET LINK"}
+              {loading ? LOADING_TEXT.sending : "SEND RESET LINK"}
             </Button>
           </form>
 

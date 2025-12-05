@@ -22,10 +22,27 @@ export default async function StatsPage() {
   // Only last 4 weeks
   const { data: logs } = await supabase
     .from("user_logs")
-    .select("date")
+    .select("id, date, duration, notes, workout_id")
     .eq("user_id", user.id)
     .gte("date", startDate)
     .order("date", { ascending: true });
+
+  // Fetch workout titles for the logs
+  const workoutIds = [...new Set(logs?.map((l) => l.workout_id).filter(Boolean) || [])];
+  const { data: workoutsData } = workoutIds.length > 0
+    ? await supabase
+        .from("workouts")
+        .select("id, title")
+        .in("id", workoutIds)
+    : { data: [] };
+
+  const workoutTitleMap = new Map(workoutsData?.map((w) => [w.id, w.title]) || []);
+
+  // Raw logs for history
+  const rawLogs = logs?.map((log) => ({
+    ...log,
+    workout_title: log.workout_id ? workoutTitleMap.get(log.workout_id) || "Unknown" : "Unknown",
+  })) || [];
 
   // Process logs into weekly consistency
   const consistencyMap = new Map<string, number>();
@@ -67,7 +84,7 @@ export default async function StatsPage() {
   // Fetch Body Metrics
   const { data: metrics } = await supabase
     .from("body_metrics")
-    .select("recorded_at, weight")
+    .select("id, recorded_at, weight")
     .eq("user_id", user.id)
     .order("recorded_at", { ascending: true });
 
@@ -80,6 +97,9 @@ export default async function StatsPage() {
       weight: m.weight,
     })) || [];
 
+  // Raw metrics for edit/delete
+  const rawMetrics = metrics || [];
+
   return (
     <div className="container mx-auto max-w-md px-4 py-6 md:max-w-4xl lg:max-w-7xl">
       <StatsClient
@@ -87,6 +107,8 @@ export default async function StatsPage() {
         weightData={weightData}
         xpData={xpData}
         userId={user.id}
+        rawMetrics={rawMetrics}
+        rawLogs={rawLogs}
       />
     </div>
   );

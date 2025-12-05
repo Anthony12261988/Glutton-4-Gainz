@@ -3,7 +3,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Edit, Trash2, ArrowLeft } from "lucide-react";
+import { Plus, Edit, ArrowLeft } from "lucide-react";
+import { DeleteButton } from "@/components/coach/delete-button";
 
 export default async function WorkoutManagerPage() {
   const supabase = await createClient();
@@ -64,7 +65,7 @@ export default async function WorkoutManagerPage() {
                       <Edit className="h-4 w-4 text-steel" />
                     </Button>
                   </Link>
-                  {/* Delete button would go here - needs client component or server action */}
+                  <DeleteButton id={workout.id} table="workouts" title={workout.title} />
                 </div>
               </CardHeader>
               <CardContent>

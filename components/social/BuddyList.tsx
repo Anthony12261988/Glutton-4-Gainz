@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Loader2, BellOff } from "lucide-react";
+import { Users, Loader2, BellOff, UserMinus } from "lucide-react";
 
 interface BuddyProfile {
   id: string;
@@ -24,6 +24,7 @@ interface BuddyListProps {
   actingId: string | null;
   onAccept: (id: string) => Promise<void>;
   onWakeUp: (buddy: BuddyProfile, relationId: string) => Promise<void>;
+  onRemove: (id: string) => Promise<void>;
 }
 
 export function BuddyList({
@@ -31,6 +32,7 @@ export function BuddyList({
   actingId,
   onAccept,
   onWakeUp,
+  onRemove,
 }: BuddyListProps) {
   return (
     <Card>
@@ -84,19 +86,34 @@ export function BuddyList({
                       </div>
                     )
                   ) : (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => onWakeUp(relation.other, relation.id)}
-                      disabled={actingId === relation.id}
-                    >
-                      {actingId === relation.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <BellOff className="h-4 w-4 mr-2" />
-                      )}
-                      Wake Up
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => onWakeUp(relation.other, relation.id)}
+                        disabled={actingId === relation.id}
+                      >
+                        {actingId === relation.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <BellOff className="h-4 w-4 mr-2" />
+                        )}
+                        Wake Up
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => onRemove(relation.id)}
+                        disabled={actingId === relation.id}
+                        className="text-red-500 hover:text-red-400 hover:bg-red-500/10"
+                      >
+                        {actingId === relation.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <UserMinus className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
                   )}
                 </div>
               );

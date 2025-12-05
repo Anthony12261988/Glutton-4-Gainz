@@ -193,6 +193,28 @@ export function BuddySystem({ userId, initialBuddies }: BuddySystemProps) {
     }
   };
 
+  const handleRemove = async (id: string) => {
+    setActingId(id);
+    try {
+      const { error } = await supabase.from("buddies").delete().eq("id", id);
+      if (error) throw error;
+
+      setBuddies((prev) => prev.filter((b) => b.id !== id));
+      toast({
+        title: "BUDDY REMOVED",
+        description: "Squad member dismissed.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "REMOVAL FAILED",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setActingId(null);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <BuddySearchForm onSearch={handleSearch} onAddBuddy={handleAddBuddy} />
@@ -201,6 +223,7 @@ export function BuddySystem({ userId, initialBuddies }: BuddySystemProps) {
         actingId={actingId}
         onAccept={handleAccept}
         onWakeUp={handleWakeUp}
+        onRemove={handleRemove}
       />
     </div>
   );

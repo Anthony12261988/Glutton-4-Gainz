@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import { OnboardingIntro } from "@/components/features/onboarding/OnboardingIntro";
 import { FitnessTestStep } from "@/components/features/onboarding/FitnessTestStep";
 import { OnboardingResults } from "@/components/features/onboarding/OnboardingResults";
+import { TOAST_MESSAGES } from "@/lib/dictionary";
 
 type Step = "intro" | "pushups" | "squats" | "core" | "results";
 
@@ -60,8 +61,8 @@ export default function OnboardingPage() {
         await supabase.from("profiles").update({ role: "coach" }).eq("id", user.id);
 
         toast({
-          title: "Commission Accepted. Welcome to the Barracks.",
-          description: "Redirecting to your officer dashboard.",
+          title: TOAST_MESSAGES.workout.onboardingComplete.title,
+          description: TOAST_MESSAGES.workout.onboardingComplete.description,
         });
 
         router.replace("/barracks");
@@ -119,9 +120,8 @@ export default function OnboardingPage() {
     } catch (error) {
       console.error("Error updating profile:", error);
       toast({
-        title: "ERROR SAVING RESULTS",
-        description:
-          "Your tier was calculated but not saved. Please try again.",
+        title: TOAST_MESSAGES.workout.assessmentError.title,
+        description: TOAST_MESSAGES.workout.assessmentError.description,
         variant: "destructive",
       });
     } finally {
@@ -132,8 +132,8 @@ export default function OnboardingPage() {
 
   const handleComplete = () => {
     toast({
-      title: "PROFILE UPDATED",
-      description: "Redirecting to your dashboard...",
+      title: TOAST_MESSAGES.workout.profileUpdated.title,
+      description: TOAST_MESSAGES.workout.profileUpdated.description,
     });
     router.push("/dashboard");
     router.refresh();

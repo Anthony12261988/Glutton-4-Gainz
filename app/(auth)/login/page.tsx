@@ -15,6 +15,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Shield, Mail, Lock, Chrome } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { TOAST_MESSAGES, LOADING_TEXT, BUTTON_LABELS, PLACEHOLDERS, PAGE_TITLES, NAV_LINKS } from "@/lib/dictionary";
 
 export default function LoginPage() {
   const { toast } = useToast();
@@ -36,22 +37,22 @@ export default function LoginPage() {
 
       if (error) {
         toast({
-          title: "LOGIN FAILED",
+          title: TOAST_MESSAGES.auth.loginFailed.title,
           description: error.message,
           variant: "destructive",
         });
       } else {
         toast({
-          title: "ACCESS GRANTED",
-          description: "Welcome back, soldier.",
+          title: TOAST_MESSAGES.auth.loginSuccess.title,
+          description: TOAST_MESSAGES.auth.loginSuccess.description,
         });
         router.push("/dashboard");
         router.refresh();
       }
     } catch (error) {
       toast({
-        title: "ERROR",
-        description: "An unexpected error occurred.",
+        title: TOAST_MESSAGES.auth.loginError.title,
+        description: TOAST_MESSAGES.auth.loginError.description,
         variant: "destructive",
       });
     } finally {
@@ -70,15 +71,15 @@ export default function LoginPage() {
 
       if (error) {
         toast({
-          title: "LOGIN FAILED",
+          title: TOAST_MESSAGES.auth.loginFailed.title,
           description: error.message,
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "ERROR",
-        description: "An unexpected error occurred.",
+        title: TOAST_MESSAGES.auth.loginError.title,
+        description: TOAST_MESSAGES.auth.loginError.description,
         variant: "destructive",
       });
     }
@@ -97,16 +98,16 @@ export default function LoginPage() {
           GLUTTON4GAMES
         </h1>
         <p className="mt-2 text-sm text-muted-text">
-          Tactical Fitness Training System
+          {PAGE_TITLES.login.subtitle}
         </p>
       </div>
 
       {/* Login Card */}
       <Card>
         <CardHeader>
-          <CardTitle>LOGIN</CardTitle>
+          <CardTitle>{PAGE_TITLES.login.title}</CardTitle>
           <CardDescription>
-            Enter your credentials to access your account
+            {PAGE_TITLES.login.description}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -118,7 +119,7 @@ export default function LoginPage() {
             type="button"
           >
             <Chrome className="mr-2 h-4 w-4" />
-            Continue with Google
+            {BUTTON_LABELS.continueWithGoogle}
           </Button>
 
           {/* Divider */}
@@ -138,14 +139,14 @@ export default function LoginPage() {
                 htmlFor="email"
                 className="text-xs font-bold uppercase tracking-wide text-muted-text"
               >
-                Email
+                Soldier ID (Email)
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-steel" />
                 <Input
                   id="email"
                   type="email"
-                  placeholder="soldier@example.com"
+                  placeholder={PLACEHOLDERS.email}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10"
@@ -159,14 +160,14 @@ export default function LoginPage() {
                 htmlFor="password"
                 className="text-xs font-bold uppercase tracking-wide text-muted-text"
               >
-                Password
+                Clearance Code
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-steel" />
                 <Input
                   id="password"
                   type="password"
-                  placeholder="••••••••"
+                  placeholder={PLACEHOLDERS.password}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10"
@@ -176,7 +177,7 @@ export default function LoginPage() {
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "AUTHENTICATING..." : "LOGIN"}
+              {loading ? LOADING_TEXT.authenticating : BUTTON_LABELS.login}
             </Button>
           </form>
 
@@ -186,7 +187,7 @@ export default function LoginPage() {
               href="/forgot-password"
               className="text-xs text-tactical-red hover:underline"
             >
-              Forgot password?
+              {BUTTON_LABELS.forgotPassword}
             </Link>
           </div>
         </CardContent>
@@ -194,12 +195,12 @@ export default function LoginPage() {
 
       {/* Signup Link */}
       <div className="text-center text-sm text-muted-text">
-        New recruit?{" "}
+        {NAV_LINKS.newRecruit}{" "}
         <Link
           href="/signup"
           className="font-bold text-tactical-red hover:underline"
         >
-          Sign up for deployment
+          {NAV_LINKS.signUpLink}
         </Link>
       </div>
     </div>

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { CompleteMissionModal } from "@/components/workouts/complete-mission-modal";
 import { BadgeEarnedToast } from "@/components/gamification/badge-earned-toast";
 import { checkForNewBadges, type Badge } from "@/lib/utils/badge-detector";
+import { TOAST_MESSAGES, BUTTON_LABELS, EMPTY_STATES } from "@/lib/dictionary";
 
 interface DashboardClientProps {
   user: any;
@@ -82,8 +83,8 @@ export default function DashboardClient({
 
       setIsCompleted(true);
       toast({
-        title: "MISSION ACCOMPLISHED",
-        description: "Log saved. XP and streak updated.",
+        title: TOAST_MESSAGES.workout.missionComplete.title,
+        description: TOAST_MESSAGES.workout.missionComplete.description,
       });
 
       // Check for newly earned badges after a short delay
@@ -100,8 +101,8 @@ export default function DashboardClient({
       router.refresh();
     } catch (error: any) {
       toast({
-        title: "MISSION FAILED",
-        description: error.message || "Could not log mission.",
+        title: TOAST_MESSAGES.workout.missionFailed.title,
+        description: error.message || TOAST_MESSAGES.workout.missionFailed.description,
         variant: "destructive",
       });
     } finally {
@@ -118,7 +119,7 @@ export default function DashboardClient({
         </h2>
         <p className="text-muted-text">Please complete onboarding.</p>
         <Button onClick={() => router.push("/onboarding")}>
-          GO TO ONBOARDING
+          {BUTTON_LABELS.goToOnboarding}
         </Button>
       </div>
     );
@@ -178,7 +179,7 @@ export default function DashboardClient({
               onClick={() => setShowModal(true)}
               disabled={loading}
             >
-              COMPLETE MISSION
+              {BUTTON_LABELS.completeMission}
             </Button>
           )}
         </div>
@@ -186,10 +187,10 @@ export default function DashboardClient({
         <div className="rounded-sm border border-steel bg-gunmetal p-8 text-center">
           <Shield className="mx-auto mb-4 h-12 w-12 text-steel" />
           <h3 className="font-heading text-xl text-high-vis">
-            NO MISSION INTEL
+            {EMPTY_STATES.noMission.title}
           </h3>
           <p className="mt-2 text-muted-text">
-            Rest day or awaiting orders from HQ.
+            {EMPTY_STATES.noMission.description}
           </p>
         </div>
       )}

@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Shield, Lock, Check } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { TOAST_MESSAGES, LOADING_TEXT, BUTTON_LABELS, PLACEHOLDERS, PAGE_TITLES } from "@/lib/dictionary";
 
 export default function ResetPasswordPage() {
   const { toast } = useToast();
@@ -39,8 +40,8 @@ export default function ResetPasswordPage() {
 
     if (password !== confirmPassword) {
       toast({
-        title: "PASSWORD MISMATCH",
-        description: "Passwords must match.",
+        title: TOAST_MESSAGES.auth.passwordMismatch.title,
+        description: TOAST_MESSAGES.auth.passwordMismatch.description,
         variant: "destructive",
       });
       return;
@@ -48,8 +49,8 @@ export default function ResetPasswordPage() {
 
     if (password.length < 8) {
       toast({
-        title: "WEAK PASSWORD",
-        description: "Password must be at least 8 characters.",
+        title: TOAST_MESSAGES.auth.weakPassword.title,
+        description: TOAST_MESSAGES.auth.weakPassword.description,
         variant: "destructive",
       });
       return;
@@ -62,13 +63,13 @@ export default function ResetPasswordPage() {
       if (error) throw error;
 
       toast({
-        title: "PASSWORD UPDATED",
-        description: "You can now log in with your new credentials.",
+        title: TOAST_MESSAGES.auth.passwordUpdated.title,
+        description: TOAST_MESSAGES.auth.passwordUpdated.description,
       });
       router.push("/login");
     } catch (error: any) {
       toast({
-        title: "RESET FAILED",
+        title: TOAST_MESSAGES.auth.resetFailed.title,
         description:
           error.message ||
           "Open the link from your email to reset your password.",
@@ -88,19 +89,18 @@ export default function ResetPasswordPage() {
           </div>
         </div>
         <h1 className="font-heading text-3xl font-bold uppercase tracking-wider text-tactical-red">
-          SET NEW PASSWORD
+          {PAGE_TITLES.resetPassword.title}
         </h1>
         <p className="mt-2 text-sm text-muted-text">
-          Complete the reset to regain access.
+          {PAGE_TITLES.resetPassword.subtitle}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Update Credentials</CardTitle>
+          <CardTitle>{PAGE_TITLES.resetPassword.title}</CardTitle>
           <CardDescription>
-            Enter and confirm your new password. Use the secure link from your
-            email to reach this page.
+            {PAGE_TITLES.resetPassword.description}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -110,14 +110,14 @@ export default function ResetPasswordPage() {
                 htmlFor="password"
                 className="text-xs font-bold uppercase tracking-wide text-muted-text"
               >
-                New Password
+                New Clearance Code
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-steel" />
                 <Input
                   id="password"
                   type="password"
-                  placeholder="••••••••"
+                  placeholder={PLACEHOLDERS.password}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10"
@@ -131,14 +131,14 @@ export default function ResetPasswordPage() {
                 htmlFor="confirmPassword"
                 className="text-xs font-bold uppercase tracking-wide text-muted-text"
               >
-                Confirm Password
+                Confirm Clearance Code
               </label>
               <div className="relative">
                 <Check className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-steel" />
                 <Input
                   id="confirmPassword"
                   type="password"
-                  placeholder="••••••••"
+                  placeholder={PLACEHOLDERS.confirmPassword}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="pl-10"
@@ -148,7 +148,7 @@ export default function ResetPasswordPage() {
             </div>
 
             <Button type="submit" className="w-full" disabled={loading || !hasSession}>
-              {loading ? "UPDATING..." : "UPDATE PASSWORD"}
+              {loading ? LOADING_TEXT.updating : BUTTON_LABELS.resetPassword}
             </Button>
 
             {!hasSession && (
