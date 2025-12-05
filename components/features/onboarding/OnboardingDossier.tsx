@@ -75,6 +75,16 @@ export function OnboardingDossier({
   const handleSubmit = async () => {
     setSaving(true);
     try {
+      // Ensure we have a userId - fallback to fetching from auth if not provided
+      let currentUserId = userId;
+      if (!currentUserId) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          throw new Error("No authenticated user found");
+        }
+        currentUserId = user.id;
+      }
+
       const { error } = await supabase
         .from("profiles")
         .update({
@@ -83,7 +93,7 @@ export function OnboardingDossier({
           available_equipment: equipment.length > 0 ? equipment : null,
           dossier_complete: true,
         })
-        .eq("id", userId);
+        .eq("id", currentUserId);
 
       if (error) throw error;
 
