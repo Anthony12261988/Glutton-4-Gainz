@@ -34,10 +34,12 @@ export default function PricingPage() {
         throw new Error(error);
       }
 
-      // Redirect to Stripe Checkout
-      if (url) {
-        window.location.href = url;
+      // Validate URL before redirecting
+      if (!url) {
+        throw new Error("No checkout URL returned from server");
       }
+
+      window.location.href = url;
     } catch (error: any) {
       console.error("Payment error:", error);
       toast({
