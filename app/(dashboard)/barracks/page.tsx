@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import CoachDashboard from "./coach-dashboard";
-import { Navigation } from "@/components/ui/navigation";
 import { ShieldAlert } from "lucide-react";
 
 export default async function BarracksPage() {
@@ -43,21 +42,18 @@ export default async function BarracksPage() {
     .eq("coach_id", user.id);
 
   return (
-    <div className="min-h-screen bg-camo-black pb-24">
-      <div className="container mx-auto px-4 py-6">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="font-heading text-3xl font-bold uppercase tracking-wider text-high-vis">
-            THE BARRACKS
-          </h1>
-          <p className="text-sm text-muted-text">
-            Squad Management & Command Center
-          </p>
-        </div>
-
-        <CoachDashboard coachId={user.id} initialTrainees={trainees || []} />
+    <div className="container mx-auto px-4 py-6 md:max-w-7xl">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="font-heading text-3xl font-bold uppercase tracking-wider text-high-vis">
+          THE BARRACKS
+        </h1>
+        <p className="text-sm text-muted-text">
+          Squad Management & Command Center
+        </p>
       </div>
-      <Navigation />
+
+      <CoachDashboard coachId={user.id} initialTrainees={trainees || []} />
     </div>
   );
 }

@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import { Navigation } from "@/components/ui/navigation";
 import { redirect } from "next/navigation";
 import CommandCenterClient from "./command-center-client";
 
@@ -41,16 +40,13 @@ export default async function CommandCenterPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="min-h-screen bg-camo-black pb-24">
-      <div className="container mx-auto px-4 py-8">
-        <CommandCenterClient
-          currentUserId={user.id}
-          troops={troops ?? []}
-          coaches={coaches ?? []}
-          invites={invites ?? []}
-        />
-      </div>
-      <Navigation />
+    <div className="container mx-auto px-4 py-8 md:max-w-7xl">
+      <CommandCenterClient
+        currentUserId={user.id}
+        troops={troops ?? []}
+        coaches={coaches ?? []}
+        invites={invites ?? []}
+      />
     </div>
   );
 }

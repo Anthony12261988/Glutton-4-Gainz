@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import StatsClient from "./stats-client";
-import { Navigation } from "@/components/ui/navigation";
 
 export default async function StatsPage() {
   const supabase = await createClient();
@@ -82,16 +81,13 @@ export default async function StatsPage() {
     })) || [];
 
   return (
-    <div className="min-h-screen bg-camo-black">
-      <div className="container mx-auto max-w-md px-4 py-6">
-        <StatsClient
-          consistencyData={consistencyData}
-          weightData={weightData}
-          xpData={xpData}
-          userId={user.id}
-        />
-      </div>
-      <Navigation />
+    <div className="container mx-auto max-w-md px-4 py-6 md:max-w-4xl lg:max-w-7xl">
+      <StatsClient
+        consistencyData={consistencyData}
+        weightData={weightData}
+        xpData={xpData}
+        userId={user.id}
+      />
     </div>
   );
 }
