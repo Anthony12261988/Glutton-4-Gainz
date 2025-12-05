@@ -67,7 +67,7 @@ export default async function SpyModePage({
     .limit(10);
 
   const { data: badges } = await supabase
-    .from("badges")
+    .from("user_badges")
     .select("*")
     .eq("user_id", params.userId)
     .order("earned_at", { ascending: false });

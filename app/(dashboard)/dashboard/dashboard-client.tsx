@@ -64,7 +64,7 @@ export default function DashboardClient({
     try {
       // Get badge count before workout completion
       const { data: badgesBefore } = await supabase
-        .from("badges")
+        .from("user_badges")
         .select("id")
         .eq("user_id", user.id);
 
