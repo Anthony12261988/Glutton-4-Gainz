@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Mail, Lock, User, Chrome } from "lucide-react";
+import { Shield, Mail, Lock, User, Chrome, Facebook } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { TOAST_MESSAGES, LOADING_TEXT, BUTTON_LABELS, PLACEHOLDERS, PAGE_TITLES, NAV_LINKS } from "@/lib/dictionary";
 
@@ -116,6 +116,31 @@ export default function SignupPage() {
     }
   };
 
+  const handleFacebookSignup = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "facebook",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (error) {
+        toast({
+          title: TOAST_MESSAGES.auth.registrationFailed.title,
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: TOAST_MESSAGES.auth.registrationError.title,
+        description: TOAST_MESSAGES.auth.registrationError.description,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Logo/Header */}
@@ -149,6 +174,17 @@ export default function SignupPage() {
           >
             <Chrome className="mr-2 h-4 w-4" />
             {BUTTON_LABELS.continueWithGoogle}
+          </Button>
+
+          {/* Facebook OAuth Button */}
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={handleFacebookSignup}
+            type="button"
+          >
+            <Facebook className="mr-2 h-4 w-4" />
+            Continue with Facebook
           </Button>
 
           {/* Divider */}

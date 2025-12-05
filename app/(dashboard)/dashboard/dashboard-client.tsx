@@ -11,12 +11,27 @@ import { CompleteMissionModal } from "@/components/workouts/complete-mission-mod
 import { BadgeEarnedToast } from "@/components/gamification/badge-earned-toast";
 import { checkForNewBadges, type Badge } from "@/lib/utils/badge-detector";
 import { TOAST_MESSAGES, BUTTON_LABELS, EMPTY_STATES } from "@/lib/dictionary";
+import { DailyRation } from "@/components/nutrition/daily-ration";
+import { fireWorkoutComplete } from "@/lib/utils/confetti";
+
+interface Recipe {
+  id: string;
+  title: string;
+  image_url: string | null;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  instructions: string;
+}
 
 interface DashboardClientProps {
   user: any;
   profile: any;
   todaysWorkout: any;
   isCompleted: boolean;
+  todaysMeal?: Recipe | null;
+  isPremium?: boolean;
 }
 
 export default function DashboardClient({
@@ -24,6 +39,8 @@ export default function DashboardClient({
   profile,
   todaysWorkout,
   isCompleted: initialCompleted,
+  todaysMeal = null,
+  isPremium = false,
 }: DashboardClientProps) {
   const { toast } = useToast();
   const router = useRouter();
@@ -82,6 +99,10 @@ export default function DashboardClient({
       if (logError) throw logError;
 
       setIsCompleted(true);
+      
+      // Fire confetti celebration
+      fireWorkoutComplete();
+      
       toast({
         title: TOAST_MESSAGES.workout.missionComplete.title,
         description: TOAST_MESSAGES.workout.missionComplete.description,
@@ -201,6 +222,9 @@ export default function DashboardClient({
         onSubmit={handleComplete}
         loading={loading}
       />
+
+      {/* Daily Ration */}
+      <DailyRation recipe={todaysMeal} isPremium={isPremium} />
 
       {/* Badge Notification */}
       {newBadges.length > 0 && (

@@ -26,6 +26,16 @@ export async function signInWithGoogle() {
   })
 }
 
+export async function signInWithFacebook() {
+  const supabase = createClient()
+  return supabase.auth.signInWithOAuth({
+    provider: 'facebook',
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback`,
+    },
+  })
+}
+
 export async function signOut() {
   const supabase = createClient()
   return supabase.auth.signOut()

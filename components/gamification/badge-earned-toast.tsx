@@ -2,6 +2,8 @@
 
 import { Award, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useEffect } from "react";
+import { fireStars } from "@/lib/utils/confetti";
 
 interface BadgeEarnedToastProps {
   badge: {
@@ -22,6 +24,13 @@ export function BadgeEarnedToast({
   isVisible,
   onClose,
 }: BadgeEarnedToastProps) {
+  // Fire confetti when badge appears
+  useEffect(() => {
+    if (isVisible) {
+      fireStars();
+    }
+  }, [isVisible]);
+
   return (
     <AnimatePresence>
       {isVisible && (

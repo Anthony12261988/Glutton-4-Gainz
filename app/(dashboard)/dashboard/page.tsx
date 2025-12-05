@@ -63,6 +63,20 @@ export default async function DashboardPage() {
     if (log) isCompleted = true;
   }
 
+  // Fetch Today's Meal (for Daily Ration)
+  const { data: mealPlan } = await supabase
+    .from("meal_plans")
+    .select(`
+      *,
+      recipe:recipes(*)
+    `)
+    .eq("user_id", user.id)
+    .eq("assigned_date", today)
+    .maybeSingle();
+
+  // Check if user is premium (not .223 tier)
+  const isPremium = profile.tier !== ".223";
+
   return (
     <div className="container mx-auto max-w-md px-4 py-6 md:max-w-4xl lg:max-w-7xl">
       <DashboardClient
@@ -70,6 +84,8 @@ export default async function DashboardPage() {
         profile={profile}
         todaysWorkout={workout}
         isCompleted={isCompleted}
+        todaysMeal={mealPlan?.recipe || null}
+        isPremium={isPremium}
       />
     </div>
   );

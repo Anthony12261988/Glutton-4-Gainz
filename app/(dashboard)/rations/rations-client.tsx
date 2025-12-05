@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { WeekCalendar } from "@/components/nutrition/week-calendar";
 import { RecipeCard, type Recipe } from "@/components/nutrition/recipe-card";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Utensils, Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Utensils, Loader2, Search, X, Flame, Beef, Wheat, Droplet } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface MealPlan {
   id: string;
@@ -33,6 +35,41 @@ export default function RationsClient({
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+
+  // Filter options
+  const filters = [
+    { id: "high-protein", label: "High Protein", icon: Beef, check: (r: Recipe) => r.protein >= 30 },
+    { id: "low-carb", label: "Low Carb", icon: Wheat, check: (r: Recipe) => r.carbs <= 20 },
+    { id: "low-cal", label: "Low Cal", icon: Flame, check: (r: Recipe) => r.calories <= 400 },
+    { id: "low-fat", label: "Low Fat", icon: Droplet, check: (r: Recipe) => r.fat <= 15 },
+  ];
+
+  // Filter and search recipes
+  const filteredRecipes = useMemo(() => {
+    let results = initialRecipes;
+
+    // Apply search
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      results = results.filter(
+        (r) =>
+          r.title.toLowerCase().includes(query) ||
+          r.instructions.toLowerCase().includes(query)
+      );
+    }
+
+    // Apply filter
+    if (activeFilter) {
+      const filter = filters.find((f) => f.id === activeFilter);
+      if (filter) {
+        results = results.filter(filter.check);
+      }
+    }
+
+    return results;
+  }, [initialRecipes, searchQuery, activeFilter]);
 
   // Derived state
   const selectedDateKey = selectedDate.toISOString().split("T")[0];
@@ -134,16 +171,77 @@ export default function RationsClient({
           AVAILABLE RATIONS
         </h3>
 
-        {initialRecipes.length === 0 ? (
+        {/* Search Bar */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-steel" />
+          <Input
+            type="text"
+            placeholder="Search recipes..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 pr-10 bg-gunmetal"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-steel hover:text-white"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+
+        {/* Filter Buttons */}
+        <div className="flex flex-wrap gap-2">
+          {filters.map((filter) => {
+            const Icon = filter.icon;
+            const isActive = activeFilter === filter.id;
+            return (
+              <button
+                key={filter.id}
+                onClick={() => setActiveFilter(isActive ? null : filter.id)}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-sm border px-3 py-1.5 text-xs font-bold uppercase transition-colors",
+                  isActive
+                    ? "border-tactical-red bg-tactical-red/20 text-tactical-red"
+                    : "border-steel/30 bg-gunmetal text-steel hover:border-steel hover:text-white"
+                )}
+              >
+                <Icon className="h-3 w-3" />
+                {filter.label}
+              </button>
+            );
+          })}
+          {activeFilter && (
+            <button
+              onClick={() => setActiveFilter(null)}
+              className="flex items-center gap-1 text-xs text-steel hover:text-white"
+            >
+              <X className="h-3 w-3" />
+              Clear
+            </button>
+          )}
+        </div>
+
+        {/* Results Count */}
+        {(searchQuery || activeFilter) && (
+          <p className="text-xs text-steel">
+            {filteredRecipes.length} recipe{filteredRecipes.length !== 1 ? "s" : ""} found
+          </p>
+        )}
+
+        {filteredRecipes.length === 0 ? (
           <div className="rounded-sm border border-tactical-red bg-gunmetal p-6 text-center">
             <p className="text-high-vis">NO RECIPES FOUND</p>
             <p className="text-sm text-muted-text">
-              HQ hasn't uploaded the menu yet.
+              {searchQuery || activeFilter
+                ? "Try adjusting your search or filters."
+                : "HQ hasn't uploaded the menu yet."}
             </p>
           </div>
         ) : (
           <div className="grid gap-4">
-            {initialRecipes.map((recipe) => (
+            {filteredRecipes.map((recipe) => (
               <RecipeCard
                 key={recipe.id}
                 recipe={recipe}
