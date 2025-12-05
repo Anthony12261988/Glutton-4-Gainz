@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   ClipboardList,
   ChevronRight,
@@ -120,7 +122,9 @@ export function FitnessDossierForm({
   const [targetWeight, setTargetWeight] = useState(
     existingData?.target_weight?.toString() || ""
   );
-  const [dob, setDob] = useState(existingData?.date_of_birth || "");
+  const [dob, setDob] = useState<Date | undefined>(
+    existingData?.date_of_birth ? new Date(existingData.date_of_birth) : undefined
+  );
   const [gender, setGender] = useState(existingData?.gender || "");
 
   const totalSteps = 4;
@@ -152,7 +156,7 @@ export function FitnessDossierForm({
           workout_days_per_week: daysPerWeek ? parseInt(daysPerWeek) : null,
           height_inches: totalHeight,
           target_weight: targetWeight ? parseFloat(targetWeight) : null,
-          date_of_birth: dob || null,
+          date_of_birth: dob ? format(dob, "yyyy-MM-dd") : null,
           gender: (gender || null) as any,
           dossier_complete: true,
         })
@@ -418,11 +422,10 @@ export function FitnessDossierForm({
               <label className="text-sm font-medium text-steel">
                 Date of Birth
               </label>
-              <Input
-                type="date"
-                value={dob}
-                onChange={(e) => setDob(e.target.value)}
-                className="bg-black/20 border-steel/30"
+              <DatePicker
+                date={dob}
+                onDateChange={setDob}
+                placeholder="Select your birth date"
               />
             </div>
 
