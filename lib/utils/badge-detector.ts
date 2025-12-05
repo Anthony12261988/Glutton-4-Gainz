@@ -80,8 +80,8 @@ export async function detectNewBadges(
 
   // Fetch already earned badges
   const { data: earnedBadges, error: badgeError } = await supabase
-    .from("badges")
-    .select("name")
+    .from("user_badges")
+    .select("badge_name")
     .eq("user_id", userId);
 
   if (badgeError) {
@@ -89,7 +89,7 @@ export async function detectNewBadges(
     return [];
   }
 
-  const earnedBadgeNames = new Set(earnedBadges?.map((b) => b.name) || []);
+  const earnedBadgeNames = new Set(earnedBadges?.map((b) => b.badge_name) || []);
 
   // Check each badge definition
   for (const badge of BADGE_DEFINITIONS) {

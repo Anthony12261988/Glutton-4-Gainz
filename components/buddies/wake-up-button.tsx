@@ -41,11 +41,11 @@ export function WakeUpButton({
       // Get current user's profile for name
       const { data: profile } = await supabase
         .from("profiles")
-        .select("full_name")
+        .select("email")
         .eq("id", user.id)
         .single();
 
-      const senderName = profile?.full_name || "Your buddy";
+      const senderName = profile?.email || "Your buddy";
 
       // Calculate days inactive
       let daysInactive = 0;
@@ -69,8 +69,8 @@ export function WakeUpButton({
 
       // Send message to buddy
       const { error: messageError } = await supabase.from("messages").insert({
-        from_user_id: user.id,
-        to_user_id: buddyId,
+        sender_id: user.id,
+        receiver_id: buddyId,
         content: randomMessage,
       });
 

@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -100,7 +100,7 @@ export async function POST(request: Request) {
 
     if (err.statusCode === 410) {
       // Subscription is gone/expired; clean it up to avoid repeated failures
-      const cookieStore = cookies();
+      const cookieStore = await cookies();
       const supabaseCleanup = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,

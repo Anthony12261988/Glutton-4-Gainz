@@ -24,7 +24,7 @@ async function fetchProfile(userId: string) {
  */
 async function fetchBadges(userId: string) {
   const { data, error } = await supabase
-    .from("badges")
+    .from("user_badges")
     .select("*")
     .eq("user_id", userId)
     .order("earned_at", { ascending: false });

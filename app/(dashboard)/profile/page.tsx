@@ -53,7 +53,7 @@ export default async function ProfilePage() {
 
   const buddies = buddyRelations || [];
 
-  const badgeIcons: Record<string, JSX.Element> = {
+  const badgeIcons: Record<string, React.ReactElement> = {
     "First Blood": <Award className="h-6 w-6" />,
     "Iron Week": <Target className="h-6 w-6" />,
     Century: <Trophy className="h-6 w-6" />,
@@ -125,7 +125,7 @@ export default async function ProfilePage() {
       </div>
 
       {/* Buddy System */}
-      <BuddySystem userId={user.id} initialBuddies={buddies} />
+      <BuddySystem userId={user.id} initialBuddies={buddies as any} />
 
       {/* Logout (Optional but good for profile) */}
       <form action="/auth/signout" method="post" className="mt-8">

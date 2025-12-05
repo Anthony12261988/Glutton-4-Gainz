@@ -214,8 +214,8 @@ export async function getPaginatedBuddies(
   if (error) throw error;
 
   // Transform data to return the buddy (not the current user)
-  const buddies = (data || []).map((relation) => {
-    const buddy = relation.user1_id === userId ? relation.user2 : relation.user1;
+  const buddies = (data || []).map((relation: any) => {
+    const buddy = relation.user_id === userId ? relation.buddy : relation.user;
     return {
       ...buddy,
       buddyship_created_at: relation.created_at,

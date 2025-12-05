@@ -7,28 +7,29 @@ const supabase = createClient();
 
 /**
  * Fetcher function for conversations list
+ * TODO: Create get_conversation_list RPC function in Supabase
  */
 async function fetchConversations(userId: string) {
-  const { data, error } = await supabase.rpc("get_conversation_list", {
-    p_user_id: userId,
-  });
-
-  if (error) throw error;
-  return data || [];
+  // const { data, error } = await supabase.rpc("get_conversation_list", {
+  //   p_user_id: userId,
+  // });
+  // if (error) throw error;
+  // return data || [];
+  return [];
 }
 
 /**
  * Fetcher function for unread message count
  */
 async function fetchUnreadCount(userId: string) {
-  const { data, error } = await supabase
+  const { count, error } = await supabase
     .from("messages")
-    .select("id", { count: "exact", head: true })
-    .eq("to_user_id", userId)
+    .select("*", { count: "exact", head: true })
+    .eq("receiver_id", userId)
     .eq("is_read", false);
 
   if (error) throw error;
-  return data || 0;
+  return count || 0;
 }
 
 /**
@@ -40,20 +41,20 @@ async function fetchConversation(userId: string, otherUserId: string) {
     .select(
       `
       *,
-      from_user:from_user_id (
+      from_user:sender_id (
         id,
-        full_name,
+        email,
         role
       ),
-      to_user:to_user_id (
+      to_user:receiver_id (
         id,
-        full_name,
+        email,
         role
       )
     `
     )
     .or(
-      `and(from_user_id.eq.${userId},to_user_id.eq.${otherUserId}),and(from_user_id.eq.${otherUserId},to_user_id.eq.${userId})`
+      `and(sender_id.eq.${userId},receiver_id.eq.${otherUserId}),and(sender_id.eq.${otherUserId},receiver_id.eq.${userId})`
     )
     .order("created_at", { ascending: true });
 
@@ -175,7 +176,7 @@ export function useMarkAsRead() {
       .from("messages")
       .update({ is_read: true })
       .in("id", messageIds)
-      .eq("to_user_id", userId);
+      .eq("receiver_id", userId);
 
     if (error) throw error;
   };

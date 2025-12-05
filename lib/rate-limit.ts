@@ -144,7 +144,7 @@ export async function rateLimit(
   const result = checkRateLimit(identifier, config);
 
   // Create rate limit headers
-  const headers = {
+  const headers: Record<string, string> = {
     "X-RateLimit-Limit": String(result.limit),
     "X-RateLimit-Remaining": String(result.remaining),
     "X-RateLimit-Reset": String(result.reset),

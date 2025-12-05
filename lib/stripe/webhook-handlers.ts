@@ -3,7 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import { stripe } from "./stripe-client";
 
 export async function handleCheckoutSessionCompleted(
-  session: Stripe.CheckoutSession
+  session: Stripe.Checkout.Session
 ) {
   const userId = session.metadata?.userId;
 

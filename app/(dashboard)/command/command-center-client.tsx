@@ -2,27 +2,18 @@
 
 import { useMemo, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import CoachInviteForm from "@/components/command/coach-invite-form";
+import { TroopsTable } from "@/components/features/command/TroopsTable";
+import { CoachTable } from "@/components/features/command/CoachTable";
+import { InviteList } from "@/components/features/command/InviteList";
 import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/database.types";
 import { useToast } from "@/hooks/use-toast";
 import {
-  BadgeCheck,
-  Ban,
   ShieldPlus,
   Sword,
   Users,
   Radio,
   Target,
-  Loader2,
 } from "lucide-react";
 
 type Profile = Tables<"profiles">;
@@ -55,17 +46,6 @@ export default function CommandCenterClient({
     () => inviteRows.filter((invite) => invite.status === "pending"),
     [inviteRows]
   );
-
-  const filteredTroops = useMemo(() => {
-    if (!search.trim()) return troopRows;
-    const query = search.trim().toLowerCase();
-    return troopRows.filter(
-      (troop) =>
-        troop.email.toLowerCase().includes(query) ||
-        troop.role.toLowerCase().includes(query) ||
-        troop.tier.toLowerCase().includes(query)
-    );
-  }, [troopRows, search]);
 
   const handleBanToggle = async (id: string, nextBanned: boolean) => {
     setBanLoading(id);
@@ -172,224 +152,26 @@ export default function CommandCenterClient({
       </div>
 
       {activeTab === "troops" ? (
-        <Card className="border-steel/40 bg-gunmetal">
-          <CardHeader className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-            <div>
-              <CardTitle>TROOP ROSTER</CardTitle>
-              <CardDescription>
-                Full visibility of every soldier and their current status.
-              </CardDescription>
-            </div>
-            <div className="flex w-full flex-col gap-2 md:w-80">
-              <Input
-                placeholder="Filter by email, role, or tier"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="bg-camo-black text-high-vis"
-              />
-            </div>
-          </CardHeader>
-          <CardContent className="overflow-x-auto">
-            <table className="w-full min-w-[720px] border-collapse text-sm">
-              <thead>
-                <tr className="border-b border-steel/30 text-left text-xs uppercase tracking-wide text-muted-text">
-                  <th className="px-4 py-3">Email</th>
-                  <th className="px-4 py-3">Tier</th>
-                  <th className="px-4 py-3">Role</th>
-                  <th className="px-4 py-3">Last Active</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-steel/20">
-                {filteredTroops.map((troop) => {
-                  const disableBan =
-                    troop.id === currentUserId || troop.role === "admin";
-                  return (
-                    <tr key={troop.id} className="hover:bg-camo-black/50">
-                      <td className="px-4 py-3 font-medium text-high-vis">
-                        {troop.email}
-                      </td>
-                      <td className="px-4 py-3 text-muted-text">
-                        {troop.tier}
-                      </td>
-                      <td className="px-4 py-3 text-muted-text capitalize">
-                        {troop.role}
-                      </td>
-                      <td className="px-4 py-3 text-muted-text">
-                        {formatTimestamp(troop.last_active)}
-                      </td>
-                      <td className="px-4 py-3">
-                        <StatusBadge banned={!!troop.banned} />
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        <Button
-                          variant={troop.banned ? "secondary" : "destructive"}
-                          size="sm"
-                          disabled={disableBan || banLoading === troop.id}
-                          onClick={() =>
-                            handleBanToggle(troop.id, !troop.banned)
-                          }
-                        >
-                          {banLoading === troop.id ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : troop.banned ? (
-                            <BadgeCheck className="h-4 w-4" />
-                          ) : (
-                            <Ban className="h-4 w-4" />
-                          )}
-                          {troop.banned
-                            ? "Reinstate"
-                            : "Dishonorable Discharge"}
-                        </Button>
-                      </td>
-                    </tr>
-                  );
-                })}
-                {filteredTroops.length === 0 && (
-                  <tr>
-                    <td
-                      colSpan={6}
-                      className="px-4 py-6 text-center text-muted-text"
-                    >
-                      No troops match this filter.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </CardContent>
-        </Card>
+        <TroopsTable
+          troops={troopRows}
+          search={search}
+          onSearchChange={setSearch}
+          currentUserId={currentUserId}
+          onBanToggle={handleBanToggle}
+          banLoading={banLoading}
+        />
       ) : (
         <div className="grid gap-6 lg:grid-cols-3">
-          <Card className="lg:col-span-2 border-steel/40 bg-gunmetal">
-            <CardHeader>
-              <CardTitle>ACTIVE OFFICERS</CardTitle>
-              <CardDescription>
-                Coaches currently on duty and leading squads.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="overflow-x-auto">
-              <table className="w-full min-w-[520px] border-collapse text-sm">
-                <thead>
-                  <tr className="border-b border-steel/30 text-left text-xs uppercase tracking-wide text-muted-text">
-                    <th className="px-4 py-3">Email</th>
-                    <th className="px-4 py-3">Tier</th>
-                    <th className="px-4 py-3">Last Active</th>
-                    <th className="px-4 py-3">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-steel/20">
-                  {coachRows.map((coach) => (
-                    <tr key={coach.id} className="hover:bg-camo-black/50">
-                      <td className="px-4 py-3 font-medium text-high-vis">
-                        {coach.email}
-                      </td>
-                      <td className="px-4 py-3 text-muted-text">
-                        {coach.tier}
-                      </td>
-                      <td className="px-4 py-3 text-muted-text">
-                        {formatTimestamp(coach.last_active)}
-                      </td>
-                      <td className="px-4 py-3">
-                        <StatusBadge banned={!!coach.banned} />
-                      </td>
-                    </tr>
-                  ))}
-                  {coachRows.length === 0 && (
-                    <tr>
-                      <td
-                        colSpan={4}
-                        className="px-4 py-6 text-center text-muted-text"
-                      >
-                        No officers commissioned yet.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </CardContent>
-          </Card>
-
-          <div className="space-y-6">
-            <Card className="border-steel/40 bg-gradient-to-b from-gunmetal to-camo-black">
-              <CardHeader>
-                <CardTitle>COMMISSION OFFICER</CardTitle>
-                <CardDescription>
-                  Send classified orders via Resend. Invitees will bypass the
-                  Day Zero gauntlet.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <CoachInviteForm
-                  invitedBy={currentUserId}
-                  onInviteCreated={handleInviteCreated}
-                />
-              </CardContent>
-            </Card>
-
-            <Card className="border-steel/40 bg-gunmetal">
-              <CardHeader>
-                <CardTitle>PENDING COMMISSIONS</CardTitle>
-                <CardDescription>
-                  Draft notices awaiting acceptance.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {pendingInvites.length === 0 && (
-                  <p className="text-sm text-muted-text">
-                    No pending invitations. Issue a draft to fill the ranks.
-                  </p>
-                )}
-                {pendingInvites.map((invite) => (
-                  <div
-                    key={invite.id}
-                    className="flex items-center justify-between rounded-sm border border-steel/30 bg-camo-black px-3 py-2"
-                  >
-                    <div>
-                      <p className="font-medium text-high-vis">{invite.email}</p>
-                      <p className="text-xs text-muted-text">
-                        Issued {formatTimestamp(invite.created_at)}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2 text-radar-green">
-                      <Sword className="h-4 w-4" />
-                      Awaiting acceptance
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </div>
+          <CoachTable coaches={coachRows} />
+          <InviteList
+            currentUserId={currentUserId}
+            pendingInvites={pendingInvites}
+            onInviteCreated={handleInviteCreated}
+          />
         </div>
       )}
     </div>
   );
-}
-
-function StatusBadge({ banned }: { banned: boolean }) {
-  return (
-    <span
-      className={`inline-flex items-center gap-2 rounded-sm px-2 py-1 text-xs font-semibold uppercase ${
-        banned
-          ? "border border-tactical-red/40 bg-tactical-red/10 text-tactical-red"
-          : "border border-radar-green/30 bg-radar-green/10 text-radar-green"
-      }`}
-    >
-      {banned ? "Dishonorable" : "Active"}
-    </span>
-  );
-}
-
-function formatTimestamp(value: string | null) {
-  if (!value) return "—";
-  const date = new Date(value);
-  return date.toLocaleString(undefined, {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 }
 
 function IntelCard({
