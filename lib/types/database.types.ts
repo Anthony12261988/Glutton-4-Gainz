@@ -239,6 +239,7 @@ export type Database = {
           date_of_birth: string | null;
           gender: "male" | "female" | "other" | "prefer_not_to_say" | null;
           dossier_complete: boolean;
+          intro_video_watched: boolean;
         };
         Insert: {
           avatar_url?: string | null;
@@ -276,6 +277,7 @@ export type Database = {
           date_of_birth?: string | null;
           gender?: "male" | "female" | "other" | "prefer_not_to_say" | null;
           dossier_complete?: boolean;
+          intro_video_watched?: boolean;
         };
         Update: {
           avatar_url?: string | null;
@@ -313,6 +315,7 @@ export type Database = {
           date_of_birth?: string | null;
           gender?: "male" | "female" | "other" | "prefer_not_to_say" | null;
           dossier_complete?: boolean;
+          intro_video_watched?: boolean;
         };
         Relationships: [
           {
