@@ -4,20 +4,23 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Crosshair, Utensils, BarChart3, Shield } from "lucide-react";
+import { Crosshair, Utensils, BarChart3, Shield, Dumbbell } from "lucide-react";
 
 interface NavItem {
   href: string;
   label: string;
   icon: React.ReactNode;
   coachOnly?: boolean;
+  hideForCoach?: boolean;
 }
 
-const navItems: NavItem[] = [
+// Items for regular users
+const userNavItems: NavItem[] = [
   {
     href: "/dashboard",
     label: "Missions",
     icon: <Crosshair className="h-5 w-5" />,
+    hideForCoach: true,
   },
   {
     href: "/rations",
@@ -25,9 +28,15 @@ const navItems: NavItem[] = [
     icon: <Utensils className="h-5 w-5" />,
   },
   {
+    href: "/library",
+    label: "Library",
+    icon: <Dumbbell className="h-5 w-5" />,
+  },
+  {
     href: "/stats",
     label: "Intel",
     icon: <BarChart3 className="h-5 w-5" />,
+    hideForCoach: true,
   },
   {
     href: "/profile",
@@ -53,7 +62,19 @@ export interface MobileNavProps {
 export function MobileNav({ className, isCoach = false }: MobileNavProps) {
   const pathname = usePathname();
 
-  const displayItems = isCoach ? [...navItems, ...coachNavItems] : navItems;
+  // Build navigation based on role
+  let displayItems: NavItem[];
+
+  if (isCoach) {
+    // Coaches see: Barracks first, then Library, Rations, Profile (no Missions/Intel)
+    displayItems = [
+      ...coachNavItems,
+      ...userNavItems.filter((item) => !item.hideForCoach),
+    ];
+  } else {
+    // Regular users see standard nav
+    displayItems = userNavItems;
+  }
 
   return (
     <nav
@@ -78,10 +99,7 @@ export function MobileNav({ className, isCoach = false }: MobileNavProps) {
               )}
             >
               <span
-                className={cn(
-                  "transition-transform",
-                  isActive && "scale-110"
-                )}
+                className={cn("transition-transform", isActive && "scale-110")}
               >
                 {item.icon}
               </span>

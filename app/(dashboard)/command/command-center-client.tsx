@@ -5,16 +5,9 @@ import { Button } from "@/components/ui/button";
 import { TroopsTable } from "@/components/features/command/TroopsTable";
 import { CoachTable } from "@/components/features/command/CoachTable";
 import { InviteList } from "@/components/features/command/InviteList";
-import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/database.types";
 import { useToast } from "@/hooks/use-toast";
-import {
-  ShieldPlus,
-  Sword,
-  Users,
-  Radio,
-  Target,
-} from "lucide-react";
+import { ShieldPlus, Sword, Users, Radio, Target } from "lucide-react";
 
 type Profile = Tables<"profiles">;
 type Invite = Tables<"coach_invites">;
@@ -32,7 +25,6 @@ export default function CommandCenterClient({
   coaches,
   invites,
 }: CommandCenterClientProps) {
-  const supabase = createClient();
   const { toast } = useToast();
 
   const [activeTab, setActiveTab] = useState<"troops" | "officers">("troops");
@@ -41,21 +33,33 @@ export default function CommandCenterClient({
   const [inviteRows, setInviteRows] = useState<Invite[]>(invites);
   const [search, setSearch] = useState("");
   const [banLoading, setBanLoading] = useState<string | null>(null);
+  const [assignLoading, setAssignLoading] = useState<string | null>(null);
 
   const pendingInvites = useMemo(
     () => inviteRows.filter((invite) => invite.status === "pending"),
     [inviteRows]
   );
 
+  // Count only regular users (not coaches/admins)
+  const soldierCount = useMemo(
+    () =>
+      troopRows.filter((t) => t.role !== "coach" && t.role !== "admin").length,
+    [troopRows]
+  );
+
   const handleBanToggle = async (id: string, nextBanned: boolean) => {
     setBanLoading(id);
     try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ banned: nextBanned })
-        .eq("id", id);
+      const response = await fetch("/api/admin/ban-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: id, banned: nextBanned }),
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.error || "Failed to update status");
+      }
 
       setTroopRows((prev) =>
         prev.map((troop) =>
@@ -79,6 +83,44 @@ export default function CommandCenterClient({
       });
     } finally {
       setBanLoading(null);
+    }
+  };
+
+  const handleCoachAssign = async (userId: string, coachId: string | null) => {
+    setAssignLoading(userId);
+    try {
+      const response = await fetch("/api/assign-coach", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, coachId }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to assign coach");
+      }
+
+      setTroopRows((prev) =>
+        prev.map((troop) =>
+          troop.id === userId ? { ...troop, coach_id: coachId } : troop
+        )
+      );
+
+      toast({
+        title: coachId ? "Coach assigned" : "Coach unassigned",
+        description: coachId
+          ? "Soldier has been assigned to their new officer."
+          : "Soldier is now unassigned.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Assignment failed",
+        description: error.message || "Could not assign coach.",
+        variant: "destructive",
+      });
+    } finally {
+      setAssignLoading(null);
     }
   };
 
@@ -118,7 +160,7 @@ export default function CommandCenterClient({
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           <IntelCard
             title="Troops enlisted"
-            value={troopRows.length}
+            value={soldierCount}
             icon={<Users className="h-5 w-5 text-radar-green" />}
           />
           <IntelCard
@@ -154,11 +196,14 @@ export default function CommandCenterClient({
       {activeTab === "troops" ? (
         <TroopsTable
           troops={troopRows}
+          coaches={coachRows}
           search={search}
           onSearchChange={setSearch}
           currentUserId={currentUserId}
           onBanToggle={handleBanToggle}
+          onCoachAssign={handleCoachAssign}
           banLoading={banLoading}
+          assignLoading={assignLoading}
         />
       ) : (
         <div className="grid gap-6 lg:grid-cols-3">

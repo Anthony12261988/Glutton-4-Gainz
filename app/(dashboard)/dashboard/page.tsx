@@ -34,7 +34,6 @@ export default async function DashboardPage() {
             We're having trouble loading your profile. Please try refreshing the
             page or contact support if the issue persists.
           </p>
-          {/* Optionally, log the error for debugging: console.error(profileError) */}
         </div>
       </div>
     );
@@ -42,6 +41,11 @@ export default async function DashboardPage() {
 
   if (!profile) {
     redirect("/onboarding");
+  }
+
+  // Coaches should go to barracks, not dashboard
+  if (profile.role === "coach") {
+    redirect("/barracks");
   }
 
   // Fetch Today's Workout

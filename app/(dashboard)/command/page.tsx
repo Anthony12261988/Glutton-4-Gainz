@@ -25,7 +25,7 @@ export default async function CommandCenterPage() {
 
   const { data: troops } = await supabase
     .from("profiles")
-    .select("id, email, tier, role, last_active, banned")
+    .select("id, email, tier, role, last_active, banned, coach_id")
     .order("last_active", { ascending: false });
 
   const { data: coaches } = await supabase

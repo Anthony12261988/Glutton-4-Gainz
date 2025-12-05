@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import CoachDashboard from "./coach-dashboard";
 import { ShieldAlert } from "lucide-react";
+import { CoachProfilePrompt } from "@/components/coach/coach-profile-prompt";
 
 export default async function BarracksPage() {
   const supabase = await createClient();
@@ -14,10 +15,10 @@ export default async function BarracksPage() {
     redirect("/login");
   }
 
-  // Verify Coach or Admin Role
+  // Verify Coach or Admin Role and get full profile
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, avatar_url")
     .eq("id", user.id)
     .single();
 
@@ -38,8 +39,10 @@ export default async function BarracksPage() {
     );
   }
 
+  // Check if profile is incomplete (no avatar for coaches)
+  const isProfileIncomplete = !profile?.avatar_url;
+
   // Fetch Assigned Trainees
-  // Note: RLS should handle filtering, but we can also be explicit
   const { data: trainees } = await supabase
     .from("profiles")
     .select("*")
@@ -47,6 +50,11 @@ export default async function BarracksPage() {
 
   return (
     <div className="container mx-auto px-4 py-6 md:max-w-7xl">
+      {/* Coach Profile Prompt */}
+      {isProfileIncomplete && profile?.role === "coach" && (
+        <CoachProfilePrompt />
+      )}
+
       {/* Header */}
       <div className="mb-8">
         <h1 className="font-heading text-3xl font-bold uppercase tracking-wider text-high-vis">

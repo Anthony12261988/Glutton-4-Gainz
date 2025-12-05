@@ -4,20 +4,30 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Crosshair, Utensils, BarChart3, Shield, Zap } from "lucide-react";
+import {
+  Crosshair,
+  Utensils,
+  BarChart3,
+  Shield,
+  Zap,
+  Dumbbell,
+} from "lucide-react";
 
 interface NavItem {
   href: string;
   label: string;
   icon: React.ReactNode;
   coachOnly?: boolean;
+  hideForCoach?: boolean;
 }
 
-const navItems: NavItem[] = [
+// Items for regular users
+const userNavItems: NavItem[] = [
   {
     href: "/dashboard",
     label: "Missions",
     icon: <Crosshair className="h-5 w-5" />,
+    hideForCoach: true,
   },
   {
     href: "/rations",
@@ -25,9 +35,15 @@ const navItems: NavItem[] = [
     icon: <Utensils className="h-5 w-5" />,
   },
   {
+    href: "/library",
+    label: "Library",
+    icon: <Dumbbell className="h-5 w-5" />,
+  },
+  {
     href: "/stats",
     label: "Intel",
     icon: <BarChart3 className="h-5 w-5" />,
+    hideForCoach: true,
   },
   {
     href: "/profile",
@@ -59,14 +75,31 @@ export interface SidebarProps {
   isAdmin?: boolean;
 }
 
-export function Sidebar({ className, isCoach = false, isAdmin = false }: SidebarProps) {
+export function Sidebar({
+  className,
+  isCoach = false,
+  isAdmin = false,
+}: SidebarProps) {
   const pathname = usePathname();
 
-  const displayItems = [
-    ...navItems,
-    ...(isCoach ? coachNavItems : []),
-    ...(isAdmin ? adminNavItems : []),
-  ];
+  // Build navigation based on role
+  let displayItems: NavItem[] = [];
+
+  if (isCoach) {
+    // Coaches see: Barracks first, then Library, Rations, Profile
+    displayItems = [
+      ...coachNavItems,
+      ...userNavItems.filter((item) => !item.hideForCoach),
+    ];
+  } else {
+    // Regular users see standard nav + barracks if coach
+    displayItems = [...userNavItems];
+  }
+
+  // Admins see everything plus Command
+  if (isAdmin) {
+    displayItems = [...userNavItems, ...coachNavItems, ...adminNavItems];
+  }
 
   return (
     <aside
@@ -107,7 +140,9 @@ export function Sidebar({ className, isCoach = false, isAdmin = false }: Sidebar
                     : "text-steel hover:bg-gunmetal hover:text-high-vis"
                 )}
               >
-                <span className={cn(isActive && "scale-110 transition-transform")}>
+                <span
+                  className={cn(isActive && "scale-110 transition-transform")}
+                >
                   {item.icon}
                 </span>
                 <span className="font-heading text-sm font-bold uppercase tracking-wide">
