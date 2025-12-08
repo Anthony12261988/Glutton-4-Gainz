@@ -83,7 +83,7 @@ export function WorkoutLibraryClient({
   }, [filteredWorkouts]);
 
   return (
-    <div className="space-y-8 pb-24">
+    <div className="space-y-8 pb-20 md:pb-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

@@ -35,50 +35,54 @@ export function WeekCalendar({
   };
 
   return (
-    <div className="flex w-full gap-2 overflow-x-auto pb-2 scrollbar-hide">
-      {days.map((date) => {
-        const dateKey = formatDateKey(date);
-        const isSelected = formatDateKey(selectedDate) === dateKey;
-        const hasMeal = plannedDates.includes(dateKey);
-        const isToday = formatDateKey(new Date()) === dateKey;
+    <div className="relative">
+      <div className="flex w-full gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        {days.map((date) => {
+          const dateKey = formatDateKey(date);
+          const isSelected = formatDateKey(selectedDate) === dateKey;
+          const hasMeal = plannedDates.includes(dateKey);
+          const isToday = formatDateKey(new Date()) === dateKey;
 
-        return (
-          <button
-            key={dateKey}
-            onClick={() => onSelectDate(date)}
-            className={cn(
-              "flex min-w-[60px] flex-col items-center justify-center gap-1 rounded-sm border p-2 transition-all",
-              isSelected
-                ? "border-tactical-red bg-tactical-red/10"
-                : "border-steel bg-gunmetal hover:border-tactical-red/50",
-              isToday && !isSelected && "border-tactical-red/50"
-            )}
-          >
-            <span
+          return (
+            <button
+              key={dateKey}
+              onClick={() => onSelectDate(date)}
               className={cn(
-                "text-[10px] font-bold uppercase tracking-wider",
-                isSelected ? "text-tactical-red" : "text-muted-text"
+                "flex min-w-[48px] sm:min-w-[56px] md:min-w-[64px] flex-col items-center justify-center gap-1 rounded-sm border p-2 transition-all shrink-0",
+                isSelected
+                  ? "border-tactical-red bg-tactical-red/10"
+                  : "border-steel bg-gunmetal hover:border-tactical-red/50",
+                isToday && !isSelected && "border-tactical-red/50"
               )}
             >
-              {date.toLocaleDateString("en-US", { weekday: "short" })}
-            </span>
-            <span
-              className={cn(
-                "font-heading text-xl font-bold",
-                isSelected ? "text-high-vis" : "text-steel"
-              )}
-            >
-              {date.getDate()}
-            </span>
-            <div
-              className={cn(
-                "h-1.5 w-1.5 rounded-full",
-                hasMeal ? "bg-radar-green" : "bg-transparent"
-              )}
-            />
-          </button>
-        );
-      })}
+              <span
+                className={cn(
+                  "text-[10px] sm:text-[11px] font-bold uppercase tracking-wider",
+                  isSelected ? "text-tactical-red" : "text-muted-text"
+                )}
+              >
+                {date.toLocaleDateString("en-US", { weekday: "short" })}
+              </span>
+              <span
+                className={cn(
+                  "font-heading text-lg sm:text-xl font-bold",
+                  isSelected ? "text-high-vis" : "text-steel"
+                )}
+              >
+                {date.getDate()}
+              </span>
+              <div
+                className={cn(
+                  "h-1.5 w-1.5 rounded-full",
+                  hasMeal ? "bg-radar-green" : "bg-transparent"
+                )}
+              />
+            </button>
+          );
+        })}
+      </div>
+      {/* Scroll indicator for mobile */}
+      <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-camo-black to-transparent pointer-events-none sm:hidden" />
     </div>
   );
 }

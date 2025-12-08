@@ -103,7 +103,7 @@ export function MobileNav({ className, isCoach = false }: MobileNavProps) {
               >
                 {item.icon}
               </span>
-              <span className="font-heading text-[10px] font-bold uppercase tracking-wide">
+              <span className="font-heading text-xs font-bold uppercase tracking-wide">
                 {item.label}
               </span>
             </Link>

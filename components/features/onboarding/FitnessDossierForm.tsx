@@ -235,7 +235,7 @@ export function FitnessDossierForm({
               <label className="text-sm font-medium text-steel">
                 Fitness Experience
               </label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {EXPERIENCE_LEVELS.map((level) => (
                   <Button
                     key={level.value}
@@ -260,7 +260,7 @@ export function FitnessDossierForm({
               <label className="text-sm font-medium text-steel">
                 Primary Goal
               </label>
-              <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {FITNESS_GOALS.map((g) => (
                   <Button
                     key={g.value}
@@ -294,13 +294,13 @@ export function FitnessDossierForm({
             <p className="text-sm text-muted-text">
               Select all equipment you have access to:
             </p>
-            <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {EQUIPMENT_OPTIONS.map((item) => (
                 <Button
                   key={item}
                   type="button"
                   variant={equipment.includes(item) ? "default" : "outline"}
-                  className={`h-auto py-2 text-sm ${
+                  className={`h-auto py-3 text-sm min-h-[44px] ${
                     equipment.includes(item)
                       ? "bg-tactical-red"
                       : "border-steel/30"
@@ -402,7 +402,7 @@ export function FitnessDossierForm({
             {/* Gender */}
             <div className="space-y-3">
               <label className="text-sm font-medium text-steel">Gender</label>
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {GENDER_OPTIONS.map((g) => (
                   <Button
                     key={g.value}

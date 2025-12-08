@@ -147,7 +147,7 @@ export default function RationsClient({
   };
 
   return (
-    <div className="space-y-6 pb-24">
+    <div className="space-y-6 pb-20 md:pb-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

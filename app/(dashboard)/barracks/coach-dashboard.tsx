@@ -152,7 +152,7 @@ export default function CoachDashboard({
       </Card>
 
       {/* Message Center */}
-      <Card className="flex h-[600px] flex-col md:col-span-2">
+      <Card className="flex h-[400px] md:h-[600px] lg:h-[700px] flex-col md:col-span-2">
         <CardHeader className="border-b border-steel/20">
           <CardTitle className="flex items-center gap-2">
             <MessageSquare className="h-5 w-5 text-tactical-red" />
@@ -184,7 +184,7 @@ export default function CoachDashboard({
                       >
                         <div
                           className={cn(
-                            "max-w-[80%] rounded-sm p-3 text-sm",
+                            "max-w-[75%] sm:max-w-[70%] md:max-w-[60%] rounded-sm p-3 text-sm",
                             isMe
                               ? "bg-tactical-red text-high-vis"
                               : "bg-gunmetal text-high-vis border border-steel"

@@ -51,7 +51,7 @@ export function AssetManagerClient() {
   };
 
   return (
-    <div className="min-h-screen bg-camo-black pb-24 text-white">
+    <div className="min-h-screen bg-camo-black pb-20 md:pb-8 text-white">
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         <Link
           href="/barracks"

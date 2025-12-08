@@ -246,7 +246,7 @@ export default function StatsClient({
   };
 
   return (
-    <div className="space-y-8 pb-24">
+    <div className="space-y-8 pb-20 md:pb-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -324,7 +324,7 @@ export default function StatsClient({
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2 max-h-[300px] overflow-y-auto">
+              <div className="space-y-2 max-h-[200px] sm:max-h-[250px] md:max-h-[300px] overflow-y-auto">
                 {[...metrics].reverse().map((metric) => (
                   <div
                     key={metric.id}
@@ -460,7 +460,7 @@ export default function StatsClient({
         {logs.length > 0 ? (
           <Card>
             <CardContent className="pt-6">
-              <div className="space-y-2 max-h-[400px] overflow-y-auto">
+              <div className="space-y-2 max-h-[300px] sm:max-h-[350px] md:max-h-[400px] overflow-y-auto">
                 {[...logs].reverse().map((log) => (
                   <div
                     key={log.id}
@@ -481,7 +481,7 @@ export default function StatsClient({
                         {log.duration && <span>{log.duration} min</span>}
                       </div>
                       {log.notes && (
-                        <p className="text-xs text-steel mt-1 truncate max-w-[200px]">
+                        <p className="text-xs text-steel mt-1 truncate max-w-[150px] sm:max-w-[250px] md:max-w-[300px]">
                           {log.notes}
                         </p>
                       )}
