@@ -58,7 +58,7 @@ export function hasTierAccess(
   }
 
   // Tier hierarchy: .223 < .308 < .50 Cal
-  const tierOrder = [".223", ".308", ".50 Cal"];
+  const tierOrder = [".223", ".556", ".762", ".50 Cal"];
   const userTierIndex = tierOrder.indexOf(profile.tier || ".223");
   const requiredTierIndex = tierOrder.indexOf(requiredTier);
 

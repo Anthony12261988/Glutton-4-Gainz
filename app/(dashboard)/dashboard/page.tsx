@@ -43,6 +43,11 @@ export default async function DashboardPage() {
     redirect("/onboarding");
   }
 
+  // Admins should go to command, not dashboard
+  if (profile.role === "admin") {
+    redirect("/command");
+  }
+
   // Coaches should go to barracks, not dashboard
   if (profile.role === "coach") {
     redirect("/barracks");

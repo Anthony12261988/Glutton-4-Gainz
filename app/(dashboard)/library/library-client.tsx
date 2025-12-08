@@ -4,8 +4,15 @@ import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Dumbbell, Play, Clock, Lock, Filter, X } from "lucide-react";
+import { Search, Dumbbell, Play, Clock, Lock, Filter, X, Plus, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 interface Exercise {
   name: string;
@@ -28,10 +35,11 @@ interface WorkoutLibraryClientProps {
   userTier: string;
   tiers: string[];
   isPremium?: boolean; // Admin/Coach override
+  canManageContent?: boolean; // Can create/edit workouts
 }
 
 // Tier hierarchy for access control
-const TIER_ORDER = [".223", ".308", ".50 Cal"];
+const TIER_ORDER = [".223", ".556", ".762", ".50 Cal"];
 
 function canAccessTier(
   userTier: string,
@@ -52,10 +60,12 @@ export function WorkoutLibraryClient({
   userTier,
   tiers,
   isPremium = false,
+  canManageContent = false,
 }: WorkoutLibraryClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null);
 
   const filteredWorkouts = useMemo(() => {
     return workouts.filter((workout) => {
@@ -94,8 +104,17 @@ export function WorkoutLibraryClient({
             Browse all available missions
           </p>
         </div>
-        <div className="rounded-sm border border-tactical-red bg-tactical-red/10 p-2">
-          <Dumbbell className="h-6 w-6 text-tactical-red" />
+        <div className="flex items-center gap-3">
+          {canManageContent && (
+            <Link href="/barracks/content/workouts/new">
+              <Button className="bg-tactical-red hover:bg-red-700">
+                <Plus className="mr-2 h-4 w-4" /> New Workout
+              </Button>
+            </Link>
+          )}
+          <div className="rounded-sm border border-tactical-red bg-tactical-red/10 p-2">
+            <Dumbbell className="h-6 w-6 text-tactical-red" />
+          </div>
         </div>
       </div>
 
@@ -198,6 +217,7 @@ export function WorkoutLibraryClient({
                       ? "hover:border-tactical-red/50 cursor-pointer"
                       : "opacity-60"
                   }`}
+                  onClick={() => canAccess && setSelectedWorkout(workout)}
                 >
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between">
@@ -285,6 +305,109 @@ export function WorkoutLibraryClient({
           </CardContent>
         </Card>
       )}
+
+      {/* Workout Details Modal */}
+      <Dialog open={!!selectedWorkout} onOpenChange={(open) => !open && setSelectedWorkout(null)}>
+        <DialogContent className="bg-gunmetal border-steel/20 max-w-2xl max-h-[90vh] overflow-y-auto">
+          {selectedWorkout && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="rounded-sm bg-tactical-red/20 px-2 py-0.5 text-xs font-bold text-tactical-red">
+                    {selectedWorkout.tier}
+                  </span>
+                  <span className="text-xs text-muted-text flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    {new Date(selectedWorkout.scheduled_date).toLocaleDateString()}
+                  </span>
+                </div>
+                <DialogTitle className="font-heading text-2xl text-high-vis">
+                  {selectedWorkout.title}
+                </DialogTitle>
+                {selectedWorkout.description && (
+                  <DialogDescription className="text-steel">
+                    {selectedWorkout.description}
+                  </DialogDescription>
+                )}
+              </DialogHeader>
+
+              {/* Video Section */}
+              {selectedWorkout.video_url && (
+                <div className="mt-4">
+                  <h4 className="font-heading text-sm font-bold uppercase text-muted-text mb-2">
+                    VIDEO DEMONSTRATION
+                  </h4>
+                  <a
+                    href={selectedWorkout.video_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 rounded-sm border border-tactical-red/30 bg-tactical-red/10 p-4 text-tactical-red hover:bg-tactical-red/20 transition-colors"
+                  >
+                    <Play className="h-6 w-6" />
+                    <span className="font-bold">Watch Workout Video</span>
+                    <ExternalLink className="h-4 w-4 ml-auto" />
+                  </a>
+                </div>
+              )}
+
+              {/* Exercises Section */}
+              {Array.isArray(selectedWorkout.sets_reps) && selectedWorkout.sets_reps.length > 0 && (
+                <div className="mt-6">
+                  <h4 className="font-heading text-sm font-bold uppercase text-muted-text mb-3">
+                    EXERCISES ({selectedWorkout.sets_reps.length})
+                  </h4>
+                  <div className="space-y-2">
+                    {selectedWorkout.sets_reps.map((exercise: Exercise, idx: number) => (
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between rounded-sm border border-steel/20 bg-camo-black p-3"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="flex h-8 w-8 items-center justify-center rounded-sm bg-tactical-red/20 text-sm font-bold text-tactical-red">
+                            {idx + 1}
+                          </span>
+                          <span className="font-medium text-white">
+                            {exercise.name || exercise.exercise}
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-sm font-bold text-high-vis">
+                            {exercise.sets}×{exercise.reps}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="mt-6 flex gap-3">
+                {selectedWorkout.video_url && (
+                  <a
+                    href={selectedWorkout.video_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1"
+                  >
+                    <Button className="w-full bg-tactical-red hover:bg-red-700">
+                      <Play className="mr-2 h-4 w-4" />
+                      Start Workout
+                    </Button>
+                  </a>
+                )}
+                <Button
+                  variant="outline"
+                  className="border-steel/30"
+                  onClick={() => setSelectedWorkout(null)}
+                >
+                  Close
+                </Button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

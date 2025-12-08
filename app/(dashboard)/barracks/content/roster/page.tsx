@@ -38,7 +38,8 @@ export default async function RosterPage() {
     .eq("id", user.id)
     .single();
 
-  if (!profile || profile.role !== "coach") {
+  const isCoachOrAdmin = profile?.role === "coach" || profile?.role === "admin";
+  if (!profile || !isCoachOrAdmin) {
     redirect("/dashboard");
   }
 

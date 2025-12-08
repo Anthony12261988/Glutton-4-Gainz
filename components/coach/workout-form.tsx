@@ -78,7 +78,12 @@ export function WorkoutForm({
           .eq("id", initialData.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("workouts").insert([formData]);
+        // Get current user for created_by
+        const { data: { user } } = await supabase.auth.getUser();
+        const { error } = await supabase.from("workouts").insert([{
+          ...formData,
+          created_by: user?.id
+        }]);
         if (error) throw error;
       }
 

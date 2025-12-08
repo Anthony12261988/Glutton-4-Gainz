@@ -15,14 +15,15 @@ export default async function WorkoutManagerPage() {
 
   if (!user) redirect("/login");
 
-  // Verify Coach Role
+  // Verify Coach or Admin Role
   const { data: profile } = await supabase
     .from("profiles")
     .select("role")
     .eq("id", user.id)
     .single();
 
-  if (profile?.role !== "coach") redirect("/dashboard");
+  const isCoachOrAdmin = profile?.role === "coach" || profile?.role === "admin";
+  if (!isCoachOrAdmin) redirect("/dashboard");
 
   const { data: workouts } = await supabase
     .from("workouts")

@@ -70,7 +70,12 @@ export function RecipeForm({
           .eq("id", initialData.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("recipes").insert([recipeData]);
+        // Get current user for created_by
+        const { data: { user } } = await supabase.auth.getUser();
+        const { error } = await supabase.from("recipes").insert([{
+          ...recipeData,
+          created_by: user?.id
+        }]);
         if (error) throw error;
       }
 

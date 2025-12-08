@@ -6,8 +6,9 @@ import SpyModeProfile from "./spy-mode-profile";
 export default async function SpyModePage({
   params,
 }: {
-  params: { userId: string };
+  params: Promise<{ userId: string }>;
 }) {
+  const { userId } = await params;
   const cookieStore = await cookies();
 
   const supabase = createServerClient(
@@ -36,14 +37,15 @@ export default async function SpyModePage({
     redirect("/login");
   }
 
-  // Verify coach
+  // Verify coach or admin
   const { data: coachProfile } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", user.id)
     .single();
 
-  if (!coachProfile || coachProfile.role !== "coach") {
+  const isCoachOrAdmin = coachProfile?.role === "coach" || coachProfile?.role === "admin";
+  if (!coachProfile || !isCoachOrAdmin) {
     redirect("/dashboard");
   }
 
@@ -51,7 +53,7 @@ export default async function SpyModePage({
   const { data: soldierProfile, error } = await supabase
     .from("profiles")
     .select("*")
-    .eq("id", params.userId)
+    .eq("id", userId)
     .single();
 
   if (error || !soldierProfile) {
@@ -62,14 +64,14 @@ export default async function SpyModePage({
   const { data: logs } = await supabase
     .from("user_logs")
     .select("*")
-    .eq("user_id", params.userId)
+    .eq("user_id", userId)
     .order("date", { ascending: false })
     .limit(10);
 
   const { data: badges } = await supabase
     .from("user_badges")
     .select("*")
-    .eq("user_id", params.userId)
+    .eq("user_id", userId)
     .order("earned_at", { ascending: false });
 
   return (

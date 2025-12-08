@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Crosshair, Utensils, BarChart3, Shield, Dumbbell } from "lucide-react";
+import { Crosshair, Utensils, BarChart3, Shield, Dumbbell, Zap } from "lucide-react";
 
 interface NavItem {
   href: string;
@@ -54,18 +54,45 @@ const coachNavItems: NavItem[] = [
   },
 ];
 
+const adminNavItems: NavItem[] = [
+  {
+    href: "/command",
+    label: "Command",
+    icon: <Zap className="h-5 w-5" />,
+  },
+  {
+    href: "/barracks",
+    label: "Barracks",
+    icon: <Shield className="h-5 w-5" />,
+  },
+  {
+    href: "/library",
+    label: "Library",
+    icon: <Dumbbell className="h-5 w-5" />,
+  },
+  {
+    href: "/rations",
+    label: "Rations",
+    icon: <Utensils className="h-5 w-5" />,
+  },
+];
+
 export interface MobileNavProps {
   className?: string;
   isCoach?: boolean;
+  isAdmin?: boolean;
 }
 
-export function MobileNav({ className, isCoach = false }: MobileNavProps) {
+export function MobileNav({ className, isCoach = false, isAdmin = false }: MobileNavProps) {
   const pathname = usePathname();
 
   // Build navigation based on role
   let displayItems: NavItem[];
 
-  if (isCoach) {
+  if (isAdmin) {
+    // Admins see admin-specific navigation
+    displayItems = adminNavItems;
+  } else if (isCoach) {
     // Coaches see: Barracks first, then Library, Rations, Profile (no Missions/Intel)
     displayItems = [
       ...coachNavItems,

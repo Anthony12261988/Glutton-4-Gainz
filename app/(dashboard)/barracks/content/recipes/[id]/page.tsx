@@ -7,8 +7,9 @@ import { redirect } from "next/navigation";
 export default async function EditRecipePage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const supabase = await createClient();
 
   const {
@@ -25,14 +26,15 @@ export default async function EditRecipePage({
     .eq("id", user.id)
     .single();
 
-  if (profile?.role !== "coach") {
+  const isCoachOrAdmin = profile?.role === "coach" || profile?.role === "admin";
+  if (!isCoachOrAdmin) {
     redirect("/dashboard");
   }
 
   const { data: recipe } = await supabase
     .from("recipes")
     .select("*")
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
 
   if (!recipe) {

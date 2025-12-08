@@ -17,8 +17,11 @@ import {
   Beef,
   Wheat,
   Droplet,
+  Plus,
+  ChefHat,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface MealPlan {
   id: string;
@@ -110,24 +113,32 @@ export default function RationsClient({
   const handleAssignMeal = async (recipe: Recipe) => {
     setLoading(true);
     try {
-      // If there's already a meal plan for this date, we update it (or delete and insert, but upsert is better)
-      // The unique constraint is on (user_id, assigned_date)
+      // Check if there's already a meal plan for this date
+      const { data: existingPlan } = await supabase
+        .from("meal_plans")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("assigned_date", selectedDateKey)
+        .single();
 
-      // First, check if we need to delete an existing one (if we want to toggle off)
-      // But for now, let's assume clicking a recipe replaces the current one for that day.
+      if (existingPlan) {
+        // Update existing meal plan
+        const { error } = await supabase
+          .from("meal_plans")
+          .update({ recipe_id: recipe.id })
+          .eq("id", existingPlan.id);
 
-      const { error } = await supabase.from("meal_plans").upsert(
-        {
+        if (error) throw error;
+      } else {
+        // Insert new meal plan
+        const { error } = await supabase.from("meal_plans").insert({
           user_id: user.id,
           recipe_id: recipe.id,
           assigned_date: selectedDateKey,
-        },
-        {
-          onConflict: "user_id, assigned_date",
-        }
-      );
+        });
 
-      if (error) throw error;
+        if (error) throw error;
+      }
 
       toast({
         title: "RATIONS ASSIGNED",
@@ -136,9 +147,10 @@ export default function RationsClient({
 
       router.refresh();
     } catch (error: any) {
+      console.error("Meal plan error:", error);
       toast({
         title: "OPERATION FAILED",
-        description: error.message,
+        description: error.message || "Failed to assign meal plan",
         variant: "destructive",
       });
     } finally {
@@ -261,16 +273,42 @@ export default function RationsClient({
         )}
 
         {filteredRecipes.length === 0 ? (
-          <div className="rounded-sm border border-tactical-red bg-gunmetal p-6 text-center">
-            <p className="text-high-vis">NO RECIPES FOUND</p>
-            <p className="text-sm text-muted-text">
-              {searchQuery || activeFilter
-                ? "Try adjusting your search or filters."
-                : "HQ hasn't uploaded the menu yet."}
+          <div className="rounded-sm border-2 border-dashed border-steel/30 bg-gunmetal/50 p-8 text-center">
+            <ChefHat className="mx-auto h-12 w-12 text-steel/50 mb-4" />
+            <p className="font-heading text-lg text-high-vis mb-2">
+              NO RECIPES AVAILABLE
             </p>
+            {searchQuery || activeFilter ? (
+              <>
+                <p className="text-sm text-muted-text mb-4">
+                  No recipes match your search criteria.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setActiveFilter(null);
+                  }}
+                  className="border-steel/30"
+                >
+                  <X className="mr-2 h-4 w-4" /> Clear Filters
+                </Button>
+              </>
+            ) : (
+              <>
+                <p className="text-sm text-muted-text mb-2">
+                  The mess hall is currently empty.
+                </p>
+                <p className="text-xs text-steel">
+                  Your coach is preparing the menu. Check back soon for
+                  delicious, mission-ready recipes!
+                </p>
+              </>
+            )}
           </div>
         ) : (
-          <div className="grid gap-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filteredRecipes.map((recipe) => (
               <RecipeCard
                 key={recipe.id}

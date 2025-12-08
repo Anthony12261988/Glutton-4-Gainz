@@ -19,7 +19,8 @@ export default async function BriefingManagerPage() {
     .eq("id", user.id)
     .single();
 
-  if (profile?.role !== "coach") {
+  const isCoachOrAdmin = profile?.role === "coach" || profile?.role === "admin";
+  if (!isCoachOrAdmin) {
     redirect("/dashboard");
   }
 

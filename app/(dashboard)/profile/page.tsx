@@ -69,7 +69,7 @@ export default async function ProfilePage() {
     if (soldiers && soldiers.length > 0) {
       const soldierIds = soldiers.map((s) => s.id);
       const { count } = await supabase
-        .from("workout_logs")
+        .from("user_logs")
         .select("*", { count: "exact", head: true })
         .in("user_id", soldierIds);
 

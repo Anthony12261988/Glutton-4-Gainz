@@ -7,8 +7,9 @@ import { redirect } from "next/navigation";
 export default async function EditWorkoutPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const supabase = await createClient();
 
   const {
@@ -25,14 +26,15 @@ export default async function EditWorkoutPage({
     .eq("id", user.id)
     .single();
 
-  if (profile?.role !== "coach") {
+  const isCoachOrAdmin = profile?.role === "coach" || profile?.role === "admin";
+  if (!isCoachOrAdmin) {
     redirect("/dashboard");
   }
 
   const { data: workout } = await supabase
     .from("workouts")
     .select("*")
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
 
   if (!workout) {

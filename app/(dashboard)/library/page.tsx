@@ -23,6 +23,9 @@ export default async function WorkoutLibraryPage() {
 
   // Check premium access (role-based or tier-based)
   const isPremium = hasPremiumAccess(profile);
+  
+  // Check if user can manage content (admin or coach)
+  const canManageContent = profile?.role === "admin" || profile?.role === "coach";
 
   // Fetch all workouts
   const { data: workouts } = await supabase
@@ -40,6 +43,7 @@ export default async function WorkoutLibraryPage() {
         userTier={profile?.tier || ".223"}
         tiers={tiers}
         isPremium={isPremium}
+        canManageContent={canManageContent}
       />
     </div>
   );

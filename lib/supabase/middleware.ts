@@ -74,7 +74,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Coach only routes
+  // Coach and Admin only routes
   if (user && request.nextUrl.pathname.startsWith("/barracks")) {
     // We need to check the user's role.
     // Since we can't easily access the DB here without potentially slowing down every request,
@@ -90,9 +90,10 @@ export async function updateSession(request: NextRequest) {
       .eq("id", user.id)
       .single();
 
-    if (profile?.role !== "coach") {
+    // Allow both coaches and admins to access barracks
+    if (profile?.role !== "coach" && profile?.role !== "admin") {
       const url = request.nextUrl.clone();
-      url.pathname = "/dashboard"; // Redirect non-coaches to dashboard
+      url.pathname = "/dashboard"; // Redirect non-coaches/non-admins to dashboard
       return NextResponse.redirect(url);
     }
   }

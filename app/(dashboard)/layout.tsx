@@ -42,7 +42,7 @@ export default async function DashboardLayout({
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <MobileNav isCoach={isCoach} />
+      <MobileNav isCoach={isCoach} isAdmin={isAdmin} />
     </div>
   );
 }

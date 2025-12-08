@@ -3,8 +3,9 @@
 import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Flame, Beef, Wheat, Droplet, Plus, Check } from "lucide-react";
+import { Flame, Beef, Wheat, Droplet, Plus, Check, ChefHat } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export interface Recipe {
   id: string;
@@ -21,9 +22,10 @@ interface RecipeCardProps {
   recipe: Recipe;
   isSelected?: boolean;
   onSelect?: (recipe: Recipe) => void;
+  showImage?: boolean;
 }
 
-export function RecipeCard({ recipe, isSelected, onSelect }: RecipeCardProps) {
+export function RecipeCard({ recipe, isSelected, onSelect, showImage = true }: RecipeCardProps) {
   return (
     <Card
       className={cn(
@@ -31,25 +33,46 @@ export function RecipeCard({ recipe, isSelected, onSelect }: RecipeCardProps) {
         isSelected && "border-tactical-red ring-1 ring-tactical-red"
       )}
     >
+      {/* Recipe Image */}
+      {showImage && (
+        <div className="relative h-40 w-full bg-gunmetal">
+          {recipe.image_url ? (
+            <Image
+              src={recipe.image_url}
+              alt={recipe.title}
+              fill
+              className="object-cover"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center">
+              <ChefHat className="h-12 w-12 text-steel/30" />
+            </div>
+          )}
+        </div>
+      )}
+      
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between">
-          <CardTitle className="text-lg">{recipe.title}</CardTitle>
+          <CardTitle className="text-lg line-clamp-2">{recipe.title}</CardTitle>
           {onSelect && (
             <Button
               size="sm"
               variant={isSelected ? "default" : "outline"}
               className={cn(
-                "h-8 w-8 p-0",
+                "h-10 w-10 p-0 flex-shrink-0 ml-2",
                 isSelected
-                  ? "bg-tactical-red text-high-vis"
-                  : "text-tactical-red"
+                  ? "bg-tactical-red text-high-vis hover:bg-tactical-red/80"
+                  : "text-tactical-red border-tactical-red hover:bg-tactical-red/20"
               )}
-              onClick={() => onSelect(recipe)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect(recipe);
+              }}
             >
               {isSelected ? (
-                <Check className="h-4 w-4" />
+                <Check className="h-5 w-5" />
               ) : (
-                <Plus className="h-4 w-4" />
+                <Plus className="h-5 w-5" />
               )}
             </Button>
           )}

@@ -11,6 +11,7 @@ import {
   Shield,
   Zap,
   Dumbbell,
+  LogOut,
 } from "lucide-react";
 
 interface NavItem {
@@ -67,6 +68,21 @@ const adminNavItems: NavItem[] = [
     label: "Command",
     icon: <Zap className="h-5 w-5" />,
   },
+  {
+    href: "/barracks",
+    label: "Barracks",
+    icon: <Shield className="h-5 w-5" />,
+  },
+  {
+    href: "/library",
+    label: "Library",
+    icon: <Dumbbell className="h-5 w-5" />,
+  },
+  {
+    href: "/rations",
+    label: "Rations",
+    icon: <Utensils className="h-5 w-5" />,
+  },
 ];
 
 export interface SidebarProps {
@@ -85,20 +101,18 @@ export function Sidebar({
   // Build navigation based on role
   let displayItems: NavItem[] = [];
 
-  if (isCoach) {
+  if (isAdmin) {
+    // Admins see only admin-specific navigation (Command is their main page)
+    displayItems = [...adminNavItems];
+  } else if (isCoach) {
     // Coaches see: Barracks first, then Library, Rations, Profile
     displayItems = [
       ...coachNavItems,
       ...userNavItems.filter((item) => !item.hideForCoach),
     ];
   } else {
-    // Regular users see standard nav + barracks if coach
+    // Regular users see standard nav
     displayItems = [...userNavItems];
-  }
-
-  // Admins see everything plus Command
-  if (isAdmin) {
-    displayItems = [...userNavItems, ...coachNavItems, ...adminNavItems];
   }
 
   return (
@@ -111,7 +125,7 @@ export function Sidebar({
       <div className="flex h-full flex-col">
         {/* Logo / Branding */}
         <div className="border-b border-steel p-6">
-          <Link href="/dashboard" className="flex items-center gap-3">
+          <Link href={isAdmin ? "/command" : isCoach ? "/barracks" : "/dashboard"} className="flex items-center gap-3">
             <div className="rounded-sm bg-tactical-red p-2">
               <Crosshair className="h-6 w-6 text-high-vis" />
             </div>
@@ -158,8 +172,17 @@ export function Sidebar({
           })}
         </nav>
 
-        {/* Footer (Optional) */}
-        <div className="border-t border-steel p-4">
+        {/* Footer with Logout */}
+        <div className="border-t border-steel p-4 space-y-3">
+          <Link
+            href="/auth/signout"
+            className="flex items-center gap-3 rounded-sm px-4 py-3 text-steel hover:bg-tactical-red/10 hover:text-tactical-red transition-all"
+          >
+            <LogOut className="h-5 w-5" />
+            <span className="font-heading text-sm font-bold uppercase tracking-wide">
+              Logout
+            </span>
+          </Link>
           <p className="text-center text-xs text-muted-text">
             © 2025 Glutton4Games
           </p>
