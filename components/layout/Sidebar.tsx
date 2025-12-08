@@ -12,6 +12,7 @@ import {
   Zap,
   Dumbbell,
   LogOut,
+  User,
 } from "lucide-react";
 
 interface NavItem {
@@ -82,6 +83,11 @@ const adminNavItems: NavItem[] = [
     href: "/rations",
     label: "Rations",
     icon: <Utensils className="h-5 w-5" />,
+  },
+  {
+    href: "/settings",
+    label: "Settings",
+    icon: <User className="h-5 w-5" />,
   },
 ];
 

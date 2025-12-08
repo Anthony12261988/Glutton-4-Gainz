@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Crosshair, Utensils, BarChart3, Shield, Dumbbell, Zap } from "lucide-react";
+import { Crosshair, Utensils, BarChart3, Shield, Dumbbell, Zap, User } from "lucide-react";
 
 interface NavItem {
   href: string;
@@ -74,6 +74,11 @@ const adminNavItems: NavItem[] = [
     href: "/rations",
     label: "Rations",
     icon: <Utensils className="h-5 w-5" />,
+  },
+  {
+    href: "/settings",
+    label: "Settings",
+    icon: <User className="h-5 w-5" />,
   },
 ];
 

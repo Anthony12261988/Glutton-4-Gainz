@@ -43,6 +43,7 @@ export async function updateSession(request: NextRequest) {
     "/rations",
     "/barracks",
     "/profile",
+    "/settings",
     "/stats",
   ];
   // Auth routes that signed-in users should NOT access (except onboarding)
