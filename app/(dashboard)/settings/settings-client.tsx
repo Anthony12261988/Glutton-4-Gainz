@@ -18,11 +18,10 @@ import {
   ArrowLeft,
   Loader2,
   Lock,
-  Eye,
-  EyeOff,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { ChangePasswordModal } from "@/components/auth/change-password-modal";
 
 interface SettingsClientProps {
   userId: string;
@@ -35,10 +34,6 @@ export function SettingsClient({ userId, profile }: SettingsClientProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [passwordLoading, setPasswordLoading] = useState(false);
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const isCoach = profile?.role === "coach";
 
@@ -49,12 +44,6 @@ export function SettingsClient({ userId, profile }: SettingsClientProps) {
     specialties: profile?.specialties || "",
     certifications: profile?.certifications || "",
     years_experience: profile?.years_experience || "",
-  });
-
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
   });
 
   const [previewUrl, setPreviewUrl] = useState(profile?.avatar_url || "");
@@ -166,68 +155,6 @@ export function SettingsClient({ userId, profile }: SettingsClientProps) {
     }
   };
 
-  const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Validation
-    if (!passwordData.newPassword || !passwordData.confirmPassword) {
-      toast({
-        title: "VALIDATION ERROR",
-        description: "Please fill in all password fields",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (passwordData.newPassword.length < 6) {
-      toast({
-        title: "PASSWORD TOO SHORT",
-        description: "Password must be at least 6 characters",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      toast({
-        title: "PASSWORDS DON'T MATCH",
-        description: "New password and confirmation must match",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setPasswordLoading(true);
-
-    try {
-      const { error } = await supabase.auth.updateUser({
-        password: passwordData.newPassword,
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: "PASSWORD UPDATED",
-        description: "Your password has been changed successfully",
-      });
-
-      // Clear password fields
-      setPasswordData({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
-    } catch (error: any) {
-      toast({
-        title: "PASSWORD UPDATE FAILED",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setPasswordLoading(false);
-    }
-  };
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -335,7 +262,7 @@ export function SettingsClient({ userId, profile }: SettingsClientProps) {
         </Card>
       </form>
 
-      {/* Change Password - Separate form */}
+      {/* Change Password - Using Modal */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -344,80 +271,10 @@ export function SettingsClient({ userId, profile }: SettingsClientProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handlePasswordChange} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="newPassword">New Password</Label>
-              <div className="relative">
-                <Input
-                  id="newPassword"
-                  type={showNewPassword ? "text" : "password"}
-                  value={passwordData.newPassword}
-                  onChange={(e) =>
-                    setPasswordData({ ...passwordData, newPassword: e.target.value })
-                  }
-                  placeholder="Enter new password"
-                  className="bg-gunmetal border-steel/30 pr-10"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowNewPassword(!showNewPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-steel hover:text-white"
-                >
-                  {showNewPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-              <p className="text-xs text-steel">Minimum 6 characters</p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm New Password</Label>
-              <div className="relative">
-                <Input
-                  id="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  value={passwordData.confirmPassword}
-                  onChange={(e) =>
-                    setPasswordData({ ...passwordData, confirmPassword: e.target.value })
-                  }
-                  placeholder="Confirm new password"
-                  className="bg-gunmetal border-steel/30 pr-10"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-steel hover:text-white"
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <Button
-              type="submit"
-              disabled={passwordLoading || !passwordData.newPassword || !passwordData.confirmPassword}
-              className="w-full bg-tactical-red hover:bg-red-700"
-            >
-              {passwordLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Updating Password...
-                </>
-              ) : (
-                <>
-                  <Lock className="mr-2 h-4 w-4" />
-                  Update Password
-                </>
-              )}
-            </Button>
-          </form>
+          <p className="text-sm text-steel mb-4">
+            Update your account password for security.
+          </p>
+          <ChangePasswordModal />
         </CardContent>
       </Card>
 
