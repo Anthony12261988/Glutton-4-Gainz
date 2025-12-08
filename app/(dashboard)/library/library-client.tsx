@@ -367,7 +367,7 @@ export function WorkoutLibraryClient({
                             {idx + 1}
                           </span>
                           <span className="font-medium text-white">
-                            {exercise.name || exercise.exercise}
+                            {exercise.name}
                           </span>
                         </div>
                         <div className="text-right">
