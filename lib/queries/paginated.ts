@@ -62,14 +62,12 @@ export async function getPaginatedRoster(
   let query = supabase
     .from("profiles")
     .select("*", { count: "exact" })
-    .neq("id", coachId) // Exclude coach themselves
-    .order("full_name", { ascending: true });
+    .eq("coach_id", coachId) // Only get soldiers assigned to this coach
+    .order("email", { ascending: true });
 
   // Apply search filter if provided
   if (searchQuery && searchQuery.trim()) {
-    query = query.or(
-      `full_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`
-    );
+    query = query.ilike("email", `%${searchQuery}%`);
   }
 
   // Get total count
@@ -81,13 +79,11 @@ export async function getPaginatedRoster(
   query = supabase
     .from("profiles")
     .select("*")
-    .neq("id", coachId)
-    .order("full_name", { ascending: true });
+    .eq("coach_id", coachId)
+    .order("email", { ascending: true });
 
   if (searchQuery && searchQuery.trim()) {
-    query = query.or(
-      `full_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`
-    );
+    query = query.ilike("email", `%${searchQuery}%`);
   }
 
   const { data, error } = await query.range(offset, offset + pageSize - 1);
@@ -188,7 +184,6 @@ export async function getPaginatedBuddies(
       *,
       user1:user1_id (
         id,
-        full_name,
         email,
         tier,
         role,
@@ -197,7 +192,6 @@ export async function getPaginatedBuddies(
       ),
       user2:user2_id (
         id,
-        full_name,
         email,
         tier,
         role,

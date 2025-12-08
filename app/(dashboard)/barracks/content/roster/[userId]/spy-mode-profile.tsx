@@ -61,18 +61,20 @@ export default function SpyModeProfile({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="text-xs text-steel/60 uppercase tracking-wide mb-1">
-                Full Name
+                Email
               </p>
-              <p className="text-lg font-bold text-white">{soldier.full_name}</p>
+              <p className="text-lg font-bold text-white flex items-center gap-2">
+                <Mail className="h-4 w-4" />
+                {soldier.email}
+              </p>
             </div>
 
             <div>
               <p className="text-xs text-steel/60 uppercase tracking-wide mb-1">
-                Email
+                User ID
               </p>
-              <p className="text-sm text-steel flex items-center gap-2">
-                <Mail className="h-4 w-4" />
-                {soldier.email}
+              <p className="text-sm text-steel font-mono">
+                {soldier.id?.slice(0, 8)}...
               </p>
             </div>
 

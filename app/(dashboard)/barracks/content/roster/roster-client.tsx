@@ -97,10 +97,11 @@ export default function RosterClient({ coachId }: RosterClientProps) {
       {/* Loading State */}
       {loading && <TableSkeleton rows={10} columns={5} />}
 
-      {/* Roster Table */}
+      {/* Roster Table - Desktop */}
       {!loading && soldiers && soldiers.length > 0 && (
         <div className="rounded-sm border border-steel/20 bg-gunmetal overflow-hidden">
-          <div className="overflow-x-auto">
+          {/* Desktop Table View */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gunmetal-light border-b border-steel/20">
                 <tr>
@@ -135,8 +136,8 @@ export default function RosterClient({ coachId }: RosterClientProps) {
                   >
                     <td className="p-4">
                       <div>
-                        <p className="font-medium text-white">{soldier.full_name}</p>
-                        <p className="text-xs text-steel/60">{soldier.email}</p>
+                        <p className="font-medium text-white">{soldier.email}</p>
+                        <p className="text-xs text-steel/60">Role: {soldier.role}</p>
                       </div>
                     </td>
                     <td className="p-4">
@@ -186,6 +187,54 @@ export default function RosterClient({ coachId }: RosterClientProps) {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="md:hidden divide-y divide-steel/20">
+            {soldiers.map((soldier: any) => (
+              <div key={soldier.id} className="p-4 space-y-3">
+                {/* Header */}
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <p className="font-medium text-white">{soldier.email}</p>
+                    <p className="text-xs text-steel/60">Role: {soldier.role}</p>
+                  </div>
+                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-sm bg-tactical-red/10 border border-tactical-red/20 text-xs font-bold text-tactical-red">
+                    <TrendingUp className="h-3 w-3" />
+                    {soldier.tier}
+                  </span>
+                </div>
+
+                {/* Stats Grid */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="text-center">
+                    <Flame className="h-4 w-4 text-orange-500 mx-auto mb-1" />
+                    <p className="font-bold text-white text-sm">{soldier.current_streak || 0}</p>
+                    <p className="text-[10px] text-steel">Streak</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="font-bold text-white text-sm">{soldier.workout_count || 0}</p>
+                    <p className="text-[10px] text-steel">Workouts</p>
+                  </div>
+                  <div className="text-center">
+                    <Award className="h-4 w-4 text-radar-green mx-auto mb-1" />
+                    <p className="font-bold text-white text-sm">{soldier.xp || 0}</p>
+                    <p className="text-[10px] text-steel">XP</p>
+                  </div>
+                </div>
+
+                {/* Action Button */}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleViewProfile(soldier.id)}
+                  className="w-full border-tactical-red text-tactical-red hover:bg-tactical-red hover:text-white min-h-[44px]"
+                >
+                  <Eye className="h-4 w-4 mr-2" />
+                  View Profile
+                </Button>
+              </div>
+            ))}
           </div>
 
           {/* Pagination */}

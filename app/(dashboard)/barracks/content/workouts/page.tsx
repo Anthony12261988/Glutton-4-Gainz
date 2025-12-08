@@ -30,9 +30,9 @@ export default async function WorkoutManagerPage() {
     .order("scheduled_date", { ascending: false });
 
   return (
-    <div className="min-h-screen bg-camo-black pb-24 text-white">
+    <div className="min-h-screen bg-camo-black pb-20 md:pb-8 text-white">
       <div className="container mx-auto px-4 py-6">
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <Link
               href="/barracks"
@@ -45,8 +45,8 @@ export default async function WorkoutManagerPage() {
             </h1>
             <p className="text-steel">Manage daily missions and workouts</p>
           </div>
-          <Link href="/barracks/content/workouts/new">
-            <Button className="bg-tactical-red hover:bg-red-700">
+          <Link href="/barracks/content/workouts/new" className="w-full sm:w-auto">
+            <Button className="bg-tactical-red hover:bg-red-700 w-full sm:w-auto min-h-[44px]">
               <Plus className="mr-2 h-4 w-4" /> New Mission
             </Button>
           </Link>
@@ -55,13 +55,13 @@ export default async function WorkoutManagerPage() {
         <div className="grid gap-4">
           {workouts?.map((workout) => (
             <Card key={workout.id} className="border-steel/20 bg-gunmetal">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2">
                 <CardTitle className="text-lg font-bold text-white">
                   {workout.title}
                 </CardTitle>
-                <div className="flex gap-2">
+                <div className="flex gap-2 justify-end sm:justify-start">
                   <Link href={`/barracks/content/workouts/${workout.id}`}>
-                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                    <Button size="sm" variant="ghost" className="h-9 w-9 p-0 min-h-[44px] min-w-[44px]">
                       <Edit className="h-4 w-4 text-steel" />
                     </Button>
                   </Link>
@@ -73,7 +73,7 @@ export default async function WorkoutManagerPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="flex justify-between text-sm text-steel">
+                <div className="flex flex-col sm:flex-row sm:justify-between gap-2 text-sm text-steel">
                   <span>Tier: {workout.tier}</span>
                   <span>
                     Date:{" "}

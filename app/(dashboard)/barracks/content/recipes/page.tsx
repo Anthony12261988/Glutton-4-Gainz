@@ -31,9 +31,9 @@ export default async function RecipeManagerPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="min-h-screen bg-camo-black pb-24 text-white">
+    <div className="min-h-screen bg-camo-black pb-20 md:pb-8 text-white">
       <div className="container mx-auto px-4 py-6">
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <Link
               href="/barracks"
@@ -46,14 +46,14 @@ export default async function RecipeManagerPage() {
             </h1>
             <p className="text-steel">Manage recipes and rations</p>
           </div>
-          <Link href="/barracks/content/recipes/new">
-            <Button className="bg-tactical-red hover:bg-red-700">
+          <Link href="/barracks/content/recipes/new" className="w-full sm:w-auto">
+            <Button className="bg-tactical-red hover:bg-red-700 w-full sm:w-auto min-h-[44px]">
               <Plus className="mr-2 h-4 w-4" /> New Recipe
             </Button>
           </Link>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {recipes?.map((recipe) => (
             <Card
               key={recipe.id}
@@ -90,7 +90,7 @@ export default async function RecipeManagerPage() {
                   >
                     <Button
                       variant="outline"
-                      className="w-full border-steel/30 hover:bg-steel/20 text-white"
+                      className="w-full border-steel/30 hover:bg-steel/20 text-white min-h-[44px]"
                     >
                       <Edit className="mr-2 h-4 w-4" /> Edit
                     </Button>

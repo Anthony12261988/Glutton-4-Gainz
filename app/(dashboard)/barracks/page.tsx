@@ -48,8 +48,30 @@ export default async function BarracksPage() {
     .select("*")
     .eq("coach_id", user.id);
 
+  // Calculate squad stats
+  const squadSize = trainees?.length || 0;
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const activeTrainees = trainees?.filter((t) => {
+    const lastActive = new Date(t.last_active);
+    return lastActive >= sevenDaysAgo;
+  }).length || 0;
+
+  // Get total workouts from all squad members
+  let totalSquadWorkouts = 0;
+  if (trainees && trainees.length > 0) {
+    const traineeIds = trainees.map((t) => t.id);
+    const { count } = await supabase
+      .from("workout_logs")
+      .select("*", { count: "exact", head: true })
+      .in("user_id", traineeIds);
+
+    totalSquadWorkouts = count || 0;
+  }
+
   return (
-    <div className="container mx-auto px-4 py-6 md:max-w-7xl">
+    <div className="container mx-auto px-4 py-6 md:max-w-7xl pb-20 md:pb-8">
       {/* Coach Profile Prompt */}
       {isProfileIncomplete && profile?.role === "coach" && (
         <CoachProfilePrompt />
@@ -63,6 +85,25 @@ export default async function BarracksPage() {
         <p className="text-sm text-muted-text">
           Squad Management & Command Center
         </p>
+      </div>
+
+      {/* Squad Stats Overview */}
+      <div className="mb-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="rounded-sm border border-steel/30 bg-gunmetal p-4">
+          <p className="text-xs text-muted-text uppercase tracking-wide mb-2">Squad Size</p>
+          <p className="font-heading text-3xl font-bold text-high-vis">{squadSize}</p>
+          <p className="text-xs text-steel mt-1">Total assigned soldiers</p>
+        </div>
+        <div className="rounded-sm border border-steel/30 bg-gunmetal p-4">
+          <p className="text-xs text-muted-text uppercase tracking-wide mb-2">Active (7D)</p>
+          <p className="font-heading text-3xl font-bold text-radar-green">{activeTrainees}</p>
+          <p className="text-xs text-steel mt-1">Active in last 7 days</p>
+        </div>
+        <div className="rounded-sm border border-steel/30 bg-gunmetal p-4">
+          <p className="text-xs text-muted-text uppercase tracking-wide mb-2">Squad Missions</p>
+          <p className="font-heading text-3xl font-bold text-tactical-red">{totalSquadWorkouts}</p>
+          <p className="text-xs text-steel mt-1">Total completed workouts</p>
+        </div>
       </div>
 
       <CoachDashboard
