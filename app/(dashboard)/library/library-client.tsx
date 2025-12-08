@@ -4,7 +4,17 @@ import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Dumbbell, Play, Clock, Lock, Filter, X, Plus, ExternalLink } from "lucide-react";
+import {
+  Search,
+  Dumbbell,
+  Play,
+  Clock,
+  Lock,
+  Filter,
+  X,
+  Plus,
+  ExternalLink,
+} from "lucide-react";
 import Link from "next/link";
 import {
   Dialog,
@@ -307,7 +317,10 @@ export function WorkoutLibraryClient({
       )}
 
       {/* Workout Details Modal */}
-      <Dialog open={!!selectedWorkout} onOpenChange={(open) => !open && setSelectedWorkout(null)}>
+      <Dialog
+        open={!!selectedWorkout}
+        onOpenChange={(open) => !open && setSelectedWorkout(null)}
+      >
         <DialogContent className="bg-gunmetal border-steel/20 max-w-2xl max-h-[90vh] overflow-y-auto">
           {selectedWorkout && (
             <>
@@ -318,7 +331,9 @@ export function WorkoutLibraryClient({
                   </span>
                   <span className="text-xs text-muted-text flex items-center gap-1">
                     <Clock className="h-3 w-3" />
-                    {new Date(selectedWorkout.scheduled_date).toLocaleDateString()}
+                    {new Date(
+                      selectedWorkout.scheduled_date
+                    ).toLocaleDateString()}
                   </span>
                 </div>
                 <DialogTitle className="font-heading text-2xl text-high-vis">
@@ -351,35 +366,38 @@ export function WorkoutLibraryClient({
               )}
 
               {/* Exercises Section */}
-              {Array.isArray(selectedWorkout.sets_reps) && selectedWorkout.sets_reps.length > 0 && (
-                <div className="mt-6">
-                  <h4 className="font-heading text-sm font-bold uppercase text-muted-text mb-3">
-                    EXERCISES ({selectedWorkout.sets_reps.length})
-                  </h4>
-                  <div className="space-y-2">
-                    {selectedWorkout.sets_reps.map((exercise: Exercise, idx: number) => (
-                      <div
-                        key={idx}
-                        className="flex items-center justify-between rounded-sm border border-steel/20 bg-camo-black p-3"
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="flex h-8 w-8 items-center justify-center rounded-sm bg-tactical-red/20 text-sm font-bold text-tactical-red">
-                            {idx + 1}
-                          </span>
-                          <span className="font-medium text-white">
-                            {exercise.name}
-                          </span>
-                        </div>
-                        <div className="text-right">
-                          <span className="text-sm font-bold text-high-vis">
-                            {exercise.sets}×{exercise.reps}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
+              {Array.isArray(selectedWorkout.sets_reps) &&
+                selectedWorkout.sets_reps.length > 0 && (
+                  <div className="mt-6">
+                    <h4 className="font-heading text-sm font-bold uppercase text-muted-text mb-3">
+                      EXERCISES ({selectedWorkout.sets_reps.length})
+                    </h4>
+                    <div className="space-y-2">
+                      {selectedWorkout.sets_reps.map(
+                        (exercise: Exercise, idx: number) => (
+                          <div
+                            key={idx}
+                            className="flex items-center justify-between rounded-sm border border-steel/20 bg-camo-black p-3"
+                          >
+                            <div className="flex items-center gap-3">
+                              <span className="flex h-8 w-8 items-center justify-center rounded-sm bg-tactical-red/20 text-sm font-bold text-tactical-red">
+                                {idx + 1}
+                              </span>
+                              <span className="font-medium text-white">
+                                {exercise.name}
+                              </span>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-sm font-bold text-high-vis">
+                                {exercise.sets}×{exercise.reps}
+                              </span>
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
               {/* Action Buttons */}
               <div className="mt-6 flex gap-3">
