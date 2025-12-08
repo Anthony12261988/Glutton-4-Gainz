@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { MessageSquare, Volume2, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -15,7 +15,7 @@ interface DailyBriefing {
 export function DailyBriefingDisplay() {
   const [briefing, setBriefing] = useState<DailyBriefing | null>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     async function fetchBriefing() {

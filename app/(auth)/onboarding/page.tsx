@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { assignTier } from "@/lib/constants/tiers";
@@ -8,15 +8,16 @@ import { createClient } from "@/lib/supabase/client";
 import { OnboardingIntro } from "@/components/features/onboarding/OnboardingIntro";
 import { FitnessTestStep } from "@/components/features/onboarding/FitnessTestStep";
 import { OnboardingResults } from "@/components/features/onboarding/OnboardingResults";
-import { OnboardingDossier } from "@/components/features/onboarding/OnboardingDossier";
+import { FitnessDossierForm } from "@/components/features/onboarding/FitnessDossierForm";
+import { IntroVideoModal } from "@/components/gamification/intro-video-modal";
 import { TOAST_MESSAGES } from "@/lib/dictionary";
 
-type Step = "intro" | "pushups" | "squats" | "core" | "results" | "dossier";
+type Step = "video" | "intro" | "pushups" | "squats" | "core" | "results" | "dossier";
 
 export default function OnboardingPage() {
   const { toast } = useToast();
   const router = useRouter();
-  const [step, setStep] = useState<Step>("intro");
+  const [step, setStep] = useState<Step>("video");
   const [pushups, setPushups] = useState<number>(0);
   const [squats, setSquats] = useState<number>(0);
   const [plankSeconds, setPlankSeconds] = useState<number>(0);
@@ -24,6 +25,47 @@ export default function OnboardingPage() {
   const [userId, setUserId] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const supabase = useMemo(() => createClient(), []);
+
+  // Check user status and redirect if needed
+  useEffect(() => {
+    async function checkUserStatus() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserId(user.id);
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role, intro_video_watched, onboarding_completed")
+          .eq("id", user.id)
+          .single();
+        
+        // Admins and coaches don't need onboarding - redirect them
+        if (profile?.role === "admin") {
+          router.push("/command");
+          return;
+        }
+        if (profile?.role === "coach") {
+          router.push("/barracks");
+          return;
+        }
+
+        // If already completed onboarding, go to dashboard
+        if (profile?.onboarding_completed) {
+          router.push("/dashboard");
+          return;
+        }
+        
+        // Skip video if already watched
+        if (profile?.intro_video_watched) {
+          setStep("intro");
+        }
+      }
+    }
+    checkUserStatus();
+  }, [supabase, router]);
+
+  const handleVideoComplete = () => {
+    setStep("intro");
+  };
 
   const handleStartTest = () => {
     setStep("pushups");
@@ -54,9 +96,10 @@ export default function OnboardingPage() {
 
       if (user) {
         setUserId(user.id);
+        // Update tier and mark onboarding as completed
         const { error } = await supabase
           .from("profiles")
-          .update({ tier })
+          .update({ tier, onboarding_completed: true })
           .eq("id", user.id);
 
         if (error) throw error;
@@ -96,6 +139,14 @@ export default function OnboardingPage() {
     router.push("/dashboard");
     router.refresh();
   };
+
+  if (step === "video") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-night-ops p-4">
+        <IntroVideoModal userId={userId} onComplete={handleVideoComplete} />
+      </div>
+    );
+  }
 
   if (step === "intro") {
     return <OnboardingIntro onStartTest={handleStartTest} />;
@@ -162,11 +213,16 @@ export default function OnboardingPage() {
 
   if (step === "dossier") {
     return (
-      <OnboardingDossier
-        userId={userId}
-        onComplete={handleDossierComplete}
-        onSkip={handleDossierSkip}
-      />
+      <div className="min-h-screen bg-night-ops p-4 py-8">
+        <div className="max-w-lg mx-auto">
+          <FitnessDossierForm
+            userId={userId}
+            simplified
+            onComplete={handleDossierComplete}
+            onSkip={handleDossierSkip}
+          />
+        </div>
+      </div>
     );
   }
 

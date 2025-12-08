@@ -45,13 +45,15 @@ export async function updateSession(request: NextRequest) {
     "/profile",
     "/stats",
   ];
+  // Auth routes that signed-in users should NOT access (except onboarding)
   const authRoutes = [
     "/login",
     "/signup",
-    "/onboarding",
     "/forgot-password",
     "/reset-password",
   ];
+  // Onboarding is special - authenticated users CAN access it if they haven't completed it
+  const isOnboarding = request.nextUrl.pathname.startsWith("/onboarding");
 
   const isProtectedRoute = protectedRoutes.some((route) =>
     request.nextUrl.pathname.startsWith(route)
@@ -67,8 +69,15 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // Redirect unauthenticated users from onboarding to signup
+  if (!user && isOnboarding) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/signup";
+    return NextResponse.redirect(url);
+  }
+
   if (user && isAuthRoute) {
-    // Signed-in users should not see auth pages again
+    // Signed-in users should not see auth pages (login, signup, etc.) - redirect to dashboard
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);

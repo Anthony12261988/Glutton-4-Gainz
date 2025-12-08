@@ -13,7 +13,6 @@ import { checkForNewBadges, type Badge } from "@/lib/utils/badge-detector";
 import { TOAST_MESSAGES, BUTTON_LABELS, EMPTY_STATES } from "@/lib/dictionary";
 import { DailyRation } from "@/components/nutrition/daily-ration";
 import { DailyBriefingDisplay } from "@/components/gamification/daily-briefing-display";
-import { IntroVideoModal } from "@/components/gamification/intro-video-modal";
 import { DossierPromptCard } from "@/components/gamification/dossier-prompt-card";
 import { fireWorkoutComplete } from "@/lib/utils/confetti";
 import Link from "next/link";
@@ -57,11 +56,6 @@ export default function DashboardClient({
   const [newBadges, setNewBadges] = useState<Badge[]>([]);
   const [currentBadgeIndex, setCurrentBadgeIndex] = useState(0);
   const [showBadgeNotification, setShowBadgeNotification] = useState(false);
-
-  // Intro video state
-  const [showIntroVideo, setShowIntroVideo] = useState(
-    !profile?.intro_video_watched
-  );
 
   // Show badges one at a time
   useEffect(() => {
@@ -265,14 +259,6 @@ export default function DashboardClient({
           badge={newBadges[currentBadgeIndex]}
           isVisible={showBadgeNotification}
           onClose={handleBadgeClose}
-        />
-      )}
-
-      {/* Intro Video Modal - shown on first login */}
-      {showIntroVideo && (
-        <IntroVideoModal
-          userId={user.id}
-          onComplete={() => setShowIntroVideo(false)}
         />
       )}
     </div>

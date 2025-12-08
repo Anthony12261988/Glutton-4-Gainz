@@ -174,15 +174,17 @@ export function Sidebar({
 
         {/* Footer with Logout */}
         <div className="border-t border-steel p-4 space-y-3">
-          <Link
-            href="/auth/signout"
-            className="flex items-center gap-3 rounded-sm px-4 py-3 text-steel hover:bg-tactical-red/10 hover:text-tactical-red transition-all"
-          >
-            <LogOut className="h-5 w-5" />
-            <span className="font-heading text-sm font-bold uppercase tracking-wide">
-              Logout
-            </span>
-          </Link>
+          <form action="/auth/signout" method="POST">
+            <button
+              type="submit"
+              className="flex w-full items-center gap-3 rounded-sm px-4 py-3 text-steel hover:bg-tactical-red/10 hover:text-tactical-red transition-all"
+            >
+              <LogOut className="h-5 w-5" />
+              <span className="font-heading text-sm font-bold uppercase tracking-wide">
+                Logout
+              </span>
+            </button>
+          </form>
           <p className="text-center text-xs text-muted-text">
             © 2025 Glutton4Games
           </p>

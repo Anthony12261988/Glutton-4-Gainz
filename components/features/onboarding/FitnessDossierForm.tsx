@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   Check,
   Loader2,
+  SkipForward,
   Target,
   Dumbbell,
   Clock,
@@ -39,6 +40,9 @@ interface FitnessDossierFormProps {
     gender?: string | null;
   };
   onComplete?: () => void;
+  onSkip?: () => void;
+  /** Simplified mode shows only 2 steps (Experience/Goals + Equipment) for onboarding */
+  simplified?: boolean;
 }
 
 const EXPERIENCE_LEVELS = [
@@ -85,6 +89,8 @@ export function FitnessDossierForm({
   userId,
   existingData,
   onComplete,
+  onSkip,
+  simplified = false,
 }: FitnessDossierFormProps) {
   const [step, setStep] = useState(1);
   const [loading, setSaving] = useState(false);
@@ -129,7 +135,7 @@ export function FitnessDossierForm({
   );
   const [gender, setGender] = useState(existingData?.gender || "");
 
-  const totalSteps = 4;
+  const totalSteps = simplified ? 2 : 4;
 
   const toggleEquipment = (item: string) => {
     if (equipment.includes(item)) {
@@ -142,37 +148,57 @@ export function FitnessDossierForm({
   const handleSubmit = async () => {
     setSaving(true);
     try {
-      const totalHeight =
-        heightFeet && heightInches
-          ? parseInt(heightFeet) * 12 + parseInt(heightInches)
-          : null;
+      // For simplified mode, only save basic fields
+      if (simplified) {
+        const { error } = await supabase
+          .from("profiles")
+          .update({
+            fitness_experience: (experience || null) as any,
+            fitness_goal: (goal || null) as any,
+            available_equipment: equipment.length > 0 ? equipment : null,
+            dossier_complete: true,
+          })
+          .eq("id", userId);
 
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          fitness_experience: (experience || null) as any,
-          fitness_goal: (goal || null) as any,
-          available_equipment: equipment.length > 0 ? equipment : null,
-          injuries_limitations: injuries.trim() || null,
-          preferred_duration: duration ? parseInt(duration) : null,
-          workout_days_per_week: daysPerWeek ? parseInt(daysPerWeek) : null,
-          height_inches: totalHeight,
-          target_weight: targetWeight ? parseFloat(targetWeight) : null,
-          date_of_birth: dob ? format(dob, "yyyy-MM-dd") : null,
-          gender: (gender || null) as any,
-          dossier_complete: true,
-        })
-        .eq("id", userId);
+        if (error) throw error;
+      } else {
+        // Full mode - save all fields
+        const totalHeight =
+          heightFeet && heightInches
+            ? parseInt(heightFeet) * 12 + parseInt(heightInches)
+            : null;
 
-      if (error) throw error;
+        const { error } = await supabase
+          .from("profiles")
+          .update({
+            fitness_experience: (experience || null) as any,
+            fitness_goal: (goal || null) as any,
+            available_equipment: equipment.length > 0 ? equipment : null,
+            injuries_limitations: injuries.trim() || null,
+            preferred_duration: duration ? parseInt(duration) : null,
+            workout_days_per_week: daysPerWeek ? parseInt(daysPerWeek) : null,
+            height_inches: totalHeight,
+            target_weight: targetWeight ? parseFloat(targetWeight) : null,
+            date_of_birth: dob ? format(dob, "yyyy-MM-dd") : null,
+            gender: (gender || null) as any,
+            dossier_complete: true,
+          })
+          .eq("id", userId);
+
+        if (error) throw error;
+      }
 
       toast({
-        title: "DOSSIER COMPLETE",
-        description: "Your fitness profile has been saved.",
+        title: simplified ? "DOSSIER FILED" : "DOSSIER COMPLETE",
+        description: simplified 
+          ? "Your fitness profile is on record, soldier."
+          : "Your fitness profile has been saved.",
       });
 
       onComplete?.();
-      router.refresh();
+      if (!simplified) {
+        router.refresh();
+      }
     } catch (err) {
       console.error("Failed to save dossier:", err);
       toast({
@@ -201,9 +227,24 @@ export function FitnessDossierForm({
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className={simplified ? "space-y-6" : "max-w-2xl mx-auto"}>
+      {/* Header for simplified/onboarding mode */}
+      {simplified && (
+        <div className="text-center">
+          <div className="mx-auto mb-4 rounded-sm border-2 border-tactical-red bg-tactical-red/10 p-3 w-fit">
+            <ClipboardList className="h-8 w-8 text-tactical-red" />
+          </div>
+          <h1 className="font-heading text-3xl font-bold uppercase tracking-wider text-high-vis">
+            FITNESS DOSSIER
+          </h1>
+          <p className="mt-2 text-sm text-muted-text">
+            Help us personalize your training program
+          </p>
+        </div>
+      )}
+
       {/* Progress Bar */}
-      <div className="mb-8">
+      <div className={simplified ? "max-w-md mx-auto" : "mb-8"}>
         <div className="flex justify-between mb-2">
           <span className="text-sm text-muted-text">
             Step {step} of {totalSteps}
@@ -233,23 +274,23 @@ export function FitnessDossierForm({
             {/* Experience Level */}
             <div className="space-y-3">
               <label className="text-sm font-medium text-steel">
-                Fitness Experience
+                What's your fitness experience?
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {EXPERIENCE_LEVELS.map((level) => (
                   <Button
                     key={level.value}
                     type="button"
                     variant={experience === level.value ? "default" : "outline"}
-                    className={`h-auto py-3 flex-col items-start ${
+                    className={`h-auto py-3 flex-col items-start text-left whitespace-normal ${
                       experience === level.value
-                        ? "bg-tactical-red"
+                        ? "bg-tactical-red hover:bg-tactical-red/90"
                         : "border-steel/30"
                     }`}
                     onClick={() => setExperience(level.value)}
                   >
                     <span className="font-bold">{level.label}</span>
-                    <span className="text-xs opacity-80">{level.desc}</span>
+                    <span className="text-xs opacity-80 break-words">{level.desc}</span>
                   </Button>
                 ))}
               </div>
@@ -258,16 +299,16 @@ export function FitnessDossierForm({
             {/* Primary Goal */}
             <div className="space-y-3">
               <label className="text-sm font-medium text-steel">
-                Primary Goal
+                What's your primary goal?
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {FITNESS_GOALS.map((g) => (
                   <Button
                     key={g.value}
                     type="button"
                     variant={goal === g.value ? "default" : "outline"}
-                    className={`h-auto py-3 ${
-                      goal === g.value ? "bg-tactical-red" : "border-steel/30"
+                    className={`h-auto py-3 whitespace-normal ${
+                      goal === g.value ? "bg-tactical-red hover:bg-tactical-red/90" : "border-steel/30"
                     }`}
                     onClick={() => setGoal(g.value)}
                   >
@@ -519,6 +560,23 @@ export function FitnessDossierForm({
           </Button>
         )}
       </div>
+
+      {/* Skip Option - only in simplified/onboarding mode */}
+      {simplified && onSkip && (
+        <div className="text-center mt-6">
+          <Button
+            variant="ghost"
+            onClick={onSkip}
+            className="text-muted-text hover:text-high-vis"
+          >
+            <SkipForward className="mr-2 h-4 w-4" />
+            Skip for now
+          </Button>
+          <p className="text-xs text-muted-text mt-1">
+            You can complete this later from your profile
+          </p>
+        </div>
+      )}
     </div>
   );
 }

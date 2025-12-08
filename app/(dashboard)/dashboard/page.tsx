@@ -53,6 +53,12 @@ export default async function DashboardPage() {
     redirect("/barracks");
   }
 
+  // If regular user hasn't completed onboarding, redirect to onboarding
+  // (Only applies to soldiers/recruits, not admin/coach)
+  if (!profile.onboarding_completed) {
+    redirect("/onboarding");
+  }
+
   // Fetch Today's Workout
   // Logic: Get workout for today's date AND user's tier
   const today = new Date().toISOString().split("T")[0];
