@@ -1,38 +1,28 @@
-<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg">
+<svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <pattern id="diamond-plate" x="0" y="0" width="120" height="120" patternUnits="userSpaceOnUse">
+    <pattern id="dot-pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
       <!-- Base background -->
-      <rect width="120" height="120" fill="#0a0a0a"/>
+      <rect width="40" height="40" fill="#0a0a0a"/>
 
-      <!-- Diamond shapes with raised effect -->
-      <g opacity="0.15">
-        <!-- Row 1 -->
-        <ellipse cx="30" cy="30" rx="20" ry="8" fill="#2a2a2a"/>
-        <ellipse cx="90" cy="30" rx="20" ry="8" fill="#2a2a2a"/>
+      <!-- Dot grid pattern - subtle circular dots -->
+      <!-- Row 1 -->
+      <circle cx="10" cy="10" r="2.5" fill="#1a1a1a" opacity="0.6"/>
+      <circle cx="30" cy="10" r="2.5" fill="#1a1a1a" opacity="0.6"/>
 
-        <!-- Row 2 (offset) -->
-        <ellipse cx="60" cy="60" rx="20" ry="8" fill="#2a2a2a"/>
+      <!-- Row 2 (offset) -->
+      <circle cx="20" cy="20" r="2.5" fill="#1a1a1a" opacity="0.6"/>
 
-        <!-- Row 3 -->
-        <ellipse cx="30" cy="90" rx="20" ry="8" fill="#2a2a2a"/>
-        <ellipse cx="90" cy="90" rx="20" ry="8" fill="#2a2a2a"/>
-      </g>
+      <!-- Row 3 -->
+      <circle cx="10" cy="30" r="2.5" fill="#1a1a1a" opacity="0.6"/>
+      <circle cx="30" cy="30" r="2.5" fill="#1a1a1a" opacity="0.6"/>
 
-      <!-- Highlights for 3D effect -->
-      <g opacity="0.08">
-        <ellipse cx="30" cy="28" rx="18" ry="6" fill="#ffffff"/>
-        <ellipse cx="90" cy="28" rx="18" ry="6" fill="#ffffff"/>
-        <ellipse cx="60" cy="58" rx="18" ry="6" fill="#ffffff"/>
-        <ellipse cx="30" cy="88" rx="18" ry="6" fill="#ffffff"/>
-        <ellipse cx="90" cy="88" rx="18" ry="6" fill="#ffffff"/>
-      </g>
-
-      <!-- Subtle grid lines -->
-      <g opacity="0.03" stroke="#ffffff" stroke-width="0.5">
-        <line x1="0" y1="0" x2="120" y2="120"/>
-        <line x1="120" y1="0" x2="0" y2="120"/>
-      </g>
+      <!-- Subtle highlights on dots for depth -->
+      <circle cx="10" cy="9.5" r="1.5" fill="#2a2a2a" opacity="0.3"/>
+      <circle cx="30" cy="9.5" r="1.5" fill="#2a2a2a" opacity="0.3"/>
+      <circle cx="20" cy="19.5" r="1.5" fill="#2a2a2a" opacity="0.3"/>
+      <circle cx="10" cy="29.5" r="1.5" fill="#2a2a2a" opacity="0.3"/>
+      <circle cx="30" cy="29.5" r="1.5" fill="#2a2a2a" opacity="0.3"/>
     </pattern>
   </defs>
-  <rect width="120" height="120" fill="url(#diamond-plate)"/>
+  <rect width="40" height="40" fill="url(#dot-pattern)"/>
 </svg>
