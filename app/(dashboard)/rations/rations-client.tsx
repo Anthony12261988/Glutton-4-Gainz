@@ -19,6 +19,7 @@ import {
   Droplet,
   Plus,
   ChefHat,
+  Lock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -34,12 +35,14 @@ interface RationsClientProps {
   user: any;
   initialRecipes: Recipe[];
   initialMealPlans: MealPlan[];
+  isPremium?: boolean;
 }
 
 export default function RationsClient({
   user,
   initialRecipes,
   initialMealPlans,
+  isPremium = false,
 }: RationsClientProps) {
   const { toast } = useToast();
   const router = useRouter();
@@ -164,10 +167,12 @@ export default function RationsClient({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-heading text-3xl font-bold uppercase tracking-wider text-high-vis">
-            RATIONS
+            {isPremium ? "RATIONS" : "STANDARD ISSUE RATIONS"}
           </h1>
           <p className="text-sm text-muted-text">
-            Fuel your mission. Plan your meals.
+            {isPremium
+              ? "Fuel your mission. Plan your meals."
+              : "Recruits follow orders. Standard issue meals only."}
           </p>
         </div>
         <div className="rounded-sm border border-tactical-red bg-tactical-red/10 p-2">
@@ -175,94 +180,141 @@ export default function RationsClient({
         </div>
       </div>
 
-      {/* Calendar */}
-      <div className="space-y-2">
-        <h3 className="font-heading text-sm font-bold uppercase text-muted-text">
-          MISSION TIMELINE
-        </h3>
-        <WeekCalendar
-          selectedDate={selectedDate}
-          onSelectDate={setSelectedDate}
-          plannedDates={plannedDates}
-        />
-      </div>
+      {/* Recruit Notice */}
+      {!isPremium && (
+        <div className="rounded-sm border-2 border-steel/50 bg-gunmetal/80 p-4">
+          <div className="flex items-start gap-3">
+            <Lock className="h-5 w-5 text-steel flex-shrink-0 mt-0.5" />
+            <div>
+              <h3 className="font-heading text-sm font-bold uppercase text-steel mb-1">
+                RECRUIT STATUS
+              </h3>
+              <p className="text-xs text-muted-text leading-relaxed mb-3">
+                As a Recruit, you receive Standard Issue rations. Upgrade to Soldier rank to unlock meal planning and custom rations.
+              </p>
+              <Link href="/pricing">
+                <Button size="sm" className="bg-tactical-red hover:bg-red-700">
+                  Upgrade to Soldier
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
 
-      {/* Current Plan Display */}
-      <div className="space-y-2">
-        <h3 className="font-heading text-sm font-bold uppercase text-muted-text">
-          ASSIGNED RATION
-        </h3>
-        {currentMealPlan ? (
-          <RecipeCard recipe={currentMealPlan.recipe} isSelected={true} />
-        ) : (
-          <div className="flex h-32 flex-col items-center justify-center rounded-sm border border-dashed border-steel bg-gunmetal/50 text-center">
-            <p className="text-sm text-muted-text">
-              No rations assigned for this day.
+      {/* Calendar - Only for Premium */}
+      {isPremium && (
+        <>
+          <div className="space-y-2">
+            <h3 className="font-heading text-sm font-bold uppercase text-muted-text">
+              MISSION TIMELINE
+            </h3>
+            <WeekCalendar
+              selectedDate={selectedDate}
+              onSelectDate={setSelectedDate}
+              plannedDates={plannedDates}
+            />
+          </div>
+
+          {/* Current Plan Display */}
+          <div className="space-y-2">
+            <h3 className="font-heading text-sm font-bold uppercase text-muted-text">
+              ASSIGNED RATION
+            </h3>
+            {currentMealPlan ? (
+              <RecipeCard recipe={currentMealPlan.recipe} isSelected={true} />
+            ) : (
+              <div className="flex h-32 flex-col items-center justify-center rounded-sm border border-dashed border-steel bg-gunmetal/50 text-center">
+                <p className="text-sm text-muted-text">
+                  No rations assigned for this day.
+                </p>
+                <p className="text-xs text-steel">
+                  Select a recipe below to assign.
+                </p>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* Standard Issue Display for Recruits */}
+      {!isPremium && (
+        <div className="space-y-2">
+          <h3 className="font-heading text-sm font-bold uppercase text-muted-text">
+            STANDARD ISSUE MENU
+          </h3>
+          <div className="rounded-sm border border-steel/30 bg-gunmetal/50 p-4">
+            <p className="text-sm text-muted-text mb-2">
+              These are your standard issue rations. Recruits follow orders—you eat what you're given.
             </p>
             <p className="text-xs text-steel">
-              Select a recipe below to assign.
+              Upgrade to Soldier rank to unlock meal planning and custom rations.
             </p>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Recipe Selector */}
       <div className="space-y-4">
         <h3 className="font-heading text-sm font-bold uppercase text-muted-text">
-          AVAILABLE RATIONS
+          {isPremium ? "AVAILABLE RATIONS" : "STANDARD ISSUE RATIONS"}
         </h3>
 
-        {/* Search Bar */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-steel" />
-          <Input
-            type="text"
-            placeholder="Search recipes..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 pr-10 bg-gunmetal"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-steel hover:text-white"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          )}
-        </div>
+        {/* Search Bar - Only for Premium */}
+        {isPremium && (
+          <>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-steel" />
+              <Input
+                type="text"
+                placeholder="Search recipes..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-10 bg-gunmetal"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-steel hover:text-white"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
 
-        {/* Filter Buttons */}
-        <div className="flex flex-wrap gap-2">
-          {filters.map((filter) => {
-            const Icon = filter.icon;
-            const isActive = activeFilter === filter.id;
-            return (
-              <button
-                key={filter.id}
-                onClick={() => setActiveFilter(isActive ? null : filter.id)}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-sm border px-3 py-1.5 text-xs font-bold uppercase transition-colors",
-                  isActive
-                    ? "border-tactical-red bg-tactical-red/20 text-tactical-red"
-                    : "border-steel/30 bg-gunmetal text-steel hover:border-steel hover:text-white"
-                )}
-              >
-                <Icon className="h-3 w-3" />
-                {filter.label}
-              </button>
-            );
-          })}
-          {activeFilter && (
-            <button
-              onClick={() => setActiveFilter(null)}
-              className="flex items-center gap-1 text-xs text-steel hover:text-white"
-            >
-              <X className="h-3 w-3" />
-              Clear
-            </button>
-          )}
-        </div>
+            {/* Filter Buttons */}
+            <div className="flex flex-wrap gap-2">
+              {filters.map((filter) => {
+                const Icon = filter.icon;
+                const isActive = activeFilter === filter.id;
+                return (
+                  <button
+                    key={filter.id}
+                    onClick={() => setActiveFilter(isActive ? null : filter.id)}
+                    className={cn(
+                      "flex items-center gap-1.5 rounded-sm border px-3 py-1.5 text-xs font-bold uppercase transition-colors",
+                      isActive
+                        ? "border-tactical-red bg-tactical-red/20 text-tactical-red"
+                        : "border-steel/30 bg-gunmetal text-steel hover:border-steel hover:text-white"
+                    )}
+                  >
+                    <Icon className="h-3 w-3" />
+                    {filter.label}
+                  </button>
+                );
+              })}
+              {activeFilter && (
+                <button
+                  onClick={() => setActiveFilter(null)}
+                  className="flex items-center gap-1 text-xs text-steel hover:text-white"
+                >
+                  <X className="h-3 w-3" />
+                  Clear
+                </button>
+              )}
+            </div>
+          </>
+        )}
 
         {/* Results Count */}
         {(searchQuery || activeFilter) && (
@@ -278,7 +330,7 @@ export default function RationsClient({
             <p className="font-heading text-lg text-high-vis mb-2">
               NO RECIPES AVAILABLE
             </p>
-            {searchQuery || activeFilter ? (
+            {isPremium && (searchQuery || activeFilter) ? (
               <>
                 <p className="text-sm text-muted-text mb-4">
                   No recipes match your search criteria.
@@ -313,8 +365,8 @@ export default function RationsClient({
               <RecipeCard
                 key={recipe.id}
                 recipe={recipe}
-                isSelected={currentMealPlan?.recipe_id === recipe.id}
-                onSelect={handleAssignMeal}
+                isSelected={isPremium && currentMealPlan?.recipe_id === recipe.id}
+                onSelect={isPremium ? handleAssignMeal : undefined}
               />
             ))}
           </div>

@@ -65,14 +65,19 @@ export function BriefingManagerClient() {
 
     setSaving(true);
     try {
-      // Deactivate all existing briefings
-      await supabase
+      // Deactivate all existing briefings first
+      const { error: updateError } = await supabase
         .from("daily_briefings")
         .update({ active: false })
         .eq("active", true);
 
+      if (updateError) {
+        console.error("Update error:", updateError);
+        throw new Error(`Failed to deactivate existing briefings: ${updateError.message}`);
+      }
+
       // Insert new briefing
-      const { data, error } = await supabase
+      const { data, error: insertError } = await supabase
         .from("daily_briefings")
         .insert({
           content: content.trim(),
@@ -81,7 +86,14 @@ export function BriefingManagerClient() {
         .select()
         .single();
 
-      if (error) throw error;
+      if (insertError) {
+        console.error("Insert error:", insertError);
+        throw new Error(`Failed to create briefing: ${insertError.message}`);
+      }
+
+      if (!data) {
+        throw new Error("No data returned from insert");
+      }
 
       setBriefings([data, ...briefings.map((b) => ({ ...b, active: false }))]);
       setContent("");
@@ -90,11 +102,14 @@ export function BriefingManagerClient() {
         title: "BRIEFING DEPLOYED",
         description: "Your message is now live for all troops.",
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to save briefing:", err);
+      const errorMessage = err?.message || err?.toString() || "Unknown error occurred";
       toast({
         title: "DEPLOYMENT FAILED",
-        description: "Unable to publish briefing. Retry operation.",
+        description: errorMessage.length > 100 
+          ? `${errorMessage.substring(0, 100)}...` 
+          : errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -105,16 +120,24 @@ export function BriefingManagerClient() {
   const handleActivate = async (id: string) => {
     try {
       // Deactivate all
-      await supabase
+      const { error: updateError } = await supabase
         .from("daily_briefings")
         .update({ active: false })
         .eq("active", true);
 
+      if (updateError) {
+        throw new Error(`Failed to deactivate: ${updateError.message}`);
+      }
+
       // Activate selected
-      await supabase
+      const { error: activateError } = await supabase
         .from("daily_briefings")
         .update({ active: true })
         .eq("id", id);
+
+      if (activateError) {
+        throw new Error(`Failed to activate: ${activateError.message}`);
+      }
 
       setBriefings(
         briefings.map((b) => ({
@@ -127,14 +150,30 @@ export function BriefingManagerClient() {
         title: "BRIEFING ACTIVATED",
         description: "Selected briefing is now live.",
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to activate briefing:", err);
+      toast({
+        title: "ACTIVATION FAILED",
+        description: err?.message || "Unable to activate briefing.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this briefing?")) {
+      return;
+    }
+
     try {
-      await supabase.from("daily_briefings").delete().eq("id", id);
+      const { error } = await supabase
+        .from("daily_briefings")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        throw new Error(`Failed to delete: ${error.message}`);
+      }
 
       setBriefings(briefings.filter((b) => b.id !== id));
 
@@ -142,8 +181,13 @@ export function BriefingManagerClient() {
         title: "BRIEFING REMOVED",
         description: "Message deleted from archives.",
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to delete briefing:", err);
+      toast({
+        title: "DELETION FAILED",
+        description: err?.message || "Unable to delete briefing.",
+        variant: "destructive",
+      });
     }
   };
 

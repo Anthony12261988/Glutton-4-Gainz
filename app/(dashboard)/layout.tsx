@@ -29,7 +29,7 @@ export default async function DashboardLayout({
   const isAdmin = profile?.role === "admin";
 
   return (
-    <div className="min-h-screen bg-camo-black">
+    <div className="min-h-screen">
       {/* Desktop Sidebar */}
       <Sidebar isCoach={isCoach} isAdmin={isAdmin} />
 

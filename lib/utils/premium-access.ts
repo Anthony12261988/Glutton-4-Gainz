@@ -2,10 +2,18 @@
  * Premium Access Helper
  *
  * Determines if a user has premium access based on their tier and role.
- * Admin and Coach roles always have premium access.
+ * 
+ * Role Hierarchy:
+ * - Recruit (role: "user"): Free user, assigned a tier (.223, .556, .762, .50 Cal) via Zero Day test
+ * - Soldier (role: "soldier"): Paid user, has premium access
+ * - Coach (role: "coach"): Admin/trainer, always has premium access
+ * - Admin (role: "admin"): System admin, always has premium access
+ * 
+ * Note: Recruit is a status/role (Free User), not a tier. 
+ * Tiers (.223, .556, .762, .50 Cal) are assigned based on Zero Day test performance.
  */
 
-type UserRole = "admin" | "coach" | "soldier" | "user";
+type UserRole = "admin" | "coach" | "soldier" | "user"; // "user" = Recruit (Free User)
 
 interface ProfileForPremiumCheck {
   tier?: string | null;
@@ -16,8 +24,13 @@ interface ProfileForPremiumCheck {
  * Check if user has premium access
  * Premium access is granted if:
  * - User is admin or coach (always premium)
- * - User is soldier (paid tier)
- * - User has a tier above .223
+ * - User is soldier (paid subscription)
+ * - User has a tier above .223 (earned through Zero Day re-qualification)
+ * 
+ * Recruits (role: "user") with tier .223 do NOT have premium access.
+ * They must either:
+ * 1. Pay to become a Soldier, OR
+ * 2. Re-qualify via Zero Day to unlock higher tiers (.556, .762, .50 Cal)
  */
 export function hasPremiumAccess(
   profile: ProfileForPremiumCheck | null
@@ -29,16 +42,18 @@ export function hasPremiumAccess(
     return true;
   }
 
-  // Soldier role means paid subscription
+  // Soldier role means paid subscription - always premium
   if (profile.role === "soldier") {
     return true;
   }
 
-  // Check tier - anything above .223 is premium
+  // Recruits (role: "user") can unlock premium tiers through Zero Day re-qualification
+  // Anything above .223 grants premium access
   if (profile.tier && profile.tier !== ".223") {
     return true;
   }
 
+  // Default: Recruit with .223 tier = no premium access
   return false;
 }
 

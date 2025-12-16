@@ -12,7 +12,7 @@ import { BadgeEarnedToast } from "@/components/gamification/badge-earned-toast";
 import { checkForNewBadges, type Badge } from "@/lib/utils/badge-detector";
 import { TOAST_MESSAGES, BUTTON_LABELS, EMPTY_STATES } from "@/lib/dictionary";
 import { DailyRation } from "@/components/nutrition/daily-ration";
-import { DailyBriefingDisplay } from "@/components/gamification/daily-briefing-display";
+import { MotivationalCorner } from "@/components/gamification/motivational-corner";
 import { DossierPromptCard } from "@/components/gamification/dossier-prompt-card";
 import { fireWorkoutComplete } from "@/lib/utils/confetti";
 import Link from "next/link";
@@ -178,8 +178,8 @@ export default function DashboardClient({
         </div>
       </div>
 
-      {/* Commander's Briefing */}
-      <DailyBriefingDisplay />
+      {/* Motivational Corner - Morning Briefing (First thing they see) */}
+      <MotivationalCorner />
 
       {/* Dossier Prompt (if not complete) */}
       {!profile.dossier_complete && <DossierPromptCard />}

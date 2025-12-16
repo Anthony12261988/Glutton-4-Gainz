@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { TroopsTable } from "@/components/features/command/TroopsTable";
 import { CoachTable } from "@/components/features/command/CoachTable";
 import { InviteList } from "@/components/features/command/InviteList";
+import { MotivationalCorner } from "@/components/gamification/motivational-corner";
 import type { Tables } from "@/lib/types/database.types";
 import { useToast } from "@/hooks/use-toast";
-import { ShieldPlus, Sword, Users, Radio, Target } from "lucide-react";
+import { ShieldPlus, Sword, Users, Radio, Target, MessageSquare, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 type Profile = Tables<"profiles">;
 type Invite = Tables<"coach_invites">;
@@ -136,6 +138,25 @@ export default function CommandCenterClient({
 
   return (
     <div className="space-y-8">
+      {/* Motivational Corner - Morning Briefing (First thing they see) */}
+      <div className="space-y-3">
+        <MotivationalCorner />
+        {/* Quick action to manage briefings */}
+        <div className="flex justify-end">
+          <Link href="/barracks/content/briefing">
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-tactical-red/30 text-tactical-red hover:bg-tactical-red/10"
+            >
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Manage Briefings
+              <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </Link>
+        </div>
+      </div>
+
       <div className="rounded-sm border border-steel/40 bg-gradient-to-r from-gunmetal via-camo-black to-gunmetal p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.02),0_20px_60px_rgba(0,0,0,0.45)]">
         <p className="text-xs uppercase tracking-[0.4em] text-radar-green">
           Command Center

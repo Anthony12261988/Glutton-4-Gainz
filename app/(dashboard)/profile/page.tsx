@@ -201,6 +201,27 @@ export default async function ProfilePage() {
         <RankBadge xp={profile?.xp || 0} showProgress size="md" />
       </div>
 
+      {/* Zero Day Re-qualification Link (for non-coaches) */}
+      {!isCoach && (
+        <div className="mb-8">
+          <Link href="/zero-day">
+            <div className="rounded-sm border-2 border-tactical-red bg-tactical-red/10 p-4 hover:bg-tactical-red/20 transition-colors cursor-pointer">
+              <div className="flex items-center gap-3">
+                <Shield className="h-6 w-6 text-tactical-red flex-shrink-0" />
+                <div className="flex-1">
+                  <h3 className="font-heading text-sm font-bold uppercase text-tactical-red mb-1">
+                    ZERO DAY RE-QUALIFICATION
+                  </h3>
+                  <p className="text-xs text-muted-text">
+                    Re-test to unlock higher tiers. Prove you're ready for the next level.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Link>
+        </div>
+      )}
+
       {/* Quick Links */}
       {isCoach ? (
         <div className="mb-8 grid grid-cols-2 sm:grid-cols-3 gap-3">

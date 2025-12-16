@@ -14,34 +14,35 @@ export default async function RationsPage() {
     redirect("/login");
   }
 
-  // Fetch Profile to enforce premium access
+  // Fetch Profile to check access
   const { data: profile } = await supabase
     .from("profiles")
     .select("role, tier")
     .eq("id", user.id)
     .single();
 
-  // Only premium (soldier/coach/admin or paid tier) can access meal planner
-  if (!hasPremiumAccess(profile)) {
-    redirect("/pricing");
-  }
+  const isPremium = hasPremiumAccess(profile);
 
-  // Fetch Recipes
+  // Fetch Recipes - RLS automatically filters based on user's premium status
+  // Free users (.223 Recruits) only see standard_issue recipes
+  // Premium users (soldiers, higher tiers, coaches, admins) see all recipes
   const { data: recipes } = await supabase
     .from("recipes")
     .select("*")
     .order("title");
 
-  // Fetch Meal Plans for the user (future optimization: filter by date range)
-  const { data: mealPlans } = await supabase
-    .from("meal_plans")
-    .select(
-      `
-      *,
-      recipe:recipes(*)
-    `
-    )
-    .eq("user_id", user.id);
+  // Fetch Meal Plans for the user (only for premium users)
+  const { data: mealPlans } = isPremium
+    ? await supabase
+        .from("meal_plans")
+        .select(
+          `
+          *,
+          recipe:recipes(*)
+        `
+        )
+        .eq("user_id", user.id)
+    : { data: null };
 
   return (
     <div className="container mx-auto max-w-md px-4 py-6 md:max-w-4xl lg:max-w-7xl">
@@ -49,6 +50,7 @@ export default async function RationsPage() {
         user={user}
         initialRecipes={recipes || []}
         initialMealPlans={mealPlans || []}
+        isPremium={isPremium}
       />
     </div>
   );

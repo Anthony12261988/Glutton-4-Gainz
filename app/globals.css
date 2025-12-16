@@ -14,7 +14,26 @@
   }
 
   body {
-    @apply bg-camo-black text-high-vis;
+    @apply text-high-vis;
+    background-color: #0a0a0a;
+    background-image: 
+      repeating-linear-gradient(
+        45deg,
+        rgba(26, 26, 26, 0.5) 0px,
+        rgba(26, 26, 26, 0.5) 2px,
+        rgba(10, 10, 10, 0.3) 2px,
+        rgba(10, 10, 10, 0.3) 4px
+      ),
+      repeating-linear-gradient(
+        -45deg,
+        rgba(26, 26, 26, 0.5) 0px,
+        rgba(26, 26, 26, 0.5) 2px,
+        rgba(10, 10, 10, 0.3) 2px,
+        rgba(10, 10, 10, 0.3) 4px
+      );
+    background-size: 28px 28px;
+    background-position: 0 0, 14px 14px;
+    background-attachment: fixed;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
@@ -102,6 +121,29 @@
   .sharp {
     @apply rounded-none;
   }
+
+  /* Diamond plate texture background */
+  .bg-diamond-plate-texture {
+    background-color: #0a0a0a;
+    background-image: 
+      repeating-linear-gradient(
+        45deg,
+        rgba(26, 26, 26, 0.5) 0px,
+        rgba(26, 26, 26, 0.5) 2px,
+        rgba(10, 10, 10, 0.3) 2px,
+        rgba(10, 10, 10, 0.3) 4px
+      ),
+      repeating-linear-gradient(
+        -45deg,
+        rgba(26, 26, 26, 0.5) 0px,
+        rgba(26, 26, 26, 0.5) 2px,
+        rgba(10, 10, 10, 0.3) 2px,
+        rgba(10, 10, 10, 0.3) 4px
+      );
+    background-size: 28px 28px;
+    background-position: 0 0, 14px 14px;
+    background-attachment: fixed;
+  }
 }
 
 /* Custom scrollbar */
@@ -133,11 +175,3 @@
   @apply outline-none ring-2 ring-tactical-red ring-offset-2 ring-offset-camo-black;
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}

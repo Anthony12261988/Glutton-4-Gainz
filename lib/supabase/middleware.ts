@@ -45,6 +45,8 @@ export async function updateSession(request: NextRequest) {
     "/profile",
     "/settings",
     "/stats",
+    "/zero-day",
+    "/command",
   ];
   // Auth routes that signed-in users should NOT access (except onboarding)
   const authRoutes = [
@@ -78,9 +80,22 @@ export async function updateSession(request: NextRequest) {
   }
 
   if (user && isAuthRoute) {
-    // Signed-in users should not see auth pages (login, signup, etc.) - redirect to dashboard
+    // Signed-in users should not see auth pages (login, signup, etc.)
+    // Redirect based on role: admin -> /command, coach -> /barracks, others -> /dashboard
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
     const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
+    if (profile?.role === "admin") {
+      url.pathname = "/command";
+    } else if (profile?.role === "coach") {
+      url.pathname = "/barracks";
+    } else {
+      url.pathname = "/dashboard";
+    }
     return NextResponse.redirect(url);
   }
 

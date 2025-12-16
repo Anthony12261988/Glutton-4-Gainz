@@ -139,12 +139,29 @@ export async function handleInvoicePaymentFailed(
     `Payment failed for user ${profile.email} (${profile.id}). Invoice: ${invoice.id}, Amount: ${invoice.amount_due / 100}`
   );
 
-  // TODO: Implement notification system
-  // - Send email to user about failed payment
-  // - Create in-app notification
-  // - Optionally downgrade after X failed attempts
+  // Create in-app notification for failed payment
+  try {
+    const { error: notifError } = await supabaseAdmin
+      .from("notifications")
+      .insert({
+        user_id: profile.id,
+        type: "payment_failed",
+        title: "PAYMENT FAILED",
+        message: `Your payment of $${(invoice.amount_due / 100).toFixed(2)} failed. Please update your payment method to maintain access.`,
+        action_url: "/settings/billing",
+        priority: "high",
+      });
 
-  // For now, just log. Stripe will handle retry logic.
+    if (notifError) {
+      console.error("Failed to create notification:", notifError);
+    } else {
+      console.log(`Payment failure notification created for user ${profile.email}`);
+    }
+  } catch (error) {
+    console.error("Error creating payment notification:", error);
+  }
+
+  // Note: Stripe handles automatic retry logic
   // After final retry fails, subscription will be canceled and
-  // handleSubscriptionDeleted will downgrade the user.
+  // handleSubscriptionDeleted will downgrade the user automatically
 }
