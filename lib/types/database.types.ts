@@ -596,6 +596,47 @@ export type Database = {
           }
         ];
       };
+      zero_day_tests: {
+        Row: {
+          id: string;
+          user_id: string;
+          pushups: number;
+          squats: number;
+          plank_seconds: number;
+          assigned_tier: string;
+          previous_tier: string | null;
+          completed_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          pushups: number;
+          squats: number;
+          plank_seconds: number;
+          assigned_tier: string;
+          previous_tier?: string | null;
+          completed_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          pushups?: number;
+          squats?: number;
+          plank_seconds?: number;
+          assigned_tier?: string;
+          previous_tier?: string | null;
+          completed_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "zero_day_tests_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
