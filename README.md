@@ -2,146 +2,301 @@
 
 A tactical approach to fitness. Complete missions, earn ranks, dominate your goals.
 
-## Tech Stack
+## 🎯 Current Status: Production Ready ✅
 
-- **Framework**: Next.js 16+ (App Router, TypeScript)
+All critical features are complete and tested. Ready for deployment after applying database migrations.
+
+---
+
+## 🚀 Quick Start
+
+### 1. Install Dependencies
+```bash
+npm install
+```
+
+### 2. Set Up Environment Variables
+```bash
+cp .env.local.example .env.local
+# Fill in your Supabase and Stripe credentials
+```
+
+### 3. Apply Database Migrations
+Open **Supabase Dashboard → SQL Editor** and run these migrations **in order**:
+
+1. `supabase/migrations/043_allow_admin_briefings.sql`
+2. `supabase/migrations/044_add_recipe_freemium_fields.sql`
+3. `supabase/migrations/045_fix_recipes_rls_freemium.sql`
+4. `supabase/migrations/046_seed_standard_issue_recipes.sql`
+5. `supabase/migrations/047_create_zero_day_tests.sql`
+
+### 4. Run Development Server
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000)
+
+---
+
+## ✨ Key Features
+
+### 🎖️ Gamification System
+- **4-Tier Rank System**: .223 (Recruit) → .556 → .762 → .50 Cal (Elite)
+- **XP & Streaks**: Earn XP for completing workouts, maintain daily streaks
+- **Achievement Badges**: Unlock badges for milestones
+- **Zero Day Re-Qualification**: Re-test to unlock higher tiers and premium features
+
+### 💪 Workout System
+- **Tier-Based Workouts**: Progressively harder workouts as you rank up
+- **Video Demonstrations**: YouTube integration for exercise guides
+- **Progress Tracking**: Log sets, reps, and completion status
+- **Personal Records**: Track your best lifts and times
+
+### 🍽️ Nutrition (Rations)
+- **Freemium Model**: 5 free recipes for Recruits, all recipes for premium users
+- **Meal Planning**: Plan meals by date (premium feature)
+- **Macro Tracking**: Calories, protein, carbs, fat for each recipe
+- **Custom Recipes**: Coaches can create custom recipes
+
+### 📊 Analytics & Progress
+- **Consistency Chart**: Visual representation of workout frequency
+- **Weight Tracking**: Monitor body composition over time
+- **XP Progress**: See your progression towards next rank
+- **Fitness Dossier**: Comprehensive profile with goals and achievements
+
+### 👥 Social Features
+- **Buddy System**: Connect with workout partners
+- **Daily Briefings**: Motivational messages from coaches/admins (real-time updates)
+- **Coach Dashboard**: Coaches can manage troops, create content, invite users
+
+### 💳 Monetization
+- **Stripe Integration**: Subscription payments for Soldier tier ($9.99/month)
+- **Freemium Access**: Free users can unlock premium via Zero Day re-qualification
+- **Premium Features**: Full recipe library, meal planning, advanced workouts
+
+---
+
+## 🏗️ Tech Stack
+
+- **Framework**: Next.js 16+ (App Router, TypeScript, React 19)
 - **Styling**: Tailwind CSS v3 + Custom Military Theme
-- **Backend**: Supabase (PostgreSQL, Auth, Storage)
+- **Backend**: Supabase (PostgreSQL, Auth, Storage, Realtime)
+- **Payments**: Stripe Checkout + Webhooks
 - **Charts**: Recharts
 - **Icons**: Lucide React
-- **Payments**: Stripe
+- **UI Components**: Shadcn/UI
 
-## Project Status
+---
 
-**Current Phase**: Phases 0-2 Complete ✅ | Ready for Supabase Setup
+## 🎨 Design System
 
-### ✅ Phase 0: Foundation (COMPLETE)
-- [x] Next.js 16 with TypeScript initialized
-- [x] Tailwind CSS v3 configured with military theme colors
-- [x] All dependencies installed (Supabase, Recharts, Lucide React, Stripe, Shadcn/UI)
-- [x] Folder structure created
-- [x] Environment variables template ready
-- [x] Supabase client setup
-- [x] Proxy middleware configured
-- [x] PWA manifest created
-- [x] Custom fonts (Oswald, Inter) configured
+### Military Theme
+- **Dark Mode Only**: Tactical, high-contrast design
+- **Sharp Edges**: Minimal border radius, blocky UI
+- **Military Terminology**: Missions, Rations, Barracks, Intel
 
-### ✅ Phase 1: Supabase Backend (READY TO DEPLOY)
-- [x] 12 SQL migration files created
-- [x] 9 database tables (profiles, workouts, user_logs, user_badges, body_metrics, recipes, meal_plans, buddies, messages)
-- [x] Complete RLS policies for all tables
-- [x] Database functions and triggers (XP calculation, badge awards, streak tracking)
-- [x] Storage bucket configuration (avatars, content_assets)
-- [x] Seed data created (4 workouts, 8 recipes)
-
-### ✅ Phase 2: Design System & UI Components (COMPLETE)
-- [x] 20+ UI components built and styled
-  - Core: Button, Card, Input, Textarea, Dialog, Toast, Select, Tabs, Badge
-  - Custom: ProgressBar, MissionCard, Navigation
-  - Gamification: BadgeDisplay, RankBadge
-  - Analytics: ConsistencyChart, WeightChart, XPChart
-  - Gating: TierLockOverlay, LockedContent
-- [x] Auth pages: Login, Signup, Onboarding (Day Zero Test)
-- [x] Comprehensive demo page showcasing all components
-- [x] Build passing with 0 TypeScript errors
-
-### 🔄 Next Steps: Set Up Supabase
-- [ ] Create Supabase project at https://supabase.com
-- [ ] Run all 12 database migrations in order
-- [ ] Run seed data
-- [ ] Update `.env.local` with Supabase credentials
-- [ ] Generate TypeScript types from schema
-
-**See [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) for detailed instructions**
-
-## Getting Started
-
-### Prerequisites
-- Node.js 18+ and npm
-- Supabase account
-- Stripe account (for monetization features)
-
-### Installation
-
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Copy environment variables:
-   ```bash
-   cp .env.local.example .env.local
-   ```
-
-4. Fill in your Supabase and Stripe credentials in `.env.local`
-
-5. Run the development server:
-   ```bash
-   npm run dev
-   ```
-
-6. Open [http://localhost:3000](http://localhost:3000)
-
-## Project Structure
-
-```
-glutton4gainz/
-├── app/                    # Next.js App Router pages
-├── components/             # React components
-│   ├── ui/                # Base UI components
-│   ├── layout/            # Layout components
-│   ├── auth/              # Authentication components
-│   ├── workouts/          # Workout-related components
-│   ├── charts/            # Analytics charts
-│   ├── gamification/      # Badges, buddies
-│   ├── nutrition/         # Meal planner components
-│   └── coach/             # Coach dashboard components
-├── lib/                   # Utilities and helpers
-│   ├── auth/              # Authentication helpers
-│   ├── queries/           # Database queries
-│   ├── utils/             # Utility functions
-│   ├── supabase/          # Supabase client
-│   └── types/             # TypeScript types
-├── hooks/                 # Custom React hooks
-├── constants/             # Static data (badges, tiers)
-├── public/                # Static assets
-└── supabase/              # Supabase migrations and config
-
-## Military Theme
-
-### Colors
-- **Camo Black**: `#0a0a0a` (main background)
+### Color Palette
+- **Camo Black**: `#0a0a0a` (main background with diamond plate texture)
 - **Gunmetal**: `#1a1a1a` (cards, modals)
 - **Tactical Red**: `#D32F2F` (primary accent)
 - **Steel**: `#4a4a4a` (borders, dividers)
 - **Radar Green**: `#10B981` (success states)
+- **High Vis**: `#f5f5f5` (primary text)
 
 ### Typography
-- **Headings**: Oswald (uppercase, bold)
-- **Body**: Inter (clean, legible)
+- **Headings**: Oswald (uppercase, bold, military-style)
+- **Body**: Inter (clean, modern, legible)
 
-### Design Principles
-- Dark mode only
-- Sharp edges (minimal border radius)
-- High contrast
-- Military terminology (Mission, Rations, Intel, Barracks)
+---
 
-## Available Scripts
+## 📂 Project Structure
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm start` - Start production server
-- `npm run lint` - Run ESLint
+```
+glutton4gainz/
+├── app/
+│   ├── (auth)/              # Login, signup, onboarding
+│   ├── (dashboard)/         # Main app (dashboard, rations, barracks, etc.)
+│   ├── (app)/               # Public pages (pricing, success)
+│   └── api/                 # API routes (Stripe webhooks)
+├── components/
+│   ├── ui/                  # Base UI components (buttons, cards, etc.)
+│   ├── layout/              # Navigation, header, footer
+│   ├── features/            # Feature-specific components
+│   ├── gamification/        # Badges, briefings, rank system
+│   ├── nutrition/           # Meal planner, recipe cards
+│   └── charts/              # Analytics visualizations
+├── lib/
+│   ├── supabase/            # Supabase client & middleware
+│   ├── stripe/              # Stripe integration & webhooks
+│   ├── utils/               # Utility functions
+│   ├── constants/           # Static data (tiers, badges)
+│   └── types/               # TypeScript type definitions
+├── hooks/                   # Custom React hooks
+├── public/                  # Static assets
+└── supabase/
+    ├── migrations/          # Database migrations
+    └── seed-admin-data.sql  # Seed data
+```
 
-## Documentation
+---
 
-- **[Development & Testing Playbook](./DEV_TESTING_GUIDE.md)** - Local setup, migrations, roles, and critical test scenarios
-- **[Project Status](./PROJECT_STATUS.md)** - Detailed progress report and roadmap
-- **[Task Breakdown](./TASKS.md)** - Complete 12-phase task list (200+ tasks)
-- **[Product Requirements Document](./GLUTTON4GAMES_PRD.md)** - Full product specification
-- **[Design System](./G4G_Design_System.md)** - Visual design specifications
+## 🔐 User Roles & Access Control
 
-## License
+### Role Hierarchy
+1. **Recruit** (role: `user`, tier: `.223`) - Free user
+2. **Soldier** (role: `soldier`) - Paid subscription ($9.99/month)
+3. **Coach** (role: `coach`) - Trainer/admin with content management
+4. **Admin** (role: `admin`) - System administrator
+
+### Premium Access
+Users get premium access if:
+- They have Soldier role (paid subscription), OR
+- They have higher tier (.556, .762, .50 Cal) earned via Zero Day
+
+### Feature Access
+| Feature | Recruit | Soldier | Coach | Admin |
+|---------|---------|---------|-------|-------|
+| Basic Workouts | ✅ | ✅ | ✅ | ✅ |
+| 5 Standard Recipes | ✅ | ✅ | ✅ | ✅ |
+| All Recipes | ❌ | ✅ | ✅ | ✅ |
+| Meal Planning | ❌ | ✅ | ✅ | ✅ |
+| Zero Day Re-qual | ✅ | ✅ | ❌ | ❌ |
+| Create Content | ❌ | ❌ | ✅ | ✅ |
+| Manage Users | ❌ | ❌ | ✅ | ✅ |
+
+---
+
+## 📊 Database Schema
+
+### Core Tables
+- **profiles** - User profiles with tier, role, XP, streaks
+- **workouts** - Tier-based workout templates
+- **user_logs** - Workout completion logs
+- **user_badges** - Earned achievement badges
+- **body_metrics** - Weight, body fat tracking
+- **recipes** - Meal recipes (with `is_standard_issue` flag)
+- **meal_plans** - User meal planning
+- **zero_day_tests** - Historical test attempts (NEW)
+- **daily_briefings** - Motivational messages from coaches
+- **coach_invites** - Coach invitation system
+- **notifications** - In-app notifications (payment failures, etc.)
+
+### Security
+- **Row-Level Security (RLS)** enforced on all tables
+- **Freemium model** enforced at database level
+- **Role-based access control** via RLS policies
+
+---
+
+## 🚢 Deployment
+
+### Prerequisites
+- Supabase project with migrations applied
+- Vercel account (or any Next.js host)
+- Stripe account with webhook configured
+
+### Steps
+1. Push code to GitHub
+2. Connect repository to Vercel
+3. Set environment variables in Vercel
+4. Deploy
+
+### Environment Variables
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_key
+STRIPE_SECRET_KEY=your_stripe_secret
+STRIPE_WEBHOOK_SECRET=your_webhook_secret
+STRIPE_PRICE_ID=your_price_id
+NEXT_PUBLIC_APP_URL=https://your-domain.com
+```
+
+---
+
+## 🧪 Testing
+
+### Test Admin Login
+1. Run `npm run seed` to create admin user
+2. Log in as `rajeshsunny@gmail.com` (use your Supabase auth)
+3. Should redirect to `/command` (admin dashboard)
+
+### Test Free Tier
+1. Sign up as new user (auto-assigned .223 tier)
+2. Navigate to `/rations`
+3. Should see only 5 standard issue recipes
+
+### Test Premium Access
+1. Upgrade user to Soldier (via Stripe checkout)
+2. Navigate to `/rations`
+3. Should see all 8 recipes + meal planning
+
+### Test Zero Day
+1. Navigate to `/zero-day`
+2. Complete fitness test
+3. Check database: `SELECT * FROM zero_day_tests`
+4. Verify test data is saved
+
+---
+
+## 📝 Available Scripts
+
+```bash
+npm run dev       # Start development server
+npm run build     # Build for production
+npm start         # Start production server
+npm run lint      # Run ESLint
+npm run seed      # Seed admin data to Supabase
+```
+
+---
+
+## 🔄 Recent Updates (Dec 2024)
+
+### Production-Ready Fixes ✅
+- **Admin Briefings**: Fixed RLS to allow admins to publish briefings
+- **Real-Time Updates**: Implemented WebSocket subscriptions for briefings
+- **Zero Day Tracking**: Created `zero_day_tests` table for historical data
+- **Freemium Model**: Database-enforced with `is_standard_issue` flag on recipes
+- **Payment Notifications**: Webhook creates in-app notifications on payment failure
+- **UX Improvements**: Removed `window.location.reload()` calls, added real-time state updates
+
+---
+
+## 📖 Documentation
+
+All documentation has been consolidated into this README. Key sections:
+- **Quick Start** - Get up and running in 5 minutes
+- **Features** - Comprehensive feature overview
+- **Tech Stack** - Technologies used
+- **Database Schema** - Table structure and relationships
+- **Deployment** - Production deployment guide
+- **Testing** - Test scenarios and verification
+
+---
+
+## 🆘 Troubleshooting
+
+### "Admin can't publish briefings"
+→ Run migration 043 in Supabase SQL Editor
+
+### "Free users see all recipes"
+→ Run migrations 044, 045, and 046 in order
+
+### "Zero Day doesn't save test data"
+→ Run migration 047 to create `zero_day_tests` table
+
+### "Briefings don't update in real-time"
+→ Enable Supabase Realtime for `daily_briefings` table
+
+---
+
+## 📄 License
 
 Private - All rights reserved
+
+---
+
+**Built with 💪 by the G4G team**
