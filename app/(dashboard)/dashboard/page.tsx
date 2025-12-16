@@ -25,7 +25,7 @@ export default async function DashboardPage() {
   if (profileError) {
     // Don't redirect on error - this prevents infinite loops
     return (
-      <div className="min-h-screen bg-camo-black flex items-center justify-center p-4">
+      <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-tactical-red font-heading text-2xl">
             Profile Loading Error

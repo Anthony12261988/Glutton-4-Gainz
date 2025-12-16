@@ -31,7 +31,7 @@ export default async function WorkoutManagerPage() {
     .order("scheduled_date", { ascending: false });
 
   return (
-    <div className="min-h-screen bg-camo-black pb-20 md:pb-8 text-white">
+    <div className="min-h-screen pb-20 md:pb-8 text-white">
       <div className="container mx-auto px-4 py-6">
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>

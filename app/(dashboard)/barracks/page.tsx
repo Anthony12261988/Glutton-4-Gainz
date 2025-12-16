@@ -28,7 +28,7 @@ export default async function BarracksPage() {
 
   if (!isCoachOrAdmin) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-camo-black p-4 text-center">
+      <div className="flex min-h-screen flex-col items-center justify-center p-4 text-center">
         <ShieldAlert className="mb-4 h-16 w-16 text-tactical-red" />
         <h1 className="font-heading text-3xl text-tactical-red">
           RESTRICTED AREA

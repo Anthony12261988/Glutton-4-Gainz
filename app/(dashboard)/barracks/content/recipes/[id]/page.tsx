@@ -42,7 +42,7 @@ export default async function EditRecipePage({
   }
 
   return (
-    <div className="min-h-screen bg-camo-black pb-24 text-white">
+    <div className="min-h-screen pb-24 text-white">
       <div className="container mx-auto px-4 py-6 max-w-4xl">
         <Link
           href="/barracks/content/recipes"

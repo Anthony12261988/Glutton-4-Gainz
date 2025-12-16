@@ -97,7 +97,7 @@ const onboardingScreens = [
 
 export default function Home() {
   return (
-    <main className="relative overflow-hidden bg-camo-black text-high-vis">
+    <main className="relative overflow-hidden text-high-vis">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -left-32 top-10 h-64 w-64 rounded-full bg-tactical-red/20 blur-[120px]" />
         <div className="absolute right-0 top-40 h-72 w-72 rounded-full bg-emerald-500/10 blur-[140px]" />
