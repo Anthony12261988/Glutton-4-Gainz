@@ -1,7 +1,7 @@
 {
   "name": "glutton4gainz",
   "version": "0.1.0",
-  "description": "Military-themed fitness PWA - Glutton4Games",
+  "description": "Military-themed fitness PWA - Glutton4Gainz",
   "private": true,
   "scripts": {
     "dev": "next dev",

@@ -25,12 +25,12 @@ interface ProfileForPremiumCheck {
  * Premium access is granted if:
  * - User is admin or coach (always premium)
  * - User is soldier (paid subscription)
- * - User has a tier above .223 (earned through Zero Day re-qualification)
+ * - User has a tier above .223 (earned through Zero Day assessment)
  * 
  * Recruits (role: "user") with tier .223 do NOT have premium access.
  * They must either:
  * 1. Pay to become a Soldier, OR
- * 2. Re-qualify via Zero Day to unlock higher tiers (.556, .762, .50 Cal)
+ * 2. Complete Zero Day assessment to unlock higher tiers (.556, .762, .50 Cal)
  */
 export function hasPremiumAccess(
   profile: ProfileForPremiumCheck | null
@@ -47,7 +47,7 @@ export function hasPremiumAccess(
     return true;
   }
 
-  // Recruits (role: "user") can unlock premium tiers through Zero Day re-qualification
+  // Recruits (role: "user") can unlock premium tiers through Zero Day assessment
   // Anything above .223 grants premium access
   if (profile.tier && profile.tier !== ".223") {
     return true;

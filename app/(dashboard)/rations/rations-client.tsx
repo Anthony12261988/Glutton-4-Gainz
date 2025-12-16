@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { MotivationalCorner } from "@/components/gamification/motivational-corner";
 
 interface MealPlan {
   id: string;
@@ -179,6 +180,9 @@ export default function RationsClient({
           <Utensils className="h-6 w-6 text-tactical-red" />
         </div>
       </div>
+
+      {/* Motivational Corner - Mission Briefing */}
+      <MotivationalCorner />
 
       {/* Recruit Notice */}
       {!isPremium && (

@@ -80,7 +80,7 @@ export default function AuthCodeErrorPage() {
           <p className="text-xs text-center text-steel/60">
             Need help?{" "}
             <Link
-              href="mailto:support@glutton4games.com"
+              href="mailto:support@glutton4gainz.com"
               className="text-tactical-red hover:underline"
             >
               Contact Support

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -170,12 +171,19 @@ export function LoginForm() {
       {/* Logo/Header */}
       <div className="text-center">
         <div className="mb-4 flex justify-center">
-          <div className="rounded-sm border-2 border-tactical-red bg-gunmetal p-4">
-            <Shield className="h-12 w-12 text-tactical-red" strokeWidth={2.5} />
+          <div className="rounded-sm border-2 border-tactical-red bg-tactical-red p-6">
+            <Image
+              src="/G4G_Logo_2.png"
+              alt="Glutton4Gainz Logo"
+              width={120}
+              height={120}
+              className="h-auto w-auto"
+              priority
+            />
           </div>
         </div>
         <h1 className="font-heading text-3xl font-bold uppercase tracking-wider text-tactical-red">
-          GLUTTON4GAMES
+          GLUTTON4GAINZ
         </h1>
         <p className="mt-2 text-sm text-muted-text">
           {PAGE_TITLES.login.subtitle}

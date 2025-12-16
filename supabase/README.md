@@ -1,6 +1,6 @@
 # Supabase Setup Guide for G4G
 
-This directory contains all SQL migrations and seed data for the Glutton4Games database.
+This directory contains all SQL migrations and seed data for the Glutton4Gainz database.
 
 ## Files Overview
 
@@ -30,7 +30,7 @@ This directory contains all SQL migrations and seed data for the Glutton4Games d
 1. Go to [supabase.com](https://supabase.com) and sign in
 2. Click **"New Project"**
 3. Fill in project details:
-   - **Name**: glutton4games (or your choice)
+   - **Name**: glutton4gainz (or your choice)
    - **Database Password**: Generate a strong password (save it!)
    - **Region**: Choose closest to your users
 4. Wait for project to finish provisioning (~2 minutes)

@@ -28,7 +28,9 @@ export function MotivationalCorner() {
           .limit(1)
           .maybeSingle();
 
-        if (!error && data) {
+        if (error) {
+          console.error("Error fetching briefing:", error);
+        } else if (data) {
           setBriefing(data);
         }
       } catch (err) {

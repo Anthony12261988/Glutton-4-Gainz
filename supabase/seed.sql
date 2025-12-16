@@ -1,4 +1,4 @@
--- Seed Data for Glutton4Games
+-- Seed Data for Glutton4Gainz
 -- Sample workouts and recipes for testing
 
 -- ============================================================================

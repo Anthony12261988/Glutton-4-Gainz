@@ -6,7 +6,7 @@ import webpush from "web-push";
 // Configure web-push with VAPID keys (must be set in env)
 if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
   webpush.setVapidDetails(
-    "mailto:noreply@glutton4games.com",
+    "mailto:noreply@glutton4gainz.com",
     process.env.VAPID_PUBLIC_KEY,
     process.env.VAPID_PRIVATE_KEY
   );

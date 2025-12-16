@@ -102,14 +102,14 @@ export async function POST(req: Request) {
     const acceptLink = `${appUrl}/accept-invite?token=${inviteToken}`;
 
     const result = await resend.emails.send({
-      from: "Glutton4Games Command <noreply@glutton4games.com>",
+      from: "Glutton4Gainz Command <noreply@glutton4gainz.com>",
       to: email,
       subject: "CLASSIFIED: Officer Commission Offer",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #1a1a1a; color: #ffffff; padding: 40px;">
           <h1 style="color: #dc2626; text-transform: uppercase; letter-spacing: 2px;">Officer Commission</h1>
           <p style="color: #9ca3af; line-height: 1.6;">
-            You have been selected for a coach position at Glutton4Games Command.
+            You have been selected for a coach position at Glutton4Gainz Command.
           </p>
           <p style="color: #9ca3af; line-height: 1.6;">
             Click the button below to accept your commission and join the officer corps.
@@ -124,7 +124,7 @@ export async function POST(req: Request) {
           </p>
         </div>
       `,
-      text: `You have been drafted by Glutton4Games Command. Click here to accept your commission: ${acceptLink}`,
+      text: `You have been drafted by Glutton4Gainz Command. Click here to accept your commission: ${acceptLink}`,
     });
 
     if (result.error) {

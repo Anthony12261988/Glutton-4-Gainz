@@ -217,7 +217,7 @@ export function AcceptInviteClient({
       <CardContent className="space-y-6">
         <div className="text-center">
           <p className="text-muted-text mb-2">
-            You have been selected for a coach position at Glutton4Games.
+            You have been selected for a coach position at Glutton4Gainz.
           </p>
           {inviteEmail && (
             <p className="text-sm text-steel">

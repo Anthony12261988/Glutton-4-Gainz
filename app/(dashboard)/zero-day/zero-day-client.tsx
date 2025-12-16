@@ -96,7 +96,7 @@ export default function ZeroDayClient({
       setStep("results");
     } catch (error: any) {
       toast({
-        title: "RE-QUALIFICATION FAILED",
+        title: "ASSESSMENT FAILED",
         description: error.message || "Failed to update tier",
         variant: "destructive",
       });
@@ -120,10 +120,10 @@ export default function ZeroDayClient({
         <div className="flex items-center justify-between">
           <div>
             <h1 className="font-heading text-3xl font-bold uppercase tracking-wider text-high-vis">
-              ZERO DAY RE-QUALIFICATION
+              ZERO DAY ASSESSMENT
             </h1>
             <p className="text-sm text-muted-text">
-              Prove you're ready for the next level
+              Complete your fitness assessment to establish baseline performance
             </p>
           </div>
           <div className="rounded-sm border border-tactical-red bg-tactical-red/10 p-2">
@@ -148,11 +148,11 @@ export default function ZeroDayClient({
                   <AlertTriangle className="h-5 w-5 text-tactical-red flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="text-sm text-high-vis font-semibold mb-1">
-                      RE-QUALIFICATION PROTOCOL
+                      ASSESSMENT PROTOCOL
                     </p>
                     <p className="text-xs text-muted-text leading-relaxed">
-                      In the military, you always re-qualify to prove you're ready for the next level. 
-                      Complete the fitness assessment again. If you've improved, you'll unlock access to higher tiers.
+                      Zero Day is your fitness baseline assessment. Complete the three-part test to establish your performance tier.
+                      You can retake this assessment anytime to track improvement and unlock higher tiers.
                     </p>
                   </div>
                 </div>
@@ -199,7 +199,7 @@ export default function ZeroDayClient({
           onClick={handleStartTest}
           className="w-full py-6 text-lg bg-tactical-red hover:bg-red-700"
         >
-          BEGIN RE-QUALIFICATION
+          BEGIN ASSESSMENT
         </Button>
       </div>
     );

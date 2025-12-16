@@ -1,5 +1,5 @@
 -- =====================================================
--- GLUTTON4GAMES DATABASE INDEX OPTIMIZATION
+-- GLUTTON4GAINZ DATABASE INDEX OPTIMIZATION
 -- Migration: 029_add_performance_indexes
 -- Purpose: Add indexes for query optimization
 -- Date: December 4, 2025

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Activity,
@@ -12,7 +13,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Glutton4Games | Stop Exercising. Start Training.",
+  title: "Glutton4Gainz | Stop Exercising. Start Training.",
   description:
     "A tier-based military fitness platform. Complete daily missions, rank up from Recruit to General, and dominate the leaderboard.",
   keywords: [
@@ -21,14 +22,14 @@ export const metadata: Metadata = {
     "discipline app",
     "tier training",
     "gamified fitness",
-    "Glutton4Games",
+    "Glutton4Gainz",
   ],
   openGraph: {
-    title: "Glutton4Games – Your Mission Starts Now.",
+    title: "Glutton4Gainz – Your Mission Starts Now.",
     description:
       "Join the elite tactical fitness platform that treats every workout like a mandatory mission.",
-    url: "https://glutton4games.com",
-    siteName: "Glutton4Games",
+    url: "https://glutton4gainz.com",
+    siteName: "Glutton4Gainz",
   },
 };
 
@@ -106,9 +107,21 @@ export default function Home() {
 
       <section className="relative mx-auto flex max-w-6xl flex-col gap-12 px-6 pb-20 pt-16 lg:flex-row lg:items-center lg:gap-16 lg:pt-24">
         <div className="relative flex-1">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-sm bg-gunmetal/70 px-3 py-2 text-xs font-semibold tracking-[0.24em] text-muted-text ring-1 ring-steel/60">
-            <span className="h-2 w-2 rounded-full bg-radar-green" />
-            STOP EXERCISING. START TRAINING.
+          {/* Logo Badge */}
+          <div className="mb-6 inline-flex items-center gap-3">
+            <div className="rounded-sm bg-tactical-red p-2">
+              <Image
+                src="/G4G_Logo_2.png"
+                alt="Glutton4Gainz"
+                width={32}
+                height={32}
+                className="h-auto w-auto"
+              />
+            </div>
+            <div className="inline-flex items-center gap-2 rounded-sm bg-gunmetal/70 px-3 py-2 text-xs font-semibold tracking-[0.24em] text-muted-text ring-1 ring-steel/60">
+              <span className="h-2 w-2 rounded-full bg-radar-green" />
+              STOP EXERCISING. START TRAINING.
+            </div>
           </div>
           <h1 className="mb-4 text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
             YOUR MISSION STARTS NOW.
@@ -197,14 +210,14 @@ export default function Home() {
       >
         <div className="mb-10 max-w-3xl">
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-text">
-            WHY GLUTTON4GAMES
+            WHY GLUTTON4GAINZ
           </p>
           <h2 className="mt-3 text-3xl font-bold sm:text-4xl">
             STOP GUESSING. START EXECUTING.
           </h2>
           <p className="mt-4 text-lg text-muted-text">
-            Civilian apps overwhelm you with choices. Glutton4Games gives you orders.
-            We don’t sell beach bodies. We build combat-ready discipline.
+            Civilian apps overwhelm you with choices. Glutton4Gainz gives you orders.
+            We don't sell beach bodies. We build combat-ready discipline.
           </p>
         </div>
         <div className="grid gap-6 md:grid-cols-3">
@@ -347,7 +360,7 @@ export default function Home() {
       <footer className="border-t border-steel/50 bg-gunmetal/70">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-8 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm font-semibold">GLUTTON4GAMES © 2024.</p>
+            <p className="text-sm font-semibold">GLUTTON4GAINZ © 2024.</p>
             <p className="text-xs uppercase tracking-wide text-muted-text">
               DISCIPLINE. STRENGTH. HONOR.
             </p>

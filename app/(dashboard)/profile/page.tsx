@@ -201,7 +201,7 @@ export default async function ProfilePage() {
         <RankBadge xp={profile?.xp || 0} showProgress size="md" />
       </div>
 
-      {/* Zero Day Re-qualification Link (for non-coaches) */}
+      {/* Zero Day Assessment (for all recruits/soldiers) */}
       {!isCoach && (
         <div className="mb-8">
           <Link href="/zero-day">
@@ -210,10 +210,10 @@ export default async function ProfilePage() {
                 <Shield className="h-6 w-6 text-tactical-red flex-shrink-0" />
                 <div className="flex-1">
                   <h3 className="font-heading text-sm font-bold uppercase text-tactical-red mb-1">
-                    ZERO DAY RE-QUALIFICATION
+                    ZERO DAY ASSESSMENT
                   </h3>
                   <p className="text-xs text-muted-text">
-                    Re-test to unlock higher tiers. Prove you're ready for the next level.
+                    Complete your fitness assessment. All soldiers must test to establish baseline performance.
                   </p>
                 </div>
               </div>

@@ -1,4 +1,4 @@
-# GLUTTON4GAMES (G4G) - Military Fitness PWA
+# GLUTTON4GAINZ (G4G) - Military Fitness PWA
 
 A tactical approach to fitness. Complete missions, earn ranks, dominate your goals.
 
@@ -26,9 +26,10 @@ Open **Supabase Dashboard → SQL Editor** and run these migrations **in order**
 
 1. `supabase/migrations/043_allow_admin_briefings.sql`
 2. `supabase/migrations/044_add_recipe_freemium_fields.sql`
-3. `supabase/migrations/045_fix_recipes_rls_freemium.sql`
+3. `supabase/migrations/046_fix_recipes_rls_freemium.sql`
 4. `supabase/migrations/046_seed_standard_issue_recipes.sql`
 5. `supabase/migrations/047_create_zero_day_tests.sql`
+6. `supabase/migrations/048_fix_briefings_read_policy.sql` (IMPORTANT: Fixes "Loading briefing..." issue)
 
 ### 4. Run Development Server
 ```bash
@@ -45,7 +46,7 @@ Open [http://localhost:3000](http://localhost:3000)
 - **4-Tier Rank System**: .223 (Recruit) → .556 → .762 → .50 Cal (Elite)
 - **XP & Streaks**: Earn XP for completing workouts, maintain daily streaks
 - **Achievement Badges**: Unlock badges for milestones
-- **Zero Day Re-Qualification**: Re-test to unlock higher tiers and premium features
+- **Zero Day Assessment**: Fitness baseline test for ALL recruits to establish performance tier
 
 ### 💪 Workout System
 - **Tier-Based Workouts**: Progressively harder workouts as you rank up
@@ -67,13 +68,44 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ### 👥 Social Features
 - **Buddy System**: Connect with workout partners
-- **Daily Briefings**: Motivational messages from coaches/admins (real-time updates)
+- **Motivational Corner**: Daily briefings pour positivity into soldiers as they conquer missions
 - **Coach Dashboard**: Coaches can manage troops, create content, invite users
+- **Real-Time Updates**: WebSocket-powered live updates for briefings and content
 
 ### 💳 Monetization
 - **Stripe Integration**: Subscription payments for Soldier tier ($9.99/month)
-- **Freemium Access**: Free users can unlock premium via Zero Day re-qualification
-- **Premium Features**: Full recipe library, meal planning, advanced workouts
+- **Freemium Access**: Free users can unlock premium via Zero Day assessment
+- **Premium Features**: Full recipe library, meal planning, advanced analytics
+
+---
+
+## 📋 Client Requirements (Implemented)
+
+### ✅ Zero Day Assessment
+- **Purpose**: Fitness baseline test for ALL recruits (not just tier progression)
+- **Access**: Available to all soldiers and recruits
+- **Function**: Establishes initial performance tier based on fitness test results
+- **Retake**: Soldiers can retake anytime to track improvement and unlock higher tiers
+- **Data**: All test attempts saved to `zero_day_tests` table for historical tracking
+
+### ✅ Recruit (Free Tier) Features
+1. **Zero Day Access**: Complete fitness assessment to establish baseline
+2. **Basic Service Record**: Access to profile page with stats, badges, and progress
+3. **Standard Rations**: View 5 standard issue recipes (marked with `is_standard_issue` flag)
+4. **Tier-Based Workouts**: Access to workouts for their assigned tier
+5. **Motivational Corner**: Inspirational briefings integrated with Rations page
+
+### ✅ Motivational Corner Integration
+- **Widget**: Displays daily mission briefings from coaches/admins
+- **Location**: Integrated with Rations & Intel page (as requested)
+- **Purpose**: Pours positivity into soldiers as they conquer their daily missions
+- **Real-Time**: WebSocket-powered live updates when coaches publish new briefings
+
+### ✅ Background Texture
+- **Pattern**: Perforated metal dot texture (subtle, military-themed)
+- **Implementation**: SVG-based pattern (`/diamond-plate.svg`)
+- **Coverage**: Applied to all pages via `body` background in `globals.css`
+- **Color Scheme**: Matches tactical theme (#0a0a0a base with #1a1a1a dots)
 
 ---
 
@@ -97,7 +129,7 @@ Open [http://localhost:3000](http://localhost:3000)
 - **Military Terminology**: Missions, Rations, Barracks, Intel
 
 ### Color Palette
-- **Camo Black**: `#0a0a0a` (main background with diamond plate texture)
+- **Camo Black**: `#0a0a0a` (main background with perforated metal dot texture)
 - **Gunmetal**: `#1a1a1a` (cards, modals)
 - **Tactical Red**: `#D32F2F` (primary accent)
 - **Steel**: `#4a4a4a` (borders, dividers)
@@ -152,16 +184,19 @@ glutton4gainz/
 ### Premium Access
 Users get premium access if:
 - They have Soldier role (paid subscription), OR
-- They have higher tier (.556, .762, .50 Cal) earned via Zero Day
+- They have higher tier (.556, .762, .50 Cal) earned via Zero Day assessment
 
 ### Feature Access
-| Feature | Recruit | Soldier | Coach | Admin |
-|---------|---------|---------|-------|-------|
-| Basic Workouts | ✅ | ✅ | ✅ | ✅ |
-| 5 Standard Recipes | ✅ | ✅ | ✅ | ✅ |
+| Feature | Recruit (Free) | Soldier (Paid) | Coach | Admin |
+|---------|----------------|----------------|-------|-------|
+| Zero Day Assessment | ✅ | ✅ | ❌ | ❌ |
+| Basic Service Record | ✅ | ✅ | ✅ | ✅ |
+| Standard Rations (5 recipes) | ✅ | ✅ | ✅ | ✅ |
+| Tier-Based Workouts | ✅ | ✅ | ✅ | ✅ |
+| Motivational Corner | ✅ | ✅ | ✅ | ✅ |
 | All Recipes | ❌ | ✅ | ✅ | ✅ |
 | Meal Planning | ❌ | ✅ | ✅ | ✅ |
-| Zero Day Re-qual | ✅ | ✅ | ❌ | ❌ |
+| Advanced Analytics | ❌ | ✅ | ✅ | ✅ |
 | Create Content | ❌ | ❌ | ✅ | ✅ |
 | Manage Users | ❌ | ❌ | ✅ | ✅ |
 

@@ -1,5 +1,5 @@
 /**
- * Seed Data Script for Glutton4Games
+ * Seed Data Script for Glutton4Gainz
  * Node.js version - easier to run if you have Node.js installed
  * 
  * Usage:

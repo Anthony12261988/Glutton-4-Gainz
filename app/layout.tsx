@@ -7,7 +7,7 @@ import { AuthProvider } from "@/lib/auth/auth-context";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Glutton4Games - Military Fitness Training",
+  title: "Glutton4Gainz - Military Fitness Training",
   description:
     "A tactical approach to fitness. Complete missions, earn ranks, dominate your goals.",
   manifest: "/manifest.json",

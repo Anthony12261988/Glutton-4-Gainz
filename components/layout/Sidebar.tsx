@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
@@ -132,8 +133,14 @@ export function Sidebar({
         {/* Logo / Branding */}
         <div className="border-b border-steel p-6">
           <Link href={isAdmin ? "/command" : isCoach ? "/barracks" : "/dashboard"} className="flex items-center gap-3">
-            <div className="rounded-sm bg-tactical-red p-2">
-              <Crosshair className="h-6 w-6 text-high-vis" />
+            <div className="rounded-sm bg-tactical-red p-2.5">
+              <Image
+                src="/G4G_Logo_2.png"
+                alt="G4G Logo"
+                width={40}
+                height={40}
+                className="h-auto w-auto"
+              />
             </div>
             <div>
               <h1 className="font-heading text-xl font-bold uppercase tracking-wider text-high-vis">
@@ -192,7 +199,7 @@ export function Sidebar({
             </button>
           </form>
           <p className="text-center text-xs text-muted-text">
-            © 2025 Glutton4Games
+            © 2025 Glutton4Gainz
           </p>
         </div>
       </div>

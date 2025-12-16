@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Seed Data Script for Glutton4Games
+# Seed Data Script for Glutton4Gainz
 # This script seeds the database with test data including admin user setup
 #
 # Usage:
