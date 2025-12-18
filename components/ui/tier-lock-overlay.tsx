@@ -82,11 +82,13 @@ export function TierLockOverlay({
       {/* Unlock Message */}
       <div className="mt-4 max-w-xs text-center text-xs text-muted-text">
         {isPremiumFeature ? (
-          <p>Upgrade your account to access meal planning, coach messaging, and advanced analytics.</p>
+          <p>
+            Upgrade to Soldier rank (paid) to access meal planning, premium recipes, and advanced analytics.
+          </p>
         ) : (
           <p>
-            Complete the Day Zero Test to increase your tier and unlock this content. Higher performance
-            = higher tier access.
+            This content requires tier {requiredTier}. Complete the Zero Day Test to increase your tier.
+            Note: Tiers unlock workouts, not premium features.
           </p>
         )}
       </div>

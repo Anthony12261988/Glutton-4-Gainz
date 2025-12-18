@@ -152,7 +152,10 @@ export default function ZeroDayClient({
                     </p>
                     <p className="text-xs text-muted-text leading-relaxed">
                       Zero Day is your fitness baseline assessment. Complete the three-part test to establish your performance tier.
-                      You can retake this assessment anytime to track improvement and unlock higher tiers.
+                      Your tier determines workout difficulty. You can retake this assessment anytime to track improvement.
+                    </p>
+                    <p className="text-xs text-steel mt-2">
+                      Note: Premium features require Soldier upgrade (payment), not tier level.
                     </p>
                   </div>
                 </div>

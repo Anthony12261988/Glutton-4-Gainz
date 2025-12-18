@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import DashboardClient from "./dashboard-client";
 import { hasPremiumAccess } from "@/lib/utils/premium-access";
+import { getTodaysFeaturedMeal } from "@/lib/queries/featured-meals";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -84,21 +85,32 @@ export default async function DashboardPage() {
     if (log) isCompleted = true;
   }
 
-  // Fetch Today's Meal (for Daily Ration)
-  const { data: mealPlan } = await supabase
-    .from("meal_plans")
-    .select(
-      `
-      *,
-      recipe:recipes(*)
-    `
-    )
-    .eq("user_id", user.id)
-    .eq("assigned_date", today)
-    .maybeSingle();
-
-  // Check if user is premium (role-based or tier-based)
+  // Check if user is premium (role-based only - tiers no longer grant premium)
   const isPremium = hasPremiumAccess(profile);
+
+  // Fetch Today's Meal
+  let todaysMeal = null;
+
+  if (isPremium) {
+    // Premium users: fetch their meal plan
+    const { data: mealPlan } = await supabase
+      .from("meal_plans")
+      .select(
+        `
+        *,
+        recipe:recipes(*)
+      `
+      )
+      .eq("user_id", user.id)
+      .eq("assigned_date", today)
+      .maybeSingle();
+
+    todaysMeal = mealPlan?.recipe || null;
+  } else {
+    // Free users: show featured meal of the day
+    const { data: featuredMeal } = await getTodaysFeaturedMeal();
+    todaysMeal = featuredMeal?.recipe || null;
+  }
 
   return (
     <div className="container mx-auto max-w-md px-4 py-6 md:max-w-4xl lg:max-w-7xl">
@@ -107,7 +119,7 @@ export default async function DashboardPage() {
         profile={profile}
         todaysWorkout={workout}
         isCompleted={isCompleted}
-        todaysMeal={mealPlan?.recipe || null}
+        todaysMeal={todaysMeal}
         isPremium={isPremium}
       />
     </div>

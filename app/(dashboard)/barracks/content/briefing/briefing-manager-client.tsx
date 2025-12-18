@@ -195,10 +195,10 @@ export function BriefingManagerClient() {
     <div className="min-h-screen pb-20 md:pb-8 text-white">
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         <Link
-          href="/barracks"
+          href="/command"
           className="flex items-center text-steel hover:text-white mb-6"
         >
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Barracks
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Command
         </Link>
 
         <h1 className="font-heading text-3xl font-bold uppercase tracking-wider text-high-vis mb-8">

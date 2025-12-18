@@ -22,15 +22,15 @@ interface ProfileForPremiumCheck {
 
 /**
  * Check if user has premium access
- * Premium access is granted if:
+ * Premium access is granted ONLY if:
  * - User is admin or coach (always premium)
- * - User is soldier (paid subscription)
- * - User has a tier above .223 (earned through Zero Day assessment)
- * 
- * Recruits (role: "user") with tier .223 do NOT have premium access.
- * They must either:
- * 1. Pay to become a Soldier, OR
- * 2. Complete Zero Day assessment to unlock higher tiers (.556, .762, .50 Cal)
+ * - User is soldier (PAID subscription - ONLY way for regular users to get premium)
+ *
+ * NOTE: Tier (.223, .556, .762, .50 Cal) NO LONGER grants premium access.
+ * Tiers are now purely for workout assignment and Zero Day achievements.
+ *
+ * Recruits (role: "user") do NOT have premium access regardless of tier.
+ * They must upgrade to Soldier role (payment) to access premium features.
  */
 export function hasPremiumAccess(
   profile: ProfileForPremiumCheck | null
@@ -42,18 +42,13 @@ export function hasPremiumAccess(
     return true;
   }
 
-  // Soldier role means paid subscription - always premium
+  // Soldier role means paid subscription - ONLY premium path for regular users
   if (profile.role === "soldier") {
     return true;
   }
 
-  // Recruits (role: "user") can unlock premium tiers through Zero Day assessment
-  // Anything above .223 grants premium access
-  if (profile.tier && profile.tier !== ".223") {
-    return true;
-  }
-
-  // Default: Recruit with .223 tier = no premium access
+  // Recruits (role: "user") do NOT have premium access
+  // regardless of their tier
   return false;
 }
 
@@ -94,4 +89,23 @@ export function isCoachOrAdmin(
   profile: ProfileForPremiumCheck | null
 ): boolean {
   return profile?.role === "admin" || profile?.role === "coach";
+}
+
+/**
+ * Check if user is a free recruit (no premium access)
+ */
+export function isFreeRecruit(
+  profile: ProfileForPremiumCheck | null
+): boolean {
+  return profile?.role === "user";
+}
+
+/**
+ * Check if user has access to meal planning feature
+ * (Same as hasPremiumAccess but more explicit)
+ */
+export function hasMealPlanningAccess(
+  profile: ProfileForPremiumCheck | null
+): boolean {
+  return hasPremiumAccess(profile);
 }

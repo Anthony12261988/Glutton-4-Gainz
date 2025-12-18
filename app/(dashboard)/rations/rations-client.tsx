@@ -20,6 +20,7 @@ import {
   Plus,
   ChefHat,
   Lock,
+  Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -36,6 +37,7 @@ interface RationsClientProps {
   user: any;
   initialRecipes: Recipe[];
   initialMealPlans: MealPlan[];
+  featuredMeal?: Recipe | null;
   isPremium?: boolean;
 }
 
@@ -43,6 +45,7 @@ export default function RationsClient({
   user,
   initialRecipes,
   initialMealPlans,
+  featuredMeal = null,
   isPremium = false,
 }: RationsClientProps) {
   const { toast } = useToast();
@@ -82,9 +85,24 @@ export default function RationsClient({
     },
   ];
 
+  // Merge featured meal with recipes for free users
+  const allRecipesForUser = useMemo(() => {
+    if (isPremium) return initialRecipes;
+
+    // For free users, combine standard issue + featured meal
+    const recipes = [...initialRecipes];
+
+    // Add featured meal if it exists and is not already in standard issue
+    if (featuredMeal && !recipes.find((r) => r.id === featuredMeal.id)) {
+      recipes.unshift(featuredMeal); // Add to beginning
+    }
+
+    return recipes;
+  }, [initialRecipes, featuredMeal, isPremium]);
+
   // Filter and search recipes
   const filteredRecipes = useMemo(() => {
-    let results = initialRecipes;
+    let results = allRecipesForUser;
 
     // Apply search
     if (searchQuery.trim()) {
@@ -105,7 +123,7 @@ export default function RationsClient({
     }
 
     return results;
-  }, [initialRecipes, searchQuery, activeFilter]);
+  }, [allRecipesForUser, searchQuery, activeFilter]);
 
   // Derived state
   const selectedDateKey = selectedDate.toISOString().split("T")[0];
@@ -168,12 +186,12 @@ export default function RationsClient({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-heading text-3xl font-bold uppercase tracking-wider text-high-vis">
-            {isPremium ? "RATIONS" : "STANDARD ISSUE RATIONS"}
+            {isPremium ? "RATIONS" : "RECRUIT RATIONS"}
           </h1>
           <p className="text-sm text-muted-text">
             {isPremium
               ? "Fuel your mission. Plan your meals."
-              : "Recruits follow orders. Standard issue meals only."}
+              : "Standard issue meals + today's featured recipe."}
           </p>
         </div>
         <div className="rounded-sm border border-tactical-red bg-tactical-red/10 p-2">
@@ -194,7 +212,8 @@ export default function RationsClient({
                 RECRUIT STATUS
               </h3>
               <p className="text-xs text-muted-text leading-relaxed mb-3">
-                As a Recruit, you receive Standard Issue rations. Upgrade to Soldier rank to unlock meal planning and custom rations.
+                As a Recruit, you receive {allRecipesForUser.length} Standard Issue rations plus today's featured meal.
+                Upgrade to Soldier rank to unlock meal planning and access to all premium recipes.
               </p>
               <Link href="/pricing">
                 <Button size="sm" className="bg-tactical-red hover:bg-red-700">
@@ -203,6 +222,22 @@ export default function RationsClient({
               </Link>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Featured Meal of the Day - Free Users */}
+      {!isPremium && featuredMeal && (
+        <div className="space-y-2">
+          <h3 className="font-heading text-sm font-bold uppercase text-high-vis flex items-center gap-2">
+            <Star className="h-4 w-4" />
+            TODAY'S FEATURED MEAL
+          </h3>
+          <div className="rounded-sm border-2 border-high-vis/30 bg-gradient-to-br from-high-vis/5 to-transparent p-1">
+            <RecipeCard recipe={featuredMeal} isSelected={false} />
+          </div>
+          <p className="text-xs text-steel text-center">
+            This meal is featured today for all recruits. Check back daily for new meals!
+          </p>
         </div>
       )}
 

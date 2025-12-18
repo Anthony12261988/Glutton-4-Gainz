@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import RationsClient from "./rations-client";
 import { hasPremiumAccess } from "@/lib/utils/premium-access";
+import { getTodaysFeaturedMeal } from "@/lib/queries/featured-meals";
 
 export default async function RationsPage() {
   const supabase = await createClient();
@@ -23,13 +24,16 @@ export default async function RationsPage() {
 
   const isPremium = hasPremiumAccess(profile);
 
-  // Fetch Recipes - RLS automatically filters based on user's premium status
-  // Free users (.223 Recruits) only see standard_issue recipes
-  // Premium users (soldiers, higher tiers, coaches, admins) see all recipes
+  // Fetch Recipes - RLS automatically filters based on user's role
+  // Free users (role: 'user') only see standard_issue recipes
+  // Premium users (soldiers, coaches, admins) see all recipes
   const { data: recipes } = await supabase
     .from("recipes")
     .select("*")
     .order("title");
+
+  // Fetch today's featured meal (for free users)
+  const { data: featuredMeal } = await getTodaysFeaturedMeal();
 
   // Fetch Meal Plans for the user (only for premium users)
   const { data: mealPlans } = isPremium
@@ -50,6 +54,7 @@ export default async function RationsPage() {
         user={user}
         initialRecipes={recipes || []}
         initialMealPlans={mealPlans || []}
+        featuredMeal={featuredMeal?.recipe || null}
         isPremium={isPremium}
       />
     </div>
