@@ -48,13 +48,16 @@ export default async function RationsPage() {
         .eq("user_id", user.id)
     : { data: null };
 
+  // Type cast the featured recipe to avoid TypeScript errors
+  const featuredRecipe: any = featuredMeal?.recipe || null;
+
   return (
     <div className="container mx-auto max-w-md px-4 py-6 md:max-w-4xl lg:max-w-7xl">
       <RationsClient
         user={user}
         initialRecipes={recipes || []}
         initialMealPlans={mealPlans || []}
-        featuredMeal={featuredMeal?.recipe || null}
+        featuredMeal={featuredRecipe}
         isPremium={isPremium}
       />
     </div>

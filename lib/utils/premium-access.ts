@@ -17,7 +17,7 @@ type UserRole = "admin" | "coach" | "soldier" | "user"; // "user" = Recruit (Fre
 
 interface ProfileForPremiumCheck {
   tier?: string | null;
-  role?: UserRole | null;
+  role?: string | null;
 }
 
 /**

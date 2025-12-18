@@ -89,7 +89,7 @@ export default async function DashboardPage() {
   const isPremium = hasPremiumAccess(profile);
 
   // Fetch Today's Meal
-  let todaysMeal = null;
+  let todaysMeal: any = null;
 
   if (isPremium) {
     // Premium users: fetch their meal plan

@@ -8,8 +8,8 @@ import { createClient } from "@/lib/supabase/client";
 interface DailyBriefing {
   id: string;
   content: string;
-  active: boolean;
-  created_at: string;
+  active: boolean | null;
+  created_at: string | null;
 }
 
 export function MotivationalCorner() {
@@ -124,7 +124,7 @@ export function MotivationalCorner() {
               {briefing.content}
             </p>
             <p className="mt-3 text-xs text-muted-text">
-              {new Date(briefing.created_at).toLocaleDateString("en-US", {
+              {briefing.created_at && new Date(briefing.created_at).toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
                 year: "numeric",

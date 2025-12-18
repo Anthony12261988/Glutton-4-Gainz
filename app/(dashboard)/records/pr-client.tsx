@@ -30,13 +30,13 @@ interface PersonalRecord {
   id: string;
   user_id: string;
   exercise_name: string;
-  record_type: "weight" | "reps" | "time";
+  record_type: string;
   value: number;
   unit: string;
   notes: string | null;
   achieved_at: string;
-  created_at: string;
-  updated_at: string;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 interface PRClientProps {
@@ -86,9 +86,7 @@ export function PRClient({ records: initialRecords, userId }: PRClientProps) {
 
   // Form state
   const [exerciseName, setExerciseName] = useState("");
-  const [recordType, setRecordType] = useState<"weight" | "reps" | "time">(
-    "weight"
-  );
+  const [recordType, setRecordType] = useState<string>("weight");
   const [value, setValue] = useState("");
   const [unit, setUnit] = useState("lbs");
   const [notes, setNotes] = useState("");

@@ -19,8 +19,8 @@ import { useToast } from "@/hooks/use-toast";
 interface DailyBriefing {
   id: string;
   content: string;
-  active: boolean;
-  created_at: string;
+  active: boolean | null;
+  created_at: string | null;
 }
 
 export function BriefingManagerClient() {
@@ -285,7 +285,7 @@ export function BriefingManagerClient() {
                           </span>
                         )}
                         <span className="text-xs text-muted-text">
-                          {new Date(briefing.created_at).toLocaleDateString(
+                          {briefing.created_at && new Date(briefing.created_at).toLocaleDateString(
                             "en-US",
                             {
                               month: "short",

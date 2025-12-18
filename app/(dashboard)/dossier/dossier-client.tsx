@@ -20,7 +20,7 @@ interface DossierPageClientProps {
     target_weight?: number | null;
     date_of_birth?: string | null;
     gender?: string | null;
-    dossier_complete?: boolean;
+    dossier_complete?: boolean | null;
   } | null;
 }
 
