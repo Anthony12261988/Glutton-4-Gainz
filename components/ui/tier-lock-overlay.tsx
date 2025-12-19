@@ -56,11 +56,11 @@ export function TierLockOverlay({
         {isPremiumFeature ? (
           <>
             <p className="mt-2 text-sm text-muted-text">
-              Premium Feature - Upgrade to Soldier Tier
+              Premium Feature - Upgrade to Soldier Rank
             </p>
             <div className="mt-1 flex items-center justify-center gap-2 text-xs text-steel">
               <Shield className="h-4 w-4" />
-              <span>PREMIUM ACCESS REQUIRED</span>
+              <span>SOLDIER UPGRADE REQUIRED</span>
             </div>
           </>
         ) : (
@@ -83,12 +83,12 @@ export function TierLockOverlay({
       <div className="mt-4 max-w-xs text-center text-xs text-muted-text">
         {isPremiumFeature ? (
           <p>
-            Upgrade to Soldier rank (paid) to access meal planning, premium recipes, and advanced analytics.
+            Upgrade to Soldier rank (paid) to access training programs, meal planning, premium recipes, and advanced analytics.
           </p>
         ) : (
           <p>
             This content requires tier {requiredTier}. Complete the Zero Day Test to increase your tier.
-            Note: Tiers unlock workouts, not premium features.
+            Note: Tiers are assigned via assessment, but training programs require Soldier upgrade.
           </p>
         )}
       </div>

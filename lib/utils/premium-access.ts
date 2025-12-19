@@ -109,3 +109,14 @@ export function hasMealPlanningAccess(
 ): boolean {
   return hasPremiumAccess(profile);
 }
+
+/**
+ * Check if user has access to training programs (workouts)
+ * Training programs require premium access (Soldier role or higher)
+ * Free users (Recruits) only have access to zero-day assessments
+ */
+export function hasWorkoutAccess(
+  profile: ProfileForPremiumCheck | null
+): boolean {
+  return hasPremiumAccess(profile);
+}

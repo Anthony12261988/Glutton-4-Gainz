@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { MissionCard, type Exercise } from "@/components/ui/mission-card";
+import { ZeroDayCard } from "@/components/assessments/zero-day-card";
 import { useToast } from "@/hooks/use-toast";
 import { createClient } from "@/lib/supabase/client";
-import { Shield, AlertTriangle, Dumbbell } from "lucide-react";
+import { Shield, AlertTriangle, Dumbbell, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CompleteMissionModal } from "@/components/workouts/complete-mission-modal";
 import { BadgeEarnedToast } from "@/components/gamification/badge-earned-toast";
@@ -184,62 +185,91 @@ export default function DashboardClient({
       {/* Dossier Prompt (if not complete) */}
       {!profile.dossier_complete && <DossierPromptCard />}
 
-      {/* Mission Card */}
-      {todaysWorkout ? (
-        <div className="space-y-4">
-          <MissionCard
-            title={todaysWorkout.title}
-            description={todaysWorkout.description}
-            videoUrl={todaysWorkout.video_url}
-            exercises={todaysWorkout.sets_reps as Exercise[]}
-            isCompleted={isCompleted}
-            onComplete={!isCompleted ? () => setShowModal(true) : undefined}
-          />
+      {/* Mission Card or Zero-Day Assessment Card */}
+      {isPremium ? (
+        // Premium users: Show daily workout
+        todaysWorkout ? (
+          <div className="space-y-4">
+            <MissionCard
+              title={todaysWorkout.title}
+              description={todaysWorkout.description}
+              videoUrl={todaysWorkout.video_url}
+              exercises={todaysWorkout.sets_reps as Exercise[]}
+              isCompleted={isCompleted}
+              onComplete={!isCompleted ? () => setShowModal(true) : undefined}
+            />
 
-          {isCompleted && (
-            <div className="rounded-sm border border-radar-green bg-radar-green/10 p-4 text-center">
-              <p className="font-heading text-xl text-radar-green">
-                MISSION COMPLETE
-              </p>
-              <p className="text-sm text-muted-text">
-                Return to barracks for debrief.
-              </p>
-            </div>
-          )}
+            {isCompleted && (
+              <div className="rounded-sm border border-radar-green bg-radar-green/10 p-4 text-center">
+                <p className="font-heading text-xl text-radar-green">
+                  MISSION COMPLETE
+                </p>
+                <p className="text-sm text-muted-text">
+                  Return to barracks for debrief.
+                </p>
+              </div>
+            )}
 
-          {!isCompleted && (
-            <Button
-              className="w-full py-6 text-lg"
-              onClick={() => setShowModal(true)}
-              disabled={loading}
-            >
-              {BUTTON_LABELS.completeMission}
-            </Button>
-          )}
+            {!isCompleted && (
+              <Button
+                className="w-full py-6 text-lg"
+                onClick={() => setShowModal(true)}
+                disabled={loading}
+              >
+                {BUTTON_LABELS.completeMission}
+              </Button>
+            )}
 
-          {/* Browse Library Link */}
-          <Link href="/library">
-            <Button variant="outline" className="w-full border-steel/30 mt-3">
-              <Dumbbell className="mr-2 h-4 w-4" />
-              Browse Workout Library
-            </Button>
-          </Link>
-        </div>
+            {/* Browse Library Link */}
+            <Link href="/library">
+              <Button variant="outline" className="w-full border-steel/30 mt-3">
+                <Dumbbell className="mr-2 h-4 w-4" />
+                Browse Workout Library
+              </Button>
+            </Link>
+          </div>
+        ) : (
+          <div className="rounded-sm border border-steel bg-gunmetal p-8 text-center">
+            <Shield className="mx-auto mb-4 h-12 w-12 text-steel" />
+            <h3 className="font-heading text-xl text-high-vis">
+              {EMPTY_STATES.noMission.title}
+            </h3>
+            <p className="mt-2 text-muted-text">
+              {EMPTY_STATES.noMission.description}
+            </p>
+            <Link href="/library">
+              <Button className="mt-4 bg-tactical-red hover:bg-red-700">
+                <Dumbbell className="mr-2 h-4 w-4" />
+                Browse Workout Library
+              </Button>
+            </Link>
+          </div>
+        )
       ) : (
-        <div className="rounded-sm border border-steel bg-gunmetal p-8 text-center">
-          <Shield className="mx-auto mb-4 h-12 w-12 text-steel" />
-          <h3 className="font-heading text-xl text-high-vis">
-            {EMPTY_STATES.noMission.title}
-          </h3>
-          <p className="mt-2 text-muted-text">
-            {EMPTY_STATES.noMission.description}
-          </p>
-          <Link href="/library">
-            <Button className="mt-4 bg-tactical-red hover:bg-red-700">
-              <Dumbbell className="mr-2 h-4 w-4" />
-              Browse Workout Library
-            </Button>
-          </Link>
+        // Free users: Show zero-day assessment card
+        <div className="space-y-4">
+          <ZeroDayCard />
+          
+          {/* Upgrade Prompt */}
+          <div className="rounded-sm border-2 border-steel/50 bg-gunmetal/80 p-4">
+            <div className="flex items-start gap-3">
+              <Lock className="h-5 w-5 text-steel flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-heading text-sm font-bold uppercase text-steel mb-1">
+                  RECRUIT STATUS
+                </h3>
+                <p className="text-xs text-muted-text leading-relaxed mb-3">
+                  As a Recruit, you have access to zero-day assessments to establish your tier.
+                  Upgrade to Soldier rank to unlock training programs, meal planning, and advanced analytics.
+                </p>
+                <Link href="/pricing">
+                  <Button size="sm" className="bg-tactical-red hover:bg-red-700">
+                    Upgrade to Soldier
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

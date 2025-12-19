@@ -48,21 +48,17 @@ interface WorkoutLibraryClientProps {
   canManageContent?: boolean; // Can create/edit workouts
 }
 
-// Tier hierarchy for access control
+// Tier hierarchy for display purposes only
 const TIER_ORDER = [".223", ".556", ".762", ".50 Cal"];
 
-function canAccessTier(
-  userTier: string,
-  workoutTier: string,
-  isPremium?: boolean
-): boolean {
-  // Admin/Coach can access all tiers
-  if (isPremium) return true;
-
-  const userIndex = TIER_ORDER.indexOf(userTier);
-  const workoutIndex = TIER_ORDER.indexOf(workoutTier);
-  // User can access their tier and below
-  return workoutIndex <= userIndex;
+/**
+ * Check if user can access workouts
+ * All training programs require premium access (Soldier role or higher)
+ * Free users (Recruits) do not have access to any training programs
+ */
+function canAccessWorkouts(isPremium?: boolean): boolean {
+  // Only premium users (Soldier, Coach, Admin) can access training programs
+  return isPremium === true;
 }
 
 export function WorkoutLibraryClient({
@@ -202,7 +198,7 @@ export function WorkoutLibraryClient({
         const tierWorkouts = groupedWorkouts[tier];
         if (!tierWorkouts || tierWorkouts.length === 0) return null;
 
-        const canAccess = canAccessTier(userTier, tier, isPremium);
+        const canAccess = canAccessWorkouts(isPremium);
 
         return (
           <div key={tier} className="space-y-4">
@@ -213,7 +209,7 @@ export function WorkoutLibraryClient({
               {!canAccess && (
                 <span className="flex items-center gap-1 rounded-sm bg-steel/20 px-2 py-0.5 text-xs text-muted-text">
                   <Lock className="h-3 w-3" />
-                  Premium
+                  Soldier Upgrade Required
                 </span>
               )}
             </div>
@@ -287,7 +283,7 @@ export function WorkoutLibraryClient({
                           size="sm"
                           className="mt-3 w-full bg-tactical-red hover:bg-red-700"
                         >
-                          Upgrade to Access
+                          Upgrade to Soldier
                         </Button>
                       </Link>
                     )}

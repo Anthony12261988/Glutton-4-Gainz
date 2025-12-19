@@ -1,6 +1,10 @@
 /**
  * Tier System Constants for G4G
  * Military-themed fitness tiers based on pushup capacity
+ * 
+ * Note: .223 (NOVICE) tier is still assigned via zero-day assessment but is NOT used
+ * for creating new training programs. Training programs are only available for
+ * .556, .762, and .50 Cal tiers (premium users only).
  */
 
 export const TIERS = {

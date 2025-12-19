@@ -56,7 +56,7 @@ const featureCards = [
     label: "CHOOSE YOUR CALIBER.",
     title: "THE TIER SYSTEM",
     body:
-      "Start at .223 (Novice) and prove your worth in the Day Zero test to unlock .556, .762, and the elite .50 Cal tiers.",
+      "Complete the Zero-Day assessment to establish your tier (.223, .556, .762, or .50 Cal). Tiers are assigned based on performance, but training programs require Soldier upgrade.",
   },
   {
     label: "ONE DAY. ONE MISSION.",
@@ -298,9 +298,10 @@ export default function Home() {
             </div>
             <p className="text-4xl font-bold">$0</p>
             <ul className="mt-2 space-y-2 text-sm text-muted-text">
-              <li>• Tier .223 (Novice) Missions</li>
+              <li>• Zero-Day Assessment Only</li>
               <li>• Basic Service Record (Stats)</li>
               <li>• Standard Rations (Daily Meal View)</li>
+              <li>• XP & Badge System</li>
             </ul>
             <Button asChild className="mt-2">
               <Link href="/signup">REPORT FOR DUTY</Link>
@@ -317,10 +318,11 @@ export default function Home() {
             <p className="text-4xl font-bold">$9.99</p>
             <p className="text-sm uppercase tracking-wide text-muted-text">per month</p>
             <ul className="mt-2 space-y-2 text-sm text-muted-text">
-              <li>• ALL TIERS UNLOCKED (.223 - .50 Cal)</li>
+              <li>• All Training Programs (.556, .762, .50 Cal)</li>
               <li>• Advanced Analytics (Weight & Consistency Charts)</li>
               <li>• Meal Planner (7-Day Ration Calendar)</li>
               <li>• Squad Leaderboards</li>
+              <li>• Zero-Day Assessment Access</li>
             </ul>
             <Button asChild size="lg" className="mt-2">
               <Link href="/signup">UPGRADE CLEARANCE</Link>

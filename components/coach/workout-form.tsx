@@ -35,7 +35,7 @@ export function WorkoutForm({
   const [formData, setFormData] = useState({
     title: initialData?.title || "",
     description: initialData?.description || "",
-    tier: initialData?.tier || ".223",
+    tier: initialData?.tier || ".556",
     video_url: initialData?.video_url || "",
     scheduled_date:
       initialData?.scheduled_date || new Date().toISOString().split("T")[0],
@@ -132,7 +132,6 @@ export function WorkoutForm({
               <SelectValue placeholder="Select Tier" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value=".223">.223 (Recruit)</SelectItem>
               <SelectItem value=".556">.556 (Soldier)</SelectItem>
               <SelectItem value=".762">.762 (Veteran)</SelectItem>
               <SelectItem value=".50 Cal">.50 Cal (Elite)</SelectItem>

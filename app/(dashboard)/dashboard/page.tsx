@@ -60,33 +60,39 @@ export default async function DashboardPage() {
     redirect("/onboarding");
   }
 
-  // Fetch Today's Workout
-  // Logic: Get workout for today's date AND user's tier
-  const today = new Date().toISOString().split("T")[0];
-
-  const { data: workout } = await supabase
-    .from("workouts")
-    .select("*")
-    .eq("tier", profile.tier)
-    .eq("scheduled_date", today)
-    .single();
-
-  // Check if already completed
-  let isCompleted = false;
-  if (workout) {
-    const { data: log } = await supabase
-      .from("user_logs")
-      .select("id")
-      .eq("user_id", user.id)
-      .eq("workout_id", workout.id)
-      .eq("date", today)
-      .single();
-
-    if (log) isCompleted = true;
-  }
-
   // Check if user is premium (role-based only - tiers no longer grant premium)
   const isPremium = hasPremiumAccess(profile);
+
+  // Fetch Today's Workout - Only for premium users
+  // Free users (Recruits) do not have access to training programs
+  const today = new Date().toISOString().split("T")[0];
+  let workout = null;
+  let isCompleted = false;
+
+  if (isPremium) {
+    // Premium users: Get workout for today's date AND user's tier
+    const { data: workoutData } = await supabase
+      .from("workouts")
+      .select("*")
+      .eq("tier", profile.tier)
+      .eq("scheduled_date", today)
+      .single();
+
+    workout = workoutData || null;
+
+    // Check if already completed
+    if (workout) {
+      const { data: log } = await supabase
+        .from("user_logs")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("workout_id", workout.id)
+        .eq("date", today)
+        .single();
+
+      if (log) isCompleted = true;
+    }
+  }
 
   // Fetch Today's Meal
   let todaysMeal: any = null;

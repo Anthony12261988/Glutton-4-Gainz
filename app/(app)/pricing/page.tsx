@@ -99,8 +99,8 @@ export default function PricingPage() {
           Choose Your <span className="text-tactical-red">Loadout</span>
         </h1>
         <p className="text-xl text-steel max-w-2xl mx-auto">
-          Upgrade to Soldier tier to unlock advanced analytics, meal planning,
-          and priority support.
+          Upgrade to Soldier tier to unlock training programs, advanced analytics, meal planning,
+          and all premium features.
         </p>
       </div>
 
@@ -112,13 +112,13 @@ export default function PricingPage() {
           buttonText={isSoldier ? "CURRENT PLAN" : "CURRENT PLAN"}
           onButtonClick={() => {}} // No action for free plan
           features={[
-            { text: "Tier 1 Workouts", included: true },
+            { text: "Zero-Day Assessment Only", included: true },
             { text: "Basic Stats Tracking", included: true },
             { text: "XP & Badge System", included: true },
             { text: "Community Access", included: true },
+            { text: "Training Programs", included: false },
             { text: "Meal Planner", included: false },
             { text: "Advanced Analytics", included: false },
-            { text: "Coach Messaging", included: false },
           ]}
         />
 
@@ -145,13 +145,13 @@ export default function PricingPage() {
               : handleUpgrade
           }
           features={[
-            { text: "All Tier Workouts", included: true },
+            { text: "All Training Programs (.556, .762, .50 Cal)", included: true },
+            { text: "Zero-Day Assessment Access", included: true },
             { text: "Advanced Stats & Charts", included: true },
             { text: "XP & Badge System", included: true },
             { text: "Community Access", included: true },
             { text: "Full Meal Planner", included: true },
             { text: "Weight & Body Metrics", included: true },
-            { text: "Priority Support", included: true },
           ]}
         />
       </div>

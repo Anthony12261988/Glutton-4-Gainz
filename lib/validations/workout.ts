@@ -32,8 +32,8 @@ export const createWorkoutSchema = z.object({
     .min(10, "Description must be at least 10 characters")
     .max(500, "Description is too long")
     .trim(),
-  tier: z.enum([".223", ".556", ".762", ".50 Cal"], {
-    message: "Invalid tier selected",
+  tier: z.enum([".556", ".762", ".50 Cal"], {
+    message: "Invalid tier selected. Training programs are only available for .556, .762, and .50 Cal tiers.",
   }),
   video_url: z
     .string()
