@@ -39,6 +39,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      badge_definitions: {
+        Row: {
+          badge_name: string
+          category: Database["public"]["Enums"]["badge_category"]
+          created_at: string
+          description: string
+          display_name: string
+          icon_name: string | null
+          id: string
+          rarity: Database["public"]["Enums"]["badge_rarity"]
+          requirement_type: string | null
+          requirement_value: number | null
+        }
+        Insert: {
+          badge_name: string
+          category: Database["public"]["Enums"]["badge_category"]
+          created_at?: string
+          description: string
+          display_name: string
+          icon_name?: string | null
+          id?: string
+          rarity?: Database["public"]["Enums"]["badge_rarity"]
+          requirement_type?: string | null
+          requirement_value?: number | null
+        }
+        Update: {
+          badge_name?: string
+          category?: Database["public"]["Enums"]["badge_category"]
+          created_at?: string
+          description?: string
+          display_name?: string
+          icon_name?: string | null
+          id?: string
+          rarity?: Database["public"]["Enums"]["badge_rarity"]
+          requirement_type?: string | null
+          requirement_value?: number | null
+        }
+        Relationships: []
+      }
       body_metrics: {
         Row: {
           created_at: string
@@ -110,6 +149,104 @@ export type Database = {
           },
         ]
       }
+      challenge_participants: {
+        Row: {
+          challenge_id: string
+          completed: boolean
+          completed_at: string | null
+          id: string
+          joined_at: string
+          progress: number
+          user_id: string
+        }
+        Insert: {
+          challenge_id: string
+          completed?: boolean
+          completed_at?: string | null
+          id?: string
+          joined_at?: string
+          progress?: number
+          user_id: string
+        }
+        Update: {
+          challenge_id?: string
+          completed?: boolean
+          completed_at?: string | null
+          id?: string
+          joined_at?: string
+          progress?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenge_participants_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "challenge_participants_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      challenges: {
+        Row: {
+          badge_reward: string | null
+          challenge_type: Database["public"]["Enums"]["challenge_type"]
+          created_at: string
+          created_by: string | null
+          description: string
+          end_date: string
+          id: string
+          start_date: string
+          status: Database["public"]["Enums"]["challenge_status"]
+          target_value: number
+          title: string
+          xp_reward: number | null
+        }
+        Insert: {
+          badge_reward?: string | null
+          challenge_type: Database["public"]["Enums"]["challenge_type"]
+          created_at?: string
+          created_by?: string | null
+          description: string
+          end_date: string
+          id?: string
+          start_date: string
+          status?: Database["public"]["Enums"]["challenge_status"]
+          target_value: number
+          title: string
+          xp_reward?: number | null
+        }
+        Update: {
+          badge_reward?: string | null
+          challenge_type?: Database["public"]["Enums"]["challenge_type"]
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          end_date?: string
+          id?: string
+          start_date?: string
+          status?: Database["public"]["Enums"]["challenge_status"]
+          target_value?: number
+          title?: string
+          xp_reward?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenges_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coach_invites: {
         Row: {
           created_at: string
@@ -161,6 +298,62 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_macros: {
+        Row: {
+          actual_calories: number | null
+          actual_carbs: number | null
+          actual_fat: number | null
+          actual_protein: number | null
+          created_at: string
+          date: string
+          id: string
+          target_calories: number | null
+          target_carbs: number | null
+          target_fat: number | null
+          target_protein: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          actual_calories?: number | null
+          actual_carbs?: number | null
+          actual_fat?: number | null
+          actual_protein?: number | null
+          created_at?: string
+          date: string
+          id?: string
+          target_calories?: number | null
+          target_carbs?: number | null
+          target_fat?: number | null
+          target_protein?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          actual_calories?: number | null
+          actual_carbs?: number | null
+          actual_fat?: number | null
+          actual_protein?: number | null
+          created_at?: string
+          date?: string
+          id?: string
+          target_calories?: number | null
+          target_carbs?: number | null
+          target_fat?: number | null
+          target_protein?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_macros_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       featured_meals: {
         Row: {
           created_at: string
@@ -205,6 +398,8 @@ export type Database = {
           assigned_date: string
           created_at: string
           id: string
+          meal_number: number | null
+          notes: string | null
           recipe_id: string
           user_id: string
         }
@@ -212,6 +407,8 @@ export type Database = {
           assigned_date: string
           created_at?: string
           id?: string
+          meal_number?: number | null
+          notes?: string | null
           recipe_id: string
           user_id: string
         }
@@ -219,6 +416,8 @@ export type Database = {
           assigned_date?: string
           created_at?: string
           id?: string
+          meal_number?: number | null
+          notes?: string | null
           recipe_id?: string
           user_id?: string
         }
@@ -232,6 +431,51 @@ export type Database = {
           },
           {
             foreignKeyName: "meal_plans_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meal_templates: {
+        Row: {
+          coach_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean | null
+          name: string
+          user_id: string | null
+        }
+        Insert: {
+          coach_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          name: string
+          user_id?: string | null
+        }
+        Update: {
+          coach_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          name?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meal_templates_coach_id_fkey"
+            columns: ["coach_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meal_templates_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -324,6 +568,145 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          post_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          post_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_likes: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          comments_count: number
+          content: string
+          created_at: string
+          id: string
+          image_url: string | null
+          likes_count: number
+          updated_at: string
+          user_id: string
+          user_log_id: string | null
+          workout_id: string | null
+        }
+        Insert: {
+          comments_count?: number
+          content: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          likes_count?: number
+          updated_at?: string
+          user_id: string
+          user_log_id?: string | null
+          workout_id?: string | null
+        }
+        Update: {
+          comments_count?: number
+          content?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          likes_count?: number
+          updated_at?: string
+          user_id?: string
+          user_log_id?: string | null
+          workout_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_user_log_id_fkey"
+            columns: ["user_log_id"]
+            isOneToOne: false
+            referencedRelation: "user_logs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_workout_id_fkey"
+            columns: ["workout_id"]
+            isOneToOne: false
+            referencedRelation: "workouts"
             referencedColumns: ["id"]
           },
         ]
@@ -465,12 +848,15 @@ export type Database = {
         Row: {
           calories: number
           carbs: number
+          cook_time_minutes: number | null
           created_at: string
           fat: number
           id: string
           image_url: string | null
+          ingredients: Json | null
           instructions: string
           is_standard_issue: boolean
+          prep_time_minutes: number | null
           protein: number
           title: string
           updated_at: string
@@ -478,12 +864,15 @@ export type Database = {
         Insert: {
           calories: number
           carbs: number
+          cook_time_minutes?: number | null
           created_at?: string
           fat: number
           id?: string
           image_url?: string | null
+          ingredients?: Json | null
           instructions: string
           is_standard_issue?: boolean
+          prep_time_minutes?: number | null
           protein: number
           title: string
           updated_at?: string
@@ -491,17 +880,100 @@ export type Database = {
         Update: {
           calories?: number
           carbs?: number
+          cook_time_minutes?: number | null
           created_at?: string
           fat?: number
           id?: string
           image_url?: string | null
+          ingredients?: Json | null
           instructions?: string
           is_standard_issue?: boolean
+          prep_time_minutes?: number | null
           protein?: number
           title?: string
           updated_at?: string
         }
         Relationships: []
+      }
+      shopping_lists: {
+        Row: {
+          created_at: string
+          end_date: string
+          id: string
+          ingredients: Json
+          start_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          end_date: string
+          id?: string
+          ingredients?: Json
+          start_date: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string
+          id?: string
+          ingredients?: Json
+          start_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shopping_lists_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      template_meals: {
+        Row: {
+          created_at: string
+          day_offset: number
+          id: string
+          meal_number: number
+          recipe_id: string
+          template_id: string
+        }
+        Insert: {
+          created_at?: string
+          day_offset?: number
+          id?: string
+          meal_number?: number
+          recipe_id: string
+          template_id: string
+        }
+        Update: {
+          created_at?: string
+          day_offset?: number
+          id?: string
+          meal_number?: number
+          recipe_id?: string
+          template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "template_meals_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "template_meals_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "meal_templates"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_badges: {
         Row: {
@@ -663,6 +1135,10 @@ export type Database = {
     }
     Functions: {
       award_century_badge: { Args: { p_user_id: string }; Returns: undefined }
+      award_challenge_badge: {
+        Args: { p_participant_id: string; p_user_id: string }
+        Returns: undefined
+      }
       award_first_blood_badge: {
         Args: { p_user_id: string }
         Returns: undefined
@@ -672,7 +1148,20 @@ export type Database = {
       is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      badge_category:
+        | "workout"
+        | "streak"
+        | "community"
+        | "challenge"
+        | "milestone"
+      badge_rarity: "common" | "rare" | "epic" | "legendary"
+      challenge_status: "upcoming" | "active" | "completed" | "expired"
+      challenge_type:
+        | "workout_count"
+        | "streak_days"
+        | "xp_total"
+        | "community_posts"
+        | "personal_record"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -802,6 +1291,23 @@ export const Constants = {
     Enums: {},
   },
   public: {
-    Enums: {},
+    Enums: {
+      badge_category: [
+        "workout",
+        "streak",
+        "community",
+        "challenge",
+        "milestone",
+      ],
+      badge_rarity: ["common", "rare", "epic", "legendary"],
+      challenge_status: ["upcoming", "active", "completed", "expired"],
+      challenge_type: [
+        "workout_count",
+        "streak_days",
+        "xp_total",
+        "community_posts",
+        "personal_record",
+      ],
+    },
   },
 } as const

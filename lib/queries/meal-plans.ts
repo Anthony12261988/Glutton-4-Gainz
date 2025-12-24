@@ -28,7 +28,8 @@ export async function getMealPlansForWeek(userId: string, startDate: string) {
     .eq("user_id", userId)
     .gte("assigned_date", startDate)
     .lte("assigned_date", endDate)
-    .order("assigned_date", { ascending: true });
+    .order("assigned_date", { ascending: true })
+    .order("meal_number", { ascending: true });
 
   if (error) {
     console.error("Error fetching meal plans for week:", error);
@@ -65,7 +66,7 @@ export async function getTodaysMeal(userId: string) {
 }
 
 /**
- * Get meal plan for a specific date
+ * Get all meal plans for a specific date (returns array of all 6 meals)
  * @param userId - User UUID
  * @param date - Date in YYYY-MM-DD format
  */
@@ -80,10 +81,10 @@ export async function getMealForDate(userId: string, date: string) {
     `)
     .eq("user_id", userId)
     .eq("assigned_date", date)
-    .maybeSingle();
+    .order("meal_number", { ascending: true });
 
   if (error) {
-    console.error("Error fetching meal for date:", error);
+    console.error("Error fetching meals for date:", error);
     return { data: null, error };
   }
 
@@ -91,24 +92,27 @@ export async function getMealForDate(userId: string, date: string) {
 }
 
 /**
- * Assign a meal to a specific day
+ * Assign a meal to a specific day and meal slot (1-6)
  * @param userId - User UUID
  * @param recipeId - Recipe UUID
  * @param date - Date in YYYY-MM-DD format
+ * @param mealNumber - Meal slot number (1-6: Breakfast, Lunch, Dinner, Snack 1-3)
  */
 export async function assignMealToDay(
   userId: string,
   recipeId: string,
-  date: string
+  date: string,
+  mealNumber: number = 1
 ) {
   const supabase = createClient();
 
-  // Check if meal already exists for this date
+  // Check if meal already exists for this date and meal slot
   const { data: existing } = await supabase
     .from("meal_plans")
     .select("id")
     .eq("user_id", userId)
     .eq("assigned_date", date)
+    .eq("meal_number", mealNumber)
     .maybeSingle();
 
   if (existing) {
@@ -137,6 +141,7 @@ export async function assignMealToDay(
         user_id: userId,
         recipe_id: recipeId,
         assigned_date: date,
+        meal_number: mealNumber,
       })
       .select(`
         *,
@@ -154,18 +159,24 @@ export async function assignMealToDay(
 }
 
 /**
- * Remove meal from a specific day
+ * Remove meal from a specific day and meal slot
  * @param userId - User UUID
  * @param date - Date in YYYY-MM-DD format
+ * @param mealNumber - Meal slot number (1-6)
  */
-export async function removeMealFromDay(userId: string, date: string) {
+export async function removeMealFromDay(
+  userId: string,
+  date: string,
+  mealNumber: number
+) {
   const supabase = createClient();
 
   const { error } = await supabase
     .from("meal_plans")
     .delete()
     .eq("user_id", userId)
-    .eq("assigned_date", date);
+    .eq("assigned_date", date)
+    .eq("meal_number", mealNumber);
 
   if (error) {
     console.error("Error removing meal:", error);
@@ -232,10 +243,44 @@ export async function getUpcomingMeals(userId: string) {
     .eq("user_id", userId)
     .gte("assigned_date", today)
     .lte("assigned_date", nextWeekStr)
-    .order("assigned_date", { ascending: true });
+    .order("assigned_date", { ascending: true })
+    .order("meal_number", { ascending: true });
 
   if (error) {
     console.error("Error fetching upcoming meals:", error);
+    return { data: null, error };
+  }
+
+  return { data, error: null };
+}
+
+/**
+ * Get meals for a date range (supports multi-meal per day)
+ * @param userId - User UUID
+ * @param startDate - Start date (YYYY-MM-DD)
+ * @param endDate - End date (YYYY-MM-DD)
+ */
+export async function getMealsForDateRange(
+  userId: string,
+  startDate: string,
+  endDate: string
+) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("meal_plans")
+    .select(`
+      *,
+      recipe:recipes(*)
+    `)
+    .eq("user_id", userId)
+    .gte("assigned_date", startDate)
+    .lte("assigned_date", endDate)
+    .order("assigned_date", { ascending: true })
+    .order("meal_number", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching meals for date range:", error);
     return { data: null, error };
   }
 

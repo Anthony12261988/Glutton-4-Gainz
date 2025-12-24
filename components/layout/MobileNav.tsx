@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Crosshair, Utensils, BarChart3, Shield, Dumbbell, Zap, User } from "lucide-react";
+import { Crosshair, Utensils, BarChart3, Shield, Dumbbell, Zap, User, Users, Trophy } from "lucide-react";
 
 interface NavItem {
   href: string;
@@ -23,6 +23,11 @@ const userNavItems: NavItem[] = [
     hideForCoach: true,
   },
   {
+    href: "/formation",
+    label: "Formation",
+    icon: <Users className="h-5 w-5" />,
+  },
+  {
     href: "/rations",
     label: "Rations",
     icon: <Utensils className="h-5 w-5" />,
@@ -31,6 +36,11 @@ const userNavItems: NavItem[] = [
     href: "/library",
     label: "Library",
     icon: <Dumbbell className="h-5 w-5" />,
+  },
+  {
+    href: "/challenges",
+    label: "Challenges",
+    icon: <Trophy className="h-5 w-5" />,
   },
   {
     href: "/stats",

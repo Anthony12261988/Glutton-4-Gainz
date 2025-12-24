@@ -35,7 +35,12 @@ export default async function RationsPage() {
   // Fetch today's featured meal (for free users)
   const { data: featuredMeal } = await getTodaysFeaturedMeal();
 
-  // Fetch Meal Plans for the user (only for premium users)
+  // Fetch Meal Plans for the week (only for premium users)
+  // Get 7 days starting from today
+  const today = new Date();
+  const weekEnd = new Date(today);
+  weekEnd.setDate(today.getDate() + 6);
+
   const { data: mealPlans } = isPremium
     ? await supabase
         .from("meal_plans")
@@ -46,6 +51,10 @@ export default async function RationsPage() {
         `
         )
         .eq("user_id", user.id)
+        .gte("assigned_date", today.toISOString().split("T")[0])
+        .lte("assigned_date", weekEnd.toISOString().split("T")[0])
+        .order("assigned_date", { ascending: true })
+        .order("meal_number", { ascending: true })
     : { data: null };
 
   // Type cast the featured recipe to avoid TypeScript errors

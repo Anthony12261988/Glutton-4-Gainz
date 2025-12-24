@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import DashboardClient from "./dashboard-client";
 import { hasPremiumAccess } from "@/lib/utils/premium-access";
 import { getTodaysFeaturedMeal } from "@/lib/queries/featured-meals";
+import { MiniCharts } from "@/components/dashboard/mini-charts";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -120,6 +121,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="container mx-auto max-w-md px-4 py-6 md:max-w-4xl lg:max-w-7xl">
+      <MiniCharts userId={user.id} />
       <DashboardClient
         user={user}
         profile={profile}

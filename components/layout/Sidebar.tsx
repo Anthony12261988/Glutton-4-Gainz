@@ -14,6 +14,8 @@ import {
   Dumbbell,
   LogOut,
   User,
+  Users,
+  Trophy,
 } from "lucide-react";
 
 interface NavItem {
@@ -33,6 +35,11 @@ const userNavItems: NavItem[] = [
     hideForCoach: true,
   },
   {
+    href: "/formation",
+    label: "Formation",
+    icon: <Users className="h-5 w-5" />,
+  },
+  {
     href: "/rations",
     label: "Rations",
     icon: <Utensils className="h-5 w-5" />,
@@ -41,6 +48,11 @@ const userNavItems: NavItem[] = [
     href: "/library",
     label: "Library",
     icon: <Dumbbell className="h-5 w-5" />,
+  },
+  {
+    href: "/challenges",
+    label: "Challenges",
+    icon: <Trophy className="h-5 w-5" />,
   },
   {
     href: "/stats",

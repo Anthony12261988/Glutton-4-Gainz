@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import Image from "next/image";
 import CoachDashboard from "./coach-dashboard";
 import { ShieldAlert, Dumbbell, ChefHat, ArrowRight } from "lucide-react";
 import { CoachProfilePrompt } from "@/components/coach/coach-profile-prompt";
@@ -146,88 +147,110 @@ export default async function BarracksPage() {
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div
-              className={`rounded-sm border p-4 ${
+              className={`rounded-sm border p-4 relative overflow-hidden ${
                 hasWorkouts
                   ? "border-radar-green/30 bg-radar-green/5"
                   : "border-tactical-red/30 bg-gunmetal"
               }`}
             >
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <Dumbbell
-                    className={`h-5 w-5 ${
-                      hasWorkouts ? "text-radar-green" : "text-tactical-red"
-                    }`}
-                  />
-                  <span className="font-bold text-high-vis">Workouts</span>
-                </div>
-                <span
-                  className={`text-xs font-bold px-2 py-1 rounded-sm ${
-                    hasWorkouts
-                      ? "bg-radar-green/20 text-radar-green"
-                      : "bg-tactical-red/20 text-tactical-red"
-                  }`}
-                >
-                  {workoutCount || 0} created
-                </span>
+              {/* Background icon watermark */}
+              <div className="absolute -right-8 -top-8 opacity-10">
+                <Image
+                  src="/imageAssests/Branding/Glutton4Gainz FF_Highlight Icon Workout.png"
+                  alt=""
+                  width={120}
+                  height={120}
+                />
               </div>
-              <p className="text-xs text-muted-text mb-3">
-                {hasWorkouts
-                  ? "Great! Soldiers can see your workouts in the Library."
-                  : "Create workouts for soldiers to complete as daily missions."}
-              </p>
-              <Link href="/barracks/content/workouts">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full border-steel/30"
-                >
-                  {hasWorkouts ? "Manage Workouts" : "Create First Workout"}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Dumbbell
+                      className={`h-5 w-5 ${
+                        hasWorkouts ? "text-radar-green" : "text-tactical-red"
+                      }`}
+                    />
+                    <span className="font-bold text-high-vis">Workouts</span>
+                  </div>
+                  <span
+                    className={`text-xs font-bold px-2 py-1 rounded-sm ${
+                      hasWorkouts
+                        ? "bg-radar-green/20 text-radar-green"
+                        : "bg-tactical-red/20 text-tactical-red"
+                    }`}
+                  >
+                    {workoutCount || 0} created
+                  </span>
+                </div>
+                <p className="text-xs text-muted-text mb-3">
+                  {hasWorkouts
+                    ? "Great! Soldiers can see your workouts in the Library."
+                    : "Create workouts for soldiers to complete as daily missions."}
+                </p>
+                <Link href="/barracks/content/workouts">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full border-steel/30"
+                  >
+                    {hasWorkouts ? "Manage Workouts" : "Create First Workout"}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
             </div>
             <div
-              className={`rounded-sm border p-4 ${
+              className={`rounded-sm border p-4 relative overflow-hidden ${
                 hasRecipes
                   ? "border-radar-green/30 bg-radar-green/5"
                   : "border-tactical-red/30 bg-gunmetal"
               }`}
             >
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <ChefHat
-                    className={`h-5 w-5 ${
-                      hasRecipes ? "text-radar-green" : "text-tactical-red"
-                    }`}
-                  />
-                  <span className="font-bold text-high-vis">Recipes</span>
-                </div>
-                <span
-                  className={`text-xs font-bold px-2 py-1 rounded-sm ${
-                    hasRecipes
-                      ? "bg-radar-green/20 text-radar-green"
-                      : "bg-tactical-red/20 text-tactical-red"
-                  }`}
-                >
-                  {recipeCount || 0} created
-                </span>
+              {/* Background icon watermark */}
+              <div className="absolute -right-8 -top-8 opacity-10">
+                <Image
+                  src="/imageAssests/Branding/Glutton4Gainz FF_Highlight Icon Mindset.png"
+                  alt=""
+                  width={120}
+                  height={120}
+                />
               </div>
-              <p className="text-xs text-muted-text mb-3">
-                {hasRecipes
-                  ? "Great! Soldiers can plan meals in the Rations section."
-                  : "Create recipes for soldiers to add to their meal plans."}
-              </p>
-              <Link href="/barracks/content/recipes">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full border-steel/30"
-                >
-                  {hasRecipes ? "Manage Recipes" : "Create First Recipe"}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <ChefHat
+                      className={`h-5 w-5 ${
+                        hasRecipes ? "text-radar-green" : "text-tactical-red"
+                      }`}
+                    />
+                    <span className="font-bold text-high-vis">Recipes</span>
+                  </div>
+                  <span
+                    className={`text-xs font-bold px-2 py-1 rounded-sm ${
+                      hasRecipes
+                        ? "bg-radar-green/20 text-radar-green"
+                        : "bg-tactical-red/20 text-tactical-red"
+                    }`}
+                  >
+                    {recipeCount || 0} created
+                  </span>
+                </div>
+                <p className="text-xs text-muted-text mb-3">
+                  {hasRecipes
+                    ? "Great! Soldiers can plan meals in the Rations section."
+                    : "Create recipes for soldiers to add to their meal plans."}
+                </p>
+                <Link href="/barracks/content/recipes">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full border-steel/30"
+                  >
+                    {hasRecipes ? "Manage Recipes" : "Create First Recipe"}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </div>

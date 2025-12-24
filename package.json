@@ -8,14 +8,18 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "node scripts/seed-data.js"
+    "seed": "node scripts/seed-data.js",
+    "generate-icons": "node scripts/generate-pwa-icons.js",
+    "optimize-icons": "node scripts/optimize-highlight-icons.js"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-popover": "^1.1.15",
+    "@radix-ui/react-progress": "^1.1.8",
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-toast": "^1.2.15",
     "@stripe/stripe-js": "^8.5.3",
     "@supabase/ssr": "^0.8.0",
@@ -33,7 +37,7 @@
     "react": "^19.2.0",
     "react-day-picker": "^9.11.3",
     "react-dom": "^19.2.0",
-    "recharts": "^3.5.1",
+    "recharts": "^3.6.0",
     "resend": "^6.5.2",
     "stripe": "^20.0.0",
     "swr": "^2.3.7",

@@ -30,6 +30,21 @@ export const metadata: Metadata = {
       "Join the elite tactical fitness platform that treats every workout like a mandatory mission.",
     url: "https://glutton4gainz.com",
     siteName: "Glutton4Gainz",
+    images: [
+      {
+        url: '/social/og-image.jpg',
+        width: 820,
+        height: 360,
+        alt: 'Glutton4Gainz - Military Fitness Training',
+      },
+    ],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Glutton4Gainz – Your Mission Starts Now",
+    description: "Join the elite tactical fitness platform that treats every workout like a mandatory mission.",
+    images: ['/social/twitter-image.jpg'],
   },
 };
 
@@ -57,24 +72,32 @@ const featureCards = [
     title: "THE TIER SYSTEM",
     body:
       "Complete the Zero-Day assessment to establish your tier (.223, .556, .762, or .50 Cal). Tiers are assigned based on performance, but training programs require Soldier upgrade.",
+    icon: "/imageAssests/Branding/Glutton4Gainz FF_Highlight Icon Workout.png",
+    iconAlt: "Tier System Icon"
   },
   {
     label: "ONE DAY. ONE MISSION.",
     title: "DAILY MISSIONS",
     body:
       "A fresh tactical workout drops daily at 0500 with intel, video, and a clear objective. Execution is mandatory.",
+    icon: "/imageAssests/Branding/Glutton4Gainz FF_Highlight Icon Coaching.png",
+    iconAlt: "Daily Missions Icon"
   },
   {
     label: "FUEL THE MACHINE.",
     title: "RATIONS & INTEL",
     body:
       "Hit the Rations dashboard for high-protein meal directives that repair tissue and keep you operational.",
+    icon: "/imageAssests/Branding/Glutton4Gainz FF_Highlight Icon Mindset.png",
+    iconAlt: "Rations Icon"
   },
   {
     label: "NO SOLDIER LEFT BEHIND.",
     title: "SQUAD ACCOUNTABILITY",
     body:
-      "Monitor your squad’s activity. If a buddy goes dark for 24 hours, send a Wake Up nudge. Move together, win together.",
+      "Monitor your squad's activity. If a buddy goes dark for 24 hours, send a Wake Up nudge. Move together, win together.",
+    icon: "/imageAssests/Branding/Glutton4Gainz FF_Highlight Icon Clients.png",
+    iconAlt: "Squad Accountability Icon"
   },
 ];
 
@@ -263,9 +286,22 @@ export default function Home() {
               key={feature.title}
               className="flex flex-col gap-3 rounded-sm border border-steel/60 bg-gunmetal/70 p-6 shadow-lg transition hover:-translate-y-1 hover:border-tactical-red/70"
             >
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-text">
-                {feature.label}
-              </p>
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-text">
+                    {feature.label}
+                  </p>
+                </div>
+                <div className="ml-4">
+                  <Image
+                    src={feature.icon}
+                    alt={feature.iconAlt}
+                    width={80}
+                    height={80}
+                    className="opacity-80 hover:opacity-100 transition-opacity"
+                  />
+                </div>
+              </div>
               <h3 className="text-2xl font-semibold">{feature.title}</h3>
               <p className="text-sm text-muted-text">{feature.body}</p>
             </div>

@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { WeekCalendar } from "@/components/nutrition/week-calendar";
 import { RecipeCard, type Recipe } from "@/components/nutrition/recipe-card";
+import { DailyMealView } from "@/components/nutrition/daily-meal-view";
+import { RecipeSelectorDialog } from "@/components/nutrition/recipe-selector-dialog";
+import { MacroTrackerWidget } from "@/components/nutrition/macro-tracker-widget";
+import { MacroEntryDialog } from "@/components/nutrition/macro-entry-dialog";
+import { TemplateManager } from "@/components/nutrition/template-manager";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,22 +26,20 @@ import {
   ChefHat,
   Lock,
   Star,
+  Calendar,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { MotivationalCorner } from "@/components/gamification/motivational-corner";
+import type { MealPlanWithRecipe, MealNumber, MacroInput, DailyMacros, PlannedMacros } from "@/lib/types/meal-planner";
+import { assignMealToDay, removeMealFromDay } from "@/lib/queries/meal-plans";
+import { setMacroTargets, getDailyMacros } from "@/lib/queries/meal-planner-enhanced";
 
-interface MealPlan {
-  id: string;
-  assigned_date: string;
-  recipe_id: string;
-  recipe: Recipe;
-}
 
 interface RationsClientProps {
   user: any;
   initialRecipes: Recipe[];
-  initialMealPlans: MealPlan[];
+  initialMealPlans: MealPlanWithRecipe[];
   featuredMeal?: Recipe | null;
   isPremium?: boolean;
 }
@@ -56,6 +59,12 @@ export default function RationsClient({
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [selectedMealSlot, setSelectedMealSlot] = useState<MealNumber | null>(null);
+  const [showRecipeSelector, setShowRecipeSelector] = useState(false);
+  const [showMacroDialog, setShowMacroDialog] = useState(false);
+  const [macroDialogMode, setMacroDialogMode] = useState<"targets" | "actuals">("actuals");
+  const [currentDailyMacros, setCurrentDailyMacros] = useState<DailyMacros | null>(null);
+  const [showTemplateManager, setShowTemplateManager] = useState(false);
 
   // Filter options
   const filters = [
@@ -127,52 +136,169 @@ export default function RationsClient({
 
   // Derived state
   const selectedDateKey = selectedDate.toISOString().split("T")[0];
-  const currentMealPlan = initialMealPlans.find(
-    (mp) => mp.assigned_date === selectedDateKey
-  );
-  const plannedDates = initialMealPlans.map((mp) => mp.assigned_date);
+  const mealPlansForSelectedDate = useMemo(() => {
+    return initialMealPlans.filter((mp) => mp.assigned_date === selectedDateKey);
+  }, [initialMealPlans, selectedDateKey]);
 
-  const handleAssignMeal = async (recipe: Recipe) => {
+  // Get unique planned dates for calendar
+  const plannedDates = useMemo(() => {
+    const dates = new Set(initialMealPlans.map((mp) => mp.assigned_date));
+    return Array.from(dates);
+  }, [initialMealPlans]);
+
+  // Calculate planned macros from all assigned meals for selected date
+  const plannedMacros: PlannedMacros = useMemo(() => {
+    return mealPlansForSelectedDate.reduce(
+      (acc, mealPlan) => {
+        const recipe = mealPlan.recipe;
+        return {
+          calories: acc.calories + (recipe?.calories || 0),
+          protein: acc.protein + (recipe?.protein || 0),
+          carbs: acc.carbs + (recipe?.carbs || 0),
+          fat: acc.fat + (recipe?.fat || 0),
+        };
+      },
+      { calories: 0, protein: 0, carbs: 0, fat: 0 }
+    );
+  }, [mealPlansForSelectedDate]);
+
+  // Get current week start date (for templates)
+  const currentWeekStartDate = useMemo(() => {
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const monday = new Date(today);
+    monday.setDate(today.getDate() + mondayOffset);
+    return monday.toISOString().split("T")[0];
+  }, []);
+
+  const handleOpenRecipeSelector = (mealNumber: number) => {
+    setSelectedMealSlot(mealNumber as MealNumber);
+    setShowRecipeSelector(true);
+  };
+
+  const handleSelectRecipe = async (recipe: Recipe) => {
+    if (!selectedMealSlot) return;
+
     setLoading(true);
     try {
-      // Check if there's already a meal plan for this date
-      const { data: existingPlan } = await supabase
-        .from("meal_plans")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("assigned_date", selectedDateKey)
-        .single();
+      const { error } = await assignMealToDay(
+        user.id,
+        recipe.id,
+        selectedDateKey,
+        selectedMealSlot
+      );
 
-      if (existingPlan) {
-        // Update existing meal plan
-        const { error } = await supabase
-          .from("meal_plans")
-          .update({ recipe_id: recipe.id })
-          .eq("id", existingPlan.id);
-
-        if (error) throw error;
-      } else {
-        // Insert new meal plan
-        const { error } = await supabase.from("meal_plans").insert({
-          user_id: user.id,
-          recipe_id: recipe.id,
-          assigned_date: selectedDateKey,
-        });
-
-        if (error) throw error;
-      }
+      if (error) throw error;
 
       toast({
         title: "RATIONS ASSIGNED",
-        description: `Meal plan updated for ${selectedDate.toLocaleDateString()}`,
+        description: `Meal assigned to slot ${selectedMealSlot}`,
       });
 
       router.refresh();
     } catch (error: any) {
-      console.error("Meal plan error:", error);
+      console.error("Meal assignment error:", error);
       toast({
         title: "OPERATION FAILED",
-        description: error.message || "Failed to assign meal plan",
+        description: error.message || "Failed to assign meal",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRemoveMeal = async (mealNumber: number) => {
+    setLoading(true);
+    try {
+      const { error } = await removeMealFromDay(user.id, selectedDateKey, mealNumber);
+
+      if (error) throw error;
+
+      toast({
+        title: "MEAL REMOVED",
+        description: `Meal slot ${mealNumber} cleared`,
+      });
+
+      router.refresh();
+    } catch (error: any) {
+      console.error("Meal removal error:", error);
+      toast({
+        title: "OPERATION FAILED",
+        description: error.message || "Failed to remove meal",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateActuals = async () => {
+    // Load current macros first
+    const { data } = await getDailyMacros(user.id, selectedDateKey);
+    setCurrentDailyMacros(data);
+    setMacroDialogMode("actuals");
+    setShowMacroDialog(true);
+  };
+
+  const handleEditTargets = async () => {
+    // Load current macros first
+    const { data } = await getDailyMacros(user.id, selectedDateKey);
+    setCurrentDailyMacros(data);
+    setMacroDialogMode("targets");
+    setShowMacroDialog(true);
+  };
+
+  const handleSaveMacros = async (macros: MacroInput, isTargets: boolean) => {
+    setLoading(true);
+    try {
+      if (isTargets) {
+        // Save targets
+        const { error } = await setMacroTargets(user.id, selectedDateKey, macros);
+        if (error) throw error;
+
+        toast({
+          title: "TARGETS SAVED",
+          description: "Macro targets updated successfully",
+        });
+      } else {
+        // Save actuals - preserve existing targets if they exist
+        const updateData: any = {
+          user_id: user.id,
+          date: selectedDateKey,
+          actual_calories: macros.calories || 0,
+          actual_protein: macros.protein || 0,
+          actual_carbs: macros.carbs || 0,
+          actual_fat: macros.fat || 0,
+        };
+
+        // If we have existing macros with targets, preserve them
+        if (currentDailyMacros) {
+          if (currentDailyMacros.target_calories) updateData.target_calories = currentDailyMacros.target_calories;
+          if (currentDailyMacros.target_protein) updateData.target_protein = currentDailyMacros.target_protein;
+          if (currentDailyMacros.target_carbs) updateData.target_carbs = currentDailyMacros.target_carbs;
+          if (currentDailyMacros.target_fat) updateData.target_fat = currentDailyMacros.target_fat;
+        }
+
+        const { error } = await supabase
+          .from("daily_macros")
+          .upsert(updateData);
+
+        if (error) throw error;
+
+        toast({
+          title: "ACTUALS UPDATED",
+          description: "Actual macros recorded successfully",
+        });
+      }
+
+      router.refresh();
+    } catch (error: any) {
+      console.error("Macro save error:", error);
+      toast({
+        title: "SAVE FAILED",
+        description: error.message || "Failed to save macros",
         variant: "destructive",
       });
     } finally {
@@ -255,24 +381,73 @@ export default function RationsClient({
             />
           </div>
 
-          {/* Current Plan Display */}
+          {/* Macro Tracker Widget */}
+          <MacroTrackerWidget
+            userId={user.id}
+            selectedDate={selectedDate}
+            plannedMacros={plannedMacros}
+            onUpdateActuals={handleUpdateActuals}
+            onEditTargets={handleEditTargets}
+          />
+
+          {/* Daily Meal View - 6 meal slots */}
           <div className="space-y-2">
             <h3 className="font-heading text-sm font-bold uppercase text-muted-text">
-              ASSIGNED RATION
+              DAILY MEAL PLAN
             </h3>
-            {currentMealPlan ? (
-              <RecipeCard recipe={currentMealPlan.recipe} isSelected={true} />
-            ) : (
-              <div className="flex h-32 flex-col items-center justify-center rounded-sm border border-dashed border-steel bg-gunmetal/50 text-center">
-                <p className="text-sm text-muted-text">
-                  No rations assigned for this day.
-                </p>
-                <p className="text-xs text-steel">
-                  Select a recipe below to assign.
-                </p>
-              </div>
-            )}
+            <DailyMealView
+              mealPlans={mealPlansForSelectedDate}
+              onOpenRecipeSelector={handleOpenRecipeSelector}
+              onRemoveMeal={handleRemoveMeal}
+              disabled={loading}
+            />
           </div>
+
+          {/* Template Manager Button */}
+          <Button
+            variant="outline"
+            onClick={() => setShowTemplateManager(true)}
+            className="w-full border-steel/30 hover:border-tactical-red"
+          >
+            <Calendar className="mr-2 h-4 w-4" />
+            MANAGE TEMPLATES
+          </Button>
+
+          {/* Recipe Selector Dialog */}
+          {selectedMealSlot && (
+            <RecipeSelectorDialog
+              open={showRecipeSelector}
+              onClose={() => {
+                setShowRecipeSelector(false);
+                setSelectedMealSlot(null);
+              }}
+              onSelect={handleSelectRecipe}
+              recipes={allRecipesForUser}
+              mealNumber={selectedMealSlot}
+              currentRecipeId={
+                mealPlansForSelectedDate.find(mp => mp.meal_number === selectedMealSlot)?.recipe_id
+              }
+            />
+          )}
+
+          {/* Macro Entry Dialog */}
+          <MacroEntryDialog
+            open={showMacroDialog}
+            onClose={() => setShowMacroDialog(false)}
+            currentMacros={currentDailyMacros}
+            onSave={handleSaveMacros}
+            mode={macroDialogMode}
+          />
+
+          {/* Template Manager */}
+          <TemplateManager
+            open={showTemplateManager}
+            onClose={() => setShowTemplateManager(false)}
+            userId={user.id}
+            currentWeekMealPlans={initialMealPlans}
+            currentWeekStartDate={currentWeekStartDate}
+            onTemplateApplied={() => router.refresh()}
+          />
         </>
       )}
 
@@ -404,8 +579,7 @@ export default function RationsClient({
               <RecipeCard
                 key={recipe.id}
                 recipe={recipe}
-                isSelected={isPremium && currentMealPlan?.recipe_id === recipe.id}
-                onSelect={isPremium ? handleAssignMeal : undefined}
+                isSelected={false}
               />
             ))}
           </div>
