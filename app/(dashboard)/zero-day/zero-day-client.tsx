@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { assignTier } from "@/lib/constants/tiers";
@@ -27,6 +27,12 @@ interface ZeroDayTest {
   previous_tier: string | null;
 }
 
+interface LatestRecord {
+  pushups: number;
+  squats: number;
+  plank_seconds: number;
+}
+
 export default function ZeroDayClient({
   userId,
   currentTier,
@@ -39,7 +45,48 @@ export default function ZeroDayClient({
   const [plankSeconds, setPlankSeconds] = useState<number>(0);
   const [assignedTier, setAssignedTier] = useState<string>("");
   const [loading, setLoading] = useState(false);
-  const supabase = useMemo(() => createClient(), []);
+  const [latestRecord, setLatestRecord] = useState<LatestRecord | null>(null);
+  const [recordLoading, setRecordLoading] = useState(true);
+  
+  const supabaseRef = useRef(createClient());
+  const hasInitializedRef = useRef(false);
+
+  // Fetch latest assessment record on mount
+  useEffect(() => {
+    if (hasInitializedRef.current) return;
+    hasInitializedRef.current = true;
+
+    const fetchLatestRecord = async () => {
+      try {
+        setRecordLoading(true);
+        const { data: record, error } = await supabaseRef.current
+          .from("zero_day_tests")
+          .select("pushups, squats, plank_seconds")
+          .eq("user_id", userId)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .single();
+
+        if (error && error.code !== "PGRST116") {
+          throw error;
+        }
+
+        if (record) {
+          setLatestRecord({
+            pushups: record.pushups,
+            squats: record.squats,
+            plank_seconds: record.plank_seconds,
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch latest record:", err);
+      } finally {
+        setRecordLoading(false);
+      }
+    };
+
+    fetchLatestRecord();
+  }, [userId]);
 
   const handleStartTest = () => {
     setStep("pushups");
@@ -73,17 +120,16 @@ export default function ZeroDayClient({
         previous_tier: currentTier,
       };
 
-      const { error: testError } = await supabase
+      const { error: testError } = await supabaseRef.current
         .from("zero_day_tests")
         .insert(testData);
 
       if (testError) {
         console.error("Failed to save test results:", testError);
-        // Don't block the flow, but log the error
       }
 
       // Update profile with new tier
-      const { error: profileError } = await supabase
+      const { error: profileError } = await supabaseRef.current
         .from("profiles")
         .update({
           tier: newTier,
@@ -92,6 +138,13 @@ export default function ZeroDayClient({
         .eq("id", userId);
 
       if (profileError) throw profileError;
+
+      // Update latest record state for display
+      setLatestRecord({
+        pushups,
+        squats,
+        plank_seconds: plankSeconds,
+      });
 
       setStep("results");
     } catch (error: any) {
@@ -115,6 +168,10 @@ export default function ZeroDayClient({
   };
 
   if (step === "intro") {
+    const displayPushups = latestRecord?.pushups ?? 0;
+    const displaySquats = latestRecord?.squats ?? 0;
+    const displayPlank = latestRecord?.plank_seconds ?? 0;
+
     return (
       <div className="space-y-8 pb-20 md:pb-8">
         <div className="flex items-center justify-between">
@@ -136,13 +193,56 @@ export default function ZeroDayClient({
             <CardTitle className="text-tactical-red">CURRENT STATUS</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div>
-                <p className="text-xs text-muted-text">CURRENT TIER</p>
-                <p className="font-heading text-2xl font-bold text-high-vis">
+                <p className="text-xs text-muted-text uppercase tracking-wide mb-2">CURRENT TIER</p>
+                <p className="font-heading text-3xl md:text-4xl font-bold text-high-vis">
                   {currentTier}
                 </p>
               </div>
+
+              {/* Assessment Results Grid */}
+              <div className="grid grid-cols-3 gap-2 md:gap-4 bg-camo-black/50 rounded-lg p-4 border border-steel/30">
+                {/* Pushups */}
+                <div className="text-center">
+                  <p className="text-xs md:text-sm text-muted-text uppercase tracking-wide mb-3">
+                    Pushups
+                  </p>
+                  <div className="bg-gunmetal/80 rounded-lg p-3 border border-radar-green/30">
+                    <p className="text-2xl md:text-3xl font-heading font-bold text-radar-green">
+                      {recordLoading ? "..." : displayPushups}
+                    </p>
+                    <p className="text-xs text-steel mt-1">reps</p>
+                  </div>
+                </div>
+
+                {/* Squats */}
+                <div className="text-center">
+                  <p className="text-xs md:text-sm text-muted-text uppercase tracking-wide mb-3">
+                    Squats
+                  </p>
+                  <div className="bg-gunmetal/80 rounded-lg p-3 border border-radar-green/30">
+                    <p className="text-2xl md:text-3xl font-heading font-bold text-radar-green">
+                      {recordLoading ? "..." : displaySquats}
+                    </p>
+                    <p className="text-xs text-steel mt-1">reps</p>
+                  </div>
+                </div>
+
+                {/* Plank */}
+                <div className="text-center">
+                  <p className="text-xs md:text-sm text-muted-text uppercase tracking-wide mb-3">
+                    Plank
+                  </p>
+                  <div className="bg-gunmetal/80 rounded-lg p-3 border border-radar-green/30">
+                    <p className="text-2xl md:text-3xl font-heading font-bold text-radar-green">
+                      {recordLoading ? "..." : displayPlank}
+                    </p>
+                    <p className="text-xs text-steel mt-1">seconds</p>
+                  </div>
+                </div>
+              </div>
+
               <div className="rounded-sm border border-steel/30 bg-gunmetal/50 p-4">
                 <div className="flex items-start gap-3">
                   <AlertTriangle className="h-5 w-5 text-tactical-red flex-shrink-0 mt-0.5" />
