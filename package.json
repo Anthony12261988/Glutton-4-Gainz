@@ -10,7 +10,14 @@
     "lint": "next lint",
     "seed": "node scripts/seed-data.js",
     "generate-icons": "node scripts/generate-pwa-icons.js",
-    "optimize-icons": "node scripts/optimize-highlight-icons.js"
+    "optimize-icons": "node scripts/optimize-highlight-icons.js",
+    "generate-vapid-keys": "node scripts/generate-vapid-keys.js",
+    "migrate": "node scripts/run-migrations.js",
+    "migrate:dev": "./scripts/migrate-dev.sh",
+    "migrate:staging": "./scripts/migrate-staging.sh",
+    "migrate:prod": "./scripts/migrate-prod.sh",
+    "migrate:status": "node scripts/check-migration-status.js",
+    "migrate:list": "supabase migration list"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
@@ -21,6 +28,7 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-toast": "^1.2.15",
+    "@sentry/nextjs": "^10.32.1",
     "@stripe/stripe-js": "^8.5.3",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.86.0",
@@ -34,6 +42,7 @@
     "framer-motion": "^12.23.25",
     "lucide-react": "^0.555.0",
     "next": "^16.0.7",
+    "posthog-js": "^1.318.2",
     "react": "^19.2.0",
     "react-day-picker": "^9.11.3",
     "react-dom": "^19.2.0",

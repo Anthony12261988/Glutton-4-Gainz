@@ -21,15 +21,29 @@ cp .env.local.example .env.local
 # Fill in your Supabase and Stripe credentials
 ```
 
-### 3. Apply Database Migrations
-Open **Supabase Dashboard → SQL Editor** and run these migrations **in order**:
+**📖 For detailed integration setup instructions, see [INTEGRATIONS_SETUP.md](./docs/INTEGRATIONS_SETUP.md)**
 
-1. `supabase/migrations/043_allow_admin_briefings.sql`
-2. `supabase/migrations/044_add_recipe_freemium_fields.sql`
-3. `supabase/migrations/046_fix_recipes_rls_freemium.sql`
-4. `supabase/migrations/046_seed_standard_issue_recipes.sql`
-5. `supabase/migrations/047_create_zero_day_tests.sql`
-6. `supabase/migrations/048_fix_briefings_read_policy.sql` (IMPORTANT: Fixes "Loading briefing..." issue)
+### 3. Apply Database Migrations
+
+**Option A: Automated (Recommended)**
+```bash
+# Install Supabase CLI
+npm install -g supabase
+
+# Login and link project
+supabase login
+supabase link --project-ref <your-project-ref>
+
+# Run all migrations
+npm run migrate:dev
+```
+
+**Option B: Manual (Supabase Dashboard)**
+Open **Supabase Dashboard → SQL Editor** and run:
+1. `supabase/migrations/000_initial_schema.sql` (consolidated initial schema)
+2. Then run migrations 026-058 in order
+
+**For detailed migration instructions, see [supabase/MIGRATIONS.md](./supabase/MIGRATIONS.md)**
 
 ### 4. Run Development Server
 ```bash

@@ -16,8 +16,18 @@ export default function Error({
     // Log error to console in development
     console.error("Application Error:", error);
 
-    // TODO: Send to error tracking service (Sentry, LogRocket, etc.)
-    // Example: Sentry.captureException(error);
+    // Send to error tracking service
+    if (typeof window !== "undefined") {
+      import("@/lib/error-tracking/sentry").then(({ captureException }) => {
+        captureException(error, {
+          level: "error",
+          tags: {
+            errorBoundary: "app-error",
+            errorDigest: error.digest || "unknown",
+          },
+        });
+      });
+    }
   }, [error]);
 
   return (

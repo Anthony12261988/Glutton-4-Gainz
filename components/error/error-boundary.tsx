@@ -47,8 +47,20 @@ export class ErrorBoundary extends Component<Props, State> {
       this.props.onError(error, errorInfo);
     }
 
-    // TODO: Send to error tracking service
-    // Example: Sentry.captureException(error, { contexts: { react: errorInfo } });
+    // Send to error tracking service
+    if (typeof window !== "undefined") {
+      import("@/lib/error-tracking/sentry").then(({ captureException }) => {
+        captureException(error, {
+          level: "error",
+          tags: {
+            errorBoundary: "react-error-boundary",
+          },
+          extra: {
+            componentStack: errorInfo.componentStack,
+          },
+        });
+      });
+    }
   }
 
   handleReset = () => {

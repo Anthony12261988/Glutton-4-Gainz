@@ -16,6 +16,32 @@ export async function GET(request: Request) {
       await supabase.auth.exchangeCodeForSession(code);
 
     if (!error && sessionData.user) {
+      // Send welcome email for new OAuth users (fire and forget)
+      // Check if this is a new user by checking if profile was just created
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("created_at")
+        .eq("id", sessionData.user.id)
+        .single();
+
+      // If profile was created in the last minute, it's likely a new user
+      if (profile) {
+        const profileAge = Date.now() - new Date(profile.created_at).getTime();
+        if (profileAge < 60000) {
+          // New user - send welcome email
+          fetch(`${origin}/api/send-welcome-email`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: sessionData.user.email,
+              name: sessionData.user.email?.split("@")[0],
+            }),
+          }).catch((err) => {
+            console.error("[Auth Callback] Failed to send welcome email:", err);
+          });
+        }
+      }
+
       // If there's an invite token, accept it
       if (inviteToken) {
         try {

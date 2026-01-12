@@ -4,19 +4,25 @@ This directory contains all SQL migrations and seed data for the Glutton4Gainz d
 
 ## Files Overview
 
-### Migration Files (Run in order)
-1. **001_create_profiles.sql** - User profiles table with tiers, XP, streaks
-2. **002_create_workouts.sql** - Daily workout missions by tier
-3. **003_create_user_logs.sql** - Completed workout tracking
-4. **004_create_user_badges.sql** - Achievement/badge system
-5. **005_create_body_metrics.sql** - Weight tracking for analytics
-6. **006_create_recipes.sql** - Meal recipes for nutrition planner
-7. **007_create_meal_plans.sql** - User meal assignments
-8. **008_create_buddies.sql** - Buddy system for social features
-9. **009_create_messages.sql** - Coach-user messaging
-10. **010_rls_policies.sql** - Row Level Security policies for all tables
-11. **011_functions_and_triggers.sql** - Database functions (XP, badges, streaks)
-12. **012_storage_buckets.sql** - Storage buckets for avatars and content
+### Migration Files
+
+**For New Databases:**
+- **000_initial_schema.sql** - Consolidated initial schema (combines 001-012)
+  - Use this for brand new database setups
+  - Includes all core tables, functions, triggers, and RLS policies
+
+**Individual Migrations (Reference):**
+- **001_create_profiles.sql** through **012_storage_buckets.sql**
+  - Keep for reference and historical tracking
+  - Use `000_initial_schema.sql` instead for new setups
+
+**Incremental Migrations:**
+- **026_create_daily_briefing.sql** through **058_create_notifications.sql**
+  - Run these in order after initial schema
+  - Each adds new features or modifies existing schema
+
+**Migration Tracking:**
+- **schema_migrations.sql** - Table to track executed migrations
 
 ### Seed Data
 - **seed.sql** - Sample workouts (4 tiers) and recipes (8 meals)
@@ -52,20 +58,11 @@ This directory contains all SQL migrations and seed data for the Glutton4Gainz d
 
 ### Step 3: Run Migrations
 
-You have two options:
+**For detailed migration instructions, see [MIGRATIONS.md](./MIGRATIONS.md)**
 
-#### Option A: Using Supabase Dashboard (Recommended for beginners)
+You have three options:
 
-1. In your Supabase project, go to **SQL Editor**
-2. For each migration file (001 through 012):
-   - Click **"New Query"**
-   - Copy the entire contents of the migration file
-   - Paste into the SQL Editor
-   - Click **"Run"** (or press Cmd/Ctrl + Enter)
-   - Wait for success message
-3. Repeat for all 12 migration files in order
-
-#### Option B: Using Supabase CLI (Advanced)
+#### Option A: Using Supabase CLI (Recommended)
 
 1. Install Supabase CLI:
    ```bash
@@ -85,8 +82,37 @@ You have two options:
 
 4. Run migrations:
    ```bash
+   # Development
+   npm run migrate:dev
+   
+   # Or manually
    supabase db push
    ```
+
+#### Option B: Using Migration Scripts
+
+```bash
+# Check migration status
+npm run migrate:status
+
+# Run on development
+npm run migrate:dev
+
+# Run on staging  
+npm run migrate:staging
+
+# Run on production (with safety checks)
+npm run migrate:prod
+```
+
+#### Option C: Using Supabase Dashboard (Manual)
+
+1. In your Supabase project, go to **SQL Editor**
+2. For new databases: Run `000_initial_schema.sql` (consolidated initial schema)
+3. Then run migrations 026-058 in order
+4. Each migration should be run in a separate query
+
+**Note**: Manual execution doesn't track migration status automatically.
 
 ### Step 4: Run Seed Data
 

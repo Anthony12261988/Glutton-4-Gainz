@@ -13,8 +13,18 @@ export default function GlobalError({
     // Log critical global error
     console.error("Global Application Error:", error);
 
-    // TODO: Send to error tracking service with high priority
-    // Example: Sentry.captureException(error, { level: 'fatal' });
+    // Send to error tracking service with high priority
+    if (typeof window !== "undefined") {
+      import("@/lib/error-tracking/sentry").then(({ captureException }) => {
+        captureException(error, {
+          level: "fatal",
+          tags: {
+            errorBoundary: "global-error",
+            errorDigest: error.digest || "critical",
+          },
+        });
+      });
+    }
   }, [error]);
 
   return (

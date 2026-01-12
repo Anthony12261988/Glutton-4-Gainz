@@ -98,6 +98,18 @@ export function SignupForm() {
           description: TOAST_MESSAGES.auth.registrationSuccess.description,
         });
 
+        // Send welcome email (fire and forget)
+        fetch("/api/send-welcome-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: data.user.email,
+            name: data.user.email?.split("@")[0],
+          }),
+        }).catch((err) => {
+          console.error("Failed to send welcome email:", err);
+        });
+
         // If there's an invite token, accept it now
         if (inviteToken) {
           try {

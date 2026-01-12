@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
 import { InstallPrompt } from "@/components/pwa/install-prompt";
 import { AuthProvider } from "@/lib/auth/auth-context";
+import { PostHogProvider } from "@/components/analytics/posthog-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -66,10 +67,12 @@ export default function RootLayout({
         className={`${inter.variable} ${oswald.variable} font-sans antialiased`}
       >
         <AuthProvider>
-          <ServiceWorkerRegister />
-          <InstallPrompt />
-          {children}
-          <Toaster />
+          <PostHogProvider>
+            <ServiceWorkerRegister />
+            <InstallPrompt />
+            {children}
+            <Toaster />
+          </PostHogProvider>
         </AuthProvider>
       </body>
     </html>
