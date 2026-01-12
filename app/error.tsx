@@ -21,7 +21,17 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="min-h-screen bg-gunmetal flex items-center justify-center p-4">
+    <div className="relative min-h-screen bg-gunmetal flex items-center justify-center p-4">
+      {/* Watermark Background */}
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <div 
+          className="absolute inset-0 z-[1] opacity-[0.15] bg-repeat-y bg-top bg-contain"
+          style={{
+            backgroundImage: 'url(/branding/IMG_5618.PNG)',
+          }}
+        />
+      </div>
+      <div className="relative z-10">
       <div className="max-w-md w-full text-center space-y-6">
         {/* Error Icon */}
         <div className="flex justify-center">
@@ -87,6 +97,7 @@ export default function Error({
             {error.digest || "N/A"}
           </span>
         </p>
+      </div>
       </div>
     </div>
   );

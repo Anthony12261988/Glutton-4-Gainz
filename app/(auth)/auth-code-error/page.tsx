@@ -12,7 +12,17 @@ import {
 
 export default function AuthCodeErrorPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gunmetal p-4">
+    <div className="relative min-h-screen flex items-center justify-center bg-gunmetal p-4">
+      {/* Watermark Background */}
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <div 
+          className="absolute inset-0 z-[1] opacity-[0.15] bg-repeat-y bg-top bg-contain"
+          style={{
+            backgroundImage: 'url(/branding/IMG_5618.PNG)',
+          }}
+        />
+      </div>
+      <div className="relative z-10">
       <Card className="w-full max-w-md border-tactical-red/20">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
@@ -88,6 +98,7 @@ export default function AuthCodeErrorPage() {
           </p>
         </div>
       </Card>
+      </div>
     </div>
   );
 }

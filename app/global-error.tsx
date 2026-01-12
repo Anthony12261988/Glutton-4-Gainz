@@ -19,8 +19,17 @@ export default function GlobalError({
 
   return (
     <html lang="en" className="dark">
-      <body className="bg-gunmetal antialiased">
-        <div className="min-h-screen flex items-center justify-center p-4">
+      <body className="relative bg-gunmetal antialiased">
+        {/* Watermark Background */}
+        <div className="pointer-events-none absolute inset-0 z-0">
+          <div 
+            className="absolute inset-0 z-[1] opacity-[0.15] bg-repeat-y bg-top bg-contain"
+            style={{
+              backgroundImage: 'url(/branding/IMG_5618.PNG)',
+            }}
+          />
+        </div>
+        <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
           <div className="max-w-md w-full text-center space-y-6">
             {/* Error Icon */}
             <div className="flex justify-center">

@@ -59,7 +59,17 @@ export default function SuccessPage() {
   // Still checking for upgrade
   if (checking) {
     return (
-      <div className="container max-w-md mx-auto py-24 px-4 text-center">
+      <div className="relative min-h-screen">
+        {/* Watermark Background */}
+        <div className="pointer-events-none absolute inset-0 z-0">
+          <div 
+            className="absolute inset-0 z-[1] opacity-[0.15] bg-repeat-y bg-top bg-contain"
+            style={{
+              backgroundImage: 'url(/branding/IMG_5618.PNG)',
+            }}
+          />
+        </div>
+        <div className="relative z-10 container max-w-md mx-auto py-24 px-4 text-center">
         <div className="flex justify-center mb-6">
           <Loader2 className="h-24 w-24 text-tactical-red animate-spin" />
         </div>
@@ -84,6 +94,7 @@ export default function SuccessPage() {
         <p className="text-xs text-steel/40">
           This usually takes a few seconds...
         </p>
+        </div>
       </div>
     );
   }
@@ -91,7 +102,17 @@ export default function SuccessPage() {
   // Upgrade verification failed
   if (error) {
     return (
-      <div className="container max-w-md mx-auto py-24 px-4 text-center">
+      <div className="relative min-h-screen">
+        {/* Watermark Background */}
+        <div className="pointer-events-none absolute inset-0 z-0">
+          <div 
+            className="absolute inset-0 z-[1] opacity-[0.15] bg-repeat-y bg-top bg-contain"
+            style={{
+              backgroundImage: 'url(/branding/IMG_5618.PNG)',
+            }}
+          />
+        </div>
+        <div className="relative z-10 container max-w-md mx-auto py-24 px-4 text-center">
         <div className="flex justify-center mb-6">
           <AlertCircle className="h-24 w-24 text-yellow-500" />
         </div>
@@ -135,13 +156,24 @@ export default function SuccessPage() {
         <p className="text-xs text-steel/40 mt-6">
           If your account isn't upgraded within 5 minutes, please contact support.
         </p>
+        </div>
       </div>
     );
   }
 
   // Upgrade complete!
   return (
-    <div className="container max-w-md mx-auto py-24 px-4 text-center">
+    <div className="relative min-h-screen">
+      {/* Watermark Background */}
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <div 
+          className="absolute inset-0 z-[1] opacity-[0.15] bg-repeat-y bg-top bg-contain"
+          style={{
+            backgroundImage: 'url(/branding/IMG_5618.PNG)',
+          }}
+        />
+      </div>
+      <div className="relative z-10 container max-w-md mx-auto py-24 px-4 text-center">
       <div className="flex justify-center mb-6">
         <CheckCircle className="h-24 w-24 text-radar-green animate-pulse" />
       </div>
@@ -180,6 +212,7 @@ export default function SuccessPage() {
       <p className="text-xs text-steel/60 mt-6">
         Redirecting to dashboard in a moment...
       </p>
+      </div>
     </div>
   );
 }

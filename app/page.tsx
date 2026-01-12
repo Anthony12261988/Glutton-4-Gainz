@@ -122,10 +122,17 @@ const onboardingScreens = [
 export default function Home() {
   return (
     <main className="relative overflow-hidden text-high-vis">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-32 top-10 h-64 w-64 rounded-full bg-tactical-red/20 blur-[120px]" />
-        <div className="absolute right-0 top-40 h-72 w-72 rounded-full bg-emerald-500/10 blur-[140px]" />
-        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-camo-black via-camo-black/80 to-transparent" />
+      <div className="pointer-events-none absolute inset-0 z-0">
+        {/* Watermark Background - positioned above body background */}
+        <div 
+          className="absolute inset-0 z-[1] opacity-[0.15] bg-repeat-y bg-top bg-contain"
+          style={{
+            backgroundImage: 'url(/branding/IMG_5618.PNG)',
+          }}
+        />
+        <div className="absolute -left-32 top-10 z-[2] h-64 w-64 rounded-full bg-tactical-red/20 blur-[120px]" />
+        <div className="absolute right-0 top-40 z-[2] h-72 w-72 rounded-full bg-emerald-500/10 blur-[140px]" />
+        <div className="absolute inset-x-0 bottom-0 z-[3] h-48 bg-gradient-to-t from-camo-black via-camo-black/80 to-transparent" />
       </div>
 
       <section className="relative mx-auto flex max-w-6xl flex-col gap-12 px-6 pb-20 pt-16 lg:flex-row lg:items-center lg:gap-16 lg:pt-24">
@@ -134,7 +141,7 @@ export default function Home() {
           <div className="mb-6 inline-flex items-center gap-3">
             <div className="rounded-sm bg-tactical-red p-2">
               <Image
-                src="/G4G_Logo_2.png"
+                src="/IMG_5614.PNG"
                 alt="Glutton4Gainz"
                 width={32}
                 height={32}

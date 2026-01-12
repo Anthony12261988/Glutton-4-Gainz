@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
-const sourceImage = path.join(__dirname, '../public/imageAssests/Branding/Glutton4Gainz FF_Social Media Profile Icon.jpg');
+const sourceImage = path.join(__dirname, '../public/IMG_5614.PNG');
 const outputDir = path.join(__dirname, '../public/icons');
 
 if (!fs.existsSync(outputDir)) {

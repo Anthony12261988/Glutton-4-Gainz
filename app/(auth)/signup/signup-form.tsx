@@ -216,7 +216,7 @@ export function SignupForm() {
         <div className="mb-4 flex justify-center">
           <div className="rounded-sm border-2 border-tactical-red bg-tactical-red p-6">
             <Image
-              src="/G4G_Logo_2.png"
+              src="/IMG_5614.PNG"
               alt="Glutton4Gainz Logo"
               width={120}
               height={120}

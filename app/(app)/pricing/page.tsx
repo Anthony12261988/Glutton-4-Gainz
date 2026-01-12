@@ -82,18 +82,39 @@ export default function PricingPage() {
 
   if (loading) {
     return (
-      <div className="container max-w-6xl mx-auto py-12 px-4">
-        <div className="h-8 w-48 bg-gunmetal animate-pulse rounded-sm mb-6" />
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          <div className="h-80 rounded-sm border border-steel/30 bg-gunmetal animate-pulse" />
-          <div className="h-80 rounded-sm border border-steel/30 bg-gunmetal animate-pulse" />
+      <div className="relative min-h-screen">
+        {/* Watermark Background */}
+        <div className="pointer-events-none absolute inset-0 z-0">
+          <div 
+            className="absolute inset-0 z-[1] opacity-[0.15] bg-repeat-y bg-top bg-contain"
+            style={{
+              backgroundImage: 'url(/branding/IMG_5618.PNG)',
+            }}
+          />
+        </div>
+        <div className="relative z-10 container max-w-6xl mx-auto py-12 px-4">
+          <div className="h-8 w-48 bg-gunmetal animate-pulse rounded-sm mb-6" />
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="h-80 rounded-sm border border-steel/30 bg-gunmetal animate-pulse" />
+            <div className="h-80 rounded-sm border border-steel/30 bg-gunmetal animate-pulse" />
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container max-w-6xl mx-auto py-12 px-4">
+    <div className="relative min-h-screen">
+      {/* Watermark Background */}
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <div 
+          className="absolute inset-0 z-[1] opacity-[0.15] bg-repeat-y bg-top bg-contain"
+          style={{
+            backgroundImage: 'url(/branding/IMG_5618.PNG)',
+          }}
+        />
+      </div>
+      <div className="relative z-10 container max-w-6xl mx-auto py-12 px-4">
       <div className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight mb-4 text-white">
           Choose Your <span className="text-tactical-red">Loadout</span>
@@ -160,6 +181,7 @@ export default function PricingPage() {
         <p className="text-steel text-sm">
           Secure payment processing by Stripe. Cancel anytime.
         </p>
+      </div>
       </div>
     </div>
   );

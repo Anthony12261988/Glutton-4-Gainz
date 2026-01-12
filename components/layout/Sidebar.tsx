@@ -147,7 +147,7 @@ export function Sidebar({
           <Link href={isAdmin ? "/command" : isCoach ? "/barracks" : "/dashboard"} className="flex items-center gap-3">
             <div className="rounded-sm bg-tactical-red p-2.5">
               <Image
-                src="/G4G_Logo_2.png"
+                src="/IMG_5614.PNG"
                 alt="G4G Logo"
                 width={40}
                 height={40}
