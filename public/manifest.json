@@ -7,6 +7,8 @@
   "background_color": "#0a0a0a",
   "theme_color": "#0a0a0a",
   "orientation": "portrait",
+  "scope": "/",
+  "categories": ["health", "fitness", "lifestyle"],
   "icons": [
     {
       "src": "/icons/icon-72x72.png",
@@ -56,5 +58,37 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your dashboard and missions",
+      "url": "/dashboard",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Library",
+      "short_name": "Library",
+      "description": "Browse workout programs",
+      "url": "/library",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Rations",
+      "short_name": "Rations",
+      "description": "View meal plans and recipes",
+      "url": "/rations",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Formation",
+      "short_name": "Formation",
+      "description": "Connect with the community",
+      "url": "/formation",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
 }

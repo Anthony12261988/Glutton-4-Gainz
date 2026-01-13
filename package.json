@@ -13,11 +13,17 @@
     "optimize-icons": "node scripts/optimize-highlight-icons.js",
     "generate-vapid-keys": "node scripts/generate-vapid-keys.js",
     "migrate": "node scripts/run-migrations.js",
+    "migrate:auto": "node scripts/run-migrations-automated.js",
+    "migrate:auto:dev": "node scripts/run-migrations-automated.js --env=dev",
+    "migrate:auto:staging": "node scripts/run-migrations-automated.js --env=staging",
+    "migrate:auto:prod": "node scripts/run-migrations-automated.js --env=prod --force",
+    "migrate:auto:dry-run": "node scripts/run-migrations-automated.js --dry-run",
     "migrate:dev": "./scripts/migrate-dev.sh",
     "migrate:staging": "./scripts/migrate-staging.sh",
     "migrate:prod": "./scripts/migrate-prod.sh",
     "migrate:status": "node scripts/check-migration-status.js",
-    "migrate:list": "supabase migration list"
+    "migrate:list": "supabase migration list",
+    "migrate:backup": "node scripts/backup-database.js"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
@@ -32,7 +38,6 @@
     "@stripe/stripe-js": "^8.5.3",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.86.0",
-    "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "canvas-confetti": "^1.9.4",
@@ -42,6 +47,7 @@
     "framer-motion": "^12.23.25",
     "lucide-react": "^0.555.0",
     "next": "^16.0.7",
+    "next-pwa": "^5.6.0",
     "posthog-js": "^1.318.2",
     "react": "^19.2.0",
     "react-day-picker": "^9.11.3",
@@ -58,7 +64,9 @@
   },
   "devDependencies": {
     "@types/canvas-confetti": "^1.9.0",
+    "@types/node": "^25.0.7",
     "autoprefixer": "^10.4.22",
+    "pg": "^8.16.3",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.1"
   }
