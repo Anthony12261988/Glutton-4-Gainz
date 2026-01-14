@@ -316,11 +316,13 @@ COMMENT ON COLUMN messages.is_read IS 'Whether the message has been read by the 
 -- PROFILES TABLE RLS
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY IF NOT EXISTS "Users can read own profile"
+DROP POLICY IF EXISTS "Users can read own profile" ON profiles;
+CREATE POLICY "Users can read own profile"
   ON profiles FOR SELECT
   USING (auth.uid() = id);
 
-CREATE POLICY IF NOT EXISTS "Coaches can read assigned users"
+DROP POLICY IF EXISTS "Coaches can read assigned users" ON profiles;
+CREATE POLICY "Coaches can read assigned users"
   ON profiles FOR SELECT
   USING (
     EXISTS (
@@ -333,7 +335,8 @@ CREATE POLICY IF NOT EXISTS "Coaches can read assigned users"
     )
   );
 
-CREATE POLICY IF NOT EXISTS "Users can update own profile"
+DROP POLICY IF EXISTS "Users can update own profile" ON profiles;
+CREATE POLICY "Users can update own profile"
   ON profiles FOR UPDATE
   USING (auth.uid() = id)
   WITH CHECK (auth.uid() = id);
@@ -341,12 +344,14 @@ CREATE POLICY IF NOT EXISTS "Users can update own profile"
 -- WORKOUTS TABLE RLS
 ALTER TABLE workouts ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY IF NOT EXISTS "Authenticated users can read workouts"
+DROP POLICY IF EXISTS "Authenticated users can read workouts" ON workouts;
+CREATE POLICY "Authenticated users can read workouts"
   ON workouts FOR SELECT
   TO authenticated
   USING (true);
 
-CREATE POLICY IF NOT EXISTS "Coaches can create workouts"
+DROP POLICY IF EXISTS "Coaches can create workouts" ON workouts;
+CREATE POLICY "Coaches can create workouts"
   ON workouts FOR INSERT
   TO authenticated
   WITH CHECK (
@@ -357,7 +362,8 @@ CREATE POLICY IF NOT EXISTS "Coaches can create workouts"
     )
   );
 
-CREATE POLICY IF NOT EXISTS "Coaches can update workouts"
+DROP POLICY IF EXISTS "Coaches can update workouts" ON workouts;
+CREATE POLICY "Coaches can update workouts"
   ON workouts FOR UPDATE
   TO authenticated
   USING (
@@ -375,7 +381,8 @@ CREATE POLICY IF NOT EXISTS "Coaches can update workouts"
     )
   );
 
-CREATE POLICY IF NOT EXISTS "Coaches can delete workouts"
+DROP POLICY IF EXISTS "Coaches can delete workouts" ON workouts;
+CREATE POLICY "Coaches can delete workouts"
   ON workouts FOR DELETE
   TO authenticated
   USING (
@@ -389,11 +396,13 @@ CREATE POLICY IF NOT EXISTS "Coaches can delete workouts"
 -- USER_LOGS TABLE RLS
 ALTER TABLE user_logs ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY IF NOT EXISTS "Users can read own logs"
+DROP POLICY IF EXISTS "Users can read own logs" ON user_logs;
+CREATE POLICY "Users can read own logs"
   ON user_logs FOR SELECT
   USING (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "Coaches can read assigned users logs"
+DROP POLICY IF EXISTS "Coaches can read assigned users logs" ON user_logs;
+CREATE POLICY "Coaches can read assigned users logs"
   ON user_logs FOR SELECT
   USING (
     EXISTS (
@@ -403,27 +412,32 @@ CREATE POLICY IF NOT EXISTS "Coaches can read assigned users logs"
     )
   );
 
-CREATE POLICY IF NOT EXISTS "Users can insert own logs"
+DROP POLICY IF EXISTS "Users can insert own logs" ON user_logs;
+CREATE POLICY "Users can insert own logs"
   ON user_logs FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "Users can update own logs"
+DROP POLICY IF EXISTS "Users can update own logs" ON user_logs;
+CREATE POLICY "Users can update own logs"
   ON user_logs FOR UPDATE
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "Users can delete own logs"
+DROP POLICY IF EXISTS "Users can delete own logs" ON user_logs;
+CREATE POLICY "Users can delete own logs"
   ON user_logs FOR DELETE
   USING (auth.uid() = user_id);
 
 -- USER_BADGES TABLE RLS
 ALTER TABLE user_badges ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY IF NOT EXISTS "Users can read own badges"
+DROP POLICY IF EXISTS "Users can read own badges" ON user_badges;
+CREATE POLICY "Users can read own badges"
   ON user_badges FOR SELECT
   USING (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "Coaches can read assigned users badges"
+DROP POLICY IF EXISTS "Coaches can read assigned users badges" ON user_badges;
+CREATE POLICY "Coaches can read assigned users badges"
   ON user_badges FOR SELECT
   USING (
     EXISTS (
@@ -436,32 +450,38 @@ CREATE POLICY IF NOT EXISTS "Coaches can read assigned users badges"
 -- BODY_METRICS TABLE RLS
 ALTER TABLE body_metrics ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY IF NOT EXISTS "Users can read own body metrics"
+DROP POLICY IF EXISTS "Users can read own body metrics" ON body_metrics;
+CREATE POLICY "Users can read own body metrics"
   ON body_metrics FOR SELECT
   USING (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "Users can insert own body metrics"
+DROP POLICY IF EXISTS "Users can insert own body metrics" ON body_metrics;
+CREATE POLICY "Users can insert own body metrics"
   ON body_metrics FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "Users can update own body metrics"
+DROP POLICY IF EXISTS "Users can update own body metrics" ON body_metrics;
+CREATE POLICY "Users can update own body metrics"
   ON body_metrics FOR UPDATE
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "Users can delete own body metrics"
+DROP POLICY IF EXISTS "Users can delete own body metrics" ON body_metrics;
+CREATE POLICY "Users can delete own body metrics"
   ON body_metrics FOR DELETE
   USING (auth.uid() = user_id);
 
 -- RECIPES TABLE RLS
 ALTER TABLE recipes ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY IF NOT EXISTS "Authenticated users can read recipes"
+DROP POLICY IF EXISTS "Authenticated users can read recipes" ON recipes;
+CREATE POLICY "Authenticated users can read recipes"
   ON recipes FOR SELECT
   TO authenticated
   USING (true);
 
-CREATE POLICY IF NOT EXISTS "Coaches can create recipes"
+DROP POLICY IF EXISTS "Coaches can create recipes" ON recipes;
+CREATE POLICY "Coaches can create recipes"
   ON recipes FOR INSERT
   TO authenticated
   WITH CHECK (
@@ -472,7 +492,8 @@ CREATE POLICY IF NOT EXISTS "Coaches can create recipes"
     )
   );
 
-CREATE POLICY IF NOT EXISTS "Coaches can update recipes"
+DROP POLICY IF EXISTS "Coaches can update recipes" ON recipes;
+CREATE POLICY "Coaches can update recipes"
   ON recipes FOR UPDATE
   TO authenticated
   USING (
@@ -490,7 +511,8 @@ CREATE POLICY IF NOT EXISTS "Coaches can update recipes"
     )
   );
 
-CREATE POLICY IF NOT EXISTS "Coaches can delete recipes"
+DROP POLICY IF EXISTS "Coaches can delete recipes" ON recipes;
+CREATE POLICY "Coaches can delete recipes"
   ON recipes FOR DELETE
   TO authenticated
   USING (
@@ -504,60 +526,72 @@ CREATE POLICY IF NOT EXISTS "Coaches can delete recipes"
 -- MEAL_PLANS TABLE RLS
 ALTER TABLE meal_plans ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY IF NOT EXISTS "Users can read own meal plans"
+DROP POLICY IF EXISTS "Users can read own meal plans" ON meal_plans;
+CREATE POLICY "Users can read own meal plans"
   ON meal_plans FOR SELECT
   USING (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "Users can insert own meal plans"
+DROP POLICY IF EXISTS "Users can insert own meal plans" ON meal_plans;
+CREATE POLICY "Users can insert own meal plans"
   ON meal_plans FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "Users can update own meal plans"
+DROP POLICY IF EXISTS "Users can update own meal plans" ON meal_plans;
+CREATE POLICY "Users can update own meal plans"
   ON meal_plans FOR UPDATE
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "Users can delete own meal plans"
+DROP POLICY IF EXISTS "Users can delete own meal plans" ON meal_plans;
+CREATE POLICY "Users can delete own meal plans"
   ON meal_plans FOR DELETE
   USING (auth.uid() = user_id);
 
 -- BUDDIES TABLE RLS
 ALTER TABLE buddies ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY IF NOT EXISTS "Users can read own buddy relationships"
+DROP POLICY IF EXISTS "Users can read own buddy relationships" ON buddies;
+CREATE POLICY "Users can read own buddy relationships"
   ON buddies FOR SELECT
   USING (auth.uid() = user_id OR auth.uid() = buddy_id);
 
-CREATE POLICY IF NOT EXISTS "Users can create buddy relationships"
+DROP POLICY IF EXISTS "Users can create buddy relationships" ON buddies;
+CREATE POLICY "Users can create buddy relationships"
   ON buddies FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "Users can update buddy relationships"
+DROP POLICY IF EXISTS "Users can update buddy relationships" ON buddies;
+CREATE POLICY "Users can update buddy relationships"
   ON buddies FOR UPDATE
   USING (auth.uid() = user_id OR auth.uid() = buddy_id)
   WITH CHECK (auth.uid() = user_id OR auth.uid() = buddy_id);
 
-CREATE POLICY IF NOT EXISTS "Users can delete buddy relationships"
+DROP POLICY IF EXISTS "Users can delete buddy relationships" ON buddies;
+CREATE POLICY "Users can delete buddy relationships"
   ON buddies FOR DELETE
   USING (auth.uid() = user_id OR auth.uid() = buddy_id);
 
 -- MESSAGES TABLE RLS
 ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY IF NOT EXISTS "Users can read own messages"
+DROP POLICY IF EXISTS "Users can read own messages" ON messages;
+CREATE POLICY "Users can read own messages"
   ON messages FOR SELECT
   USING (auth.uid() = sender_id OR auth.uid() = receiver_id);
 
-CREATE POLICY IF NOT EXISTS "Users can send messages"
+DROP POLICY IF EXISTS "Users can send messages" ON messages;
+CREATE POLICY "Users can send messages"
   ON messages FOR INSERT
   WITH CHECK (auth.uid() = sender_id);
 
-CREATE POLICY IF NOT EXISTS "Users can update received messages"
+DROP POLICY IF EXISTS "Users can update received messages" ON messages;
+CREATE POLICY "Users can update received messages"
   ON messages FOR UPDATE
   USING (auth.uid() = receiver_id)
   WITH CHECK (auth.uid() = receiver_id);
 
-CREATE POLICY IF NOT EXISTS "Users can delete sent messages"
+DROP POLICY IF EXISTS "Users can delete sent messages" ON messages;
+CREATE POLICY "Users can delete sent messages"
   ON messages FOR DELETE
   USING (auth.uid() = sender_id);
 
@@ -794,7 +828,8 @@ ON CONFLICT (id) DO NOTHING;
 ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Authenticated users can upload to their own folder
-CREATE POLICY IF NOT EXISTS "Users can upload own avatar"
+DROP POLICY IF EXISTS "Users can upload own avatar" ON storage.objects;
+CREATE POLICY "Users can upload own avatar"
   ON storage.objects FOR INSERT
   TO authenticated
   WITH CHECK (
@@ -803,7 +838,8 @@ CREATE POLICY IF NOT EXISTS "Users can upload own avatar"
   );
 
 -- Policy: Authenticated users can update their own files
-CREATE POLICY IF NOT EXISTS "Users can update own avatar"
+DROP POLICY IF EXISTS "Users can update own avatar" ON storage.objects;
+CREATE POLICY "Users can update own avatar"
   ON storage.objects FOR UPDATE
   TO authenticated
   USING (
@@ -816,7 +852,8 @@ CREATE POLICY IF NOT EXISTS "Users can update own avatar"
   );
 
 -- Policy: Authenticated users can delete their own files
-CREATE POLICY IF NOT EXISTS "Users can delete own avatar"
+DROP POLICY IF EXISTS "Users can delete own avatar" ON storage.objects;
+CREATE POLICY "Users can delete own avatar"
   ON storage.objects FOR DELETE
   TO authenticated
   USING (
@@ -825,7 +862,8 @@ CREATE POLICY IF NOT EXISTS "Users can delete own avatar"
   );
 
 -- Policy: Anyone can view avatars (public read)
-CREATE POLICY IF NOT EXISTS "Anyone can view avatars"
+DROP POLICY IF EXISTS "Anyone can view avatars" ON storage.objects;
+CREATE POLICY "Anyone can view avatars"
   ON storage.objects FOR SELECT
   TO public
   USING (bucket_id = 'avatars');
@@ -842,7 +880,8 @@ VALUES (
 ON CONFLICT (id) DO NOTHING;
 
 -- Policy: Only coaches can upload content assets
-CREATE POLICY IF NOT EXISTS "Coaches can upload content assets"
+DROP POLICY IF EXISTS "Coaches can upload content assets" ON storage.objects;
+CREATE POLICY "Coaches can upload content assets"
   ON storage.objects FOR INSERT
   TO authenticated
   WITH CHECK (
@@ -855,7 +894,8 @@ CREATE POLICY IF NOT EXISTS "Coaches can upload content assets"
   );
 
 -- Policy: Only coaches can update content assets
-CREATE POLICY IF NOT EXISTS "Coaches can update content assets"
+DROP POLICY IF EXISTS "Coaches can update content assets" ON storage.objects;
+CREATE POLICY "Coaches can update content assets"
   ON storage.objects FOR UPDATE
   TO authenticated
   USING (
@@ -876,7 +916,8 @@ CREATE POLICY IF NOT EXISTS "Coaches can update content assets"
   );
 
 -- Policy: Only coaches can delete content assets
-CREATE POLICY IF NOT EXISTS "Coaches can delete content assets"
+DROP POLICY IF EXISTS "Coaches can delete content assets" ON storage.objects;
+CREATE POLICY "Coaches can delete content assets"
   ON storage.objects FOR DELETE
   TO authenticated
   USING (
@@ -889,7 +930,8 @@ CREATE POLICY IF NOT EXISTS "Coaches can delete content assets"
   );
 
 -- Policy: Anyone can view content assets (public read)
-CREATE POLICY IF NOT EXISTS "Anyone can view content assets"
+DROP POLICY IF EXISTS "Anyone can view content assets" ON storage.objects;
+CREATE POLICY "Anyone can view content assets"
   ON storage.objects FOR SELECT
   TO public
   USING (bucket_id = 'content_assets');
