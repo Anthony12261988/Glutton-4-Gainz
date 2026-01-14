@@ -1,8 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import RationsClient from "./rations-client";
+import EnhancedPlannerClient from "./enhanced-planner-client";
 import { hasPremiumAccess } from "@/lib/utils/premium-access";
 import { getTodaysFeaturedMeal } from "@/lib/queries/featured-meals";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default async function RationsPage() {
   const supabase = await createClient();
@@ -62,13 +64,33 @@ export default async function RationsPage() {
 
   return (
     <div className="container mx-auto max-w-md px-4 py-6 md:max-w-4xl lg:max-w-7xl">
-      <RationsClient
-        user={user}
-        initialRecipes={recipes || []}
-        initialMealPlans={mealPlans || []}
-        featuredMeal={featuredRecipe}
-        isPremium={isPremium}
-      />
+      <Tabs defaultValue="basic" className="w-full">
+        <TabsList className="grid w-full max-w-md grid-cols-2 mb-6 bg-gunmetal border border-steel/20">
+          <TabsTrigger value="basic" className="data-[state=active]:bg-steel/20 data-[state=active]:text-high-vis">
+            Basic Planner
+          </TabsTrigger>
+          <TabsTrigger value="enhanced" className="data-[state=active]:bg-steel/20 data-[state=active]:text-high-vis">
+            Enhanced Planner
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="basic">
+          <RationsClient
+            user={user}
+            initialRecipes={recipes || []}
+            initialMealPlans={mealPlans || []}
+            featuredMeal={featuredRecipe}
+            isPremium={isPremium}
+          />
+        </TabsContent>
+
+        <TabsContent value="enhanced">
+          <EnhancedPlannerClient
+            user={user}
+            recipes={recipes || []}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

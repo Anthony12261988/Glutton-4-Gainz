@@ -70,9 +70,11 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ### 🍽️ Nutrition (Rations)
 - **Freemium Model**: 5 free recipes for Recruits, all recipes for premium users
-- **Meal Planning**: Plan meals by date (premium feature)
-- **Macro Tracking**: Calories, protein, carbs, fat for each recipe
+- **Basic Meal Planning**: Plan meals by date (premium feature)
+- **Enhanced Meal Planner**: Advanced planner with templates, shopping lists, and drag-and-drop calendar
+- **Macro Tracking**: Real-time macro tracking with editable targets
 - **Custom Recipes**: Coaches can create custom recipes
+- **Shopping Lists**: Auto-generate ingredient lists from meal plans
 
 ### 📊 Analytics & Progress
 - **Consistency Chart**: Visual representation of workout frequency
@@ -302,7 +304,24 @@ npm run seed      # Seed admin data to Supabase
 
 ---
 
-## 🔄 Recent Updates (Dec 2024)
+## 🔄 Recent Updates (Jan 2026)
+
+### Enhanced Meal Planner ✨ NEW
+- **Drag-and-Drop Calendar**: 7-day week view with 6 meal slots per day
+- **Meal Templates**: Save and reuse meal plans (public/private templates)
+- **Shopping Lists**: Auto-generate categorized ingredient lists from meal plans
+- **Macro Tracker**: Real-time macro tracking with editable daily targets
+- **Tab Interface**: Switch between Basic and Enhanced planners
+- **Mobile Responsive**: Optimized for all devices
+
+**Documentation**: See [ENHANCED_MEAL_PLANNER.md](ENHANCED_MEAL_PLANNER.md) for complete guide
+
+### Database & Infrastructure ✅
+- **Migration System**: Automated migration runner with PostgreSQL direct execution
+- **Storage Policies**: Manual setup guide for Supabase storage buckets
+- **PWA Support**: Full progressive web app with offline functionality
+- **Security Hardening**: Restricted image domains for better security
+- **Optional Services**: Sentry and PostHog now completely optional
 
 ### Production-Ready Fixes ✅
 - **Admin Briefings**: Fixed RLS to allow admins to publish briefings
@@ -316,13 +335,19 @@ npm run seed      # Seed admin data to Supabase
 
 ## 📖 Documentation
 
-All documentation has been consolidated into this README. Key sections:
-- **Quick Start** - Get up and running in 5 minutes
-- **Features** - Comprehensive feature overview
-- **Tech Stack** - Technologies used
-- **Database Schema** - Table structure and relationships
-- **Deployment** - Production deployment guide
-- **Testing** - Test scenarios and verification
+### Main Documentation
+- **[README.md](README.md)** - This file: Project overview, quick start, features
+- **[ENHANCED_MEAL_PLANNER.md](ENHANCED_MEAL_PLANNER.md)** - Complete guide for Enhanced Meal Planner feature
+- **[STORAGE_BUCKET_SETUP.md](STORAGE_BUCKET_SETUP.md)** - Manual setup guide for Supabase storage policies
+- **[OPTIONAL_SERVICES.md](OPTIONAL_SERVICES.md)** - Sentry & PostHog configuration guide
+
+### Integration Guides
+- **[docs/INTEGRATIONS_SETUP.md](docs/INTEGRATIONS_SETUP.md)** - Complete integration setup (Stripe, Resend, Web Push)
+- **[docs/INTEGRATIONS_QUICK_REFERENCE.md](docs/INTEGRATIONS_QUICK_REFERENCE.md)** - Quick reference for all integrations
+
+### Database Documentation
+- **[supabase/MIGRATIONS.md](supabase/MIGRATIONS.md)** - Database migrations guide
+- **[supabase/README.md](supabase/README.md)** - Supabase setup and schema documentation
 
 ---
 

@@ -221,13 +221,26 @@ USING (bucket_id = 'videos');
 
 ## Quick Policy Setup (Alternative)
 
-If you prefer, you can run these policies via SQL Editor (after migration completes):
+**RECOMMENDED**: Use the fixed SQL script file `STORAGE_POLICIES_FIXED.sql` which includes `DROP POLICY IF EXISTS` statements to handle existing policies safely.
+
+### Option A: Run the Fixed Script File (Recommended)
+```bash
+# In Supabase SQL Editor, load and run:
+# supabase/STORAGE_POLICIES_FIXED.sql
+```
+
+This script safely drops any existing policies before creating new ones, avoiding the error:
+```
+ERROR: 42710: policy "..." for table "objects" already exists
+```
+
+### Option B: Manual One-Line Script (Legacy)
+⚠️ **Note**: This may fail if policies already exist. Use Option A instead.
+
+If you prefer a one-line approach, you can run this (but it will fail if policies exist):
 
 ```sql
--- ============================================================================
--- STORAGE POLICIES - Run this AFTER the main migration
--- ============================================================================
-
+-- WARNING: Only use this if no policies exist yet
 -- Avatars bucket policies
 CREATE POLICY "Users can upload own avatar" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text);
 CREATE POLICY "Users can update own avatar" ON storage.objects FOR UPDATE TO authenticated USING (bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text) WITH CHECK (bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text);
