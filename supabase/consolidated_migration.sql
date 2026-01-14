@@ -824,49 +824,52 @@ VALUES (
 )
 ON CONFLICT (id) DO NOTHING;
 
+-- NOTE: Storage policies must be configured via Supabase Dashboard
+-- Go to Storage > Policies to set up access control for this bucket
+
 -- Enable RLS on storage.objects (should already be enabled, but ensure it)
-ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+-- SKIPPED: ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY; (already enabled by default)
 
 -- Policy: Authenticated users can upload to their own folder
-DROP POLICY IF EXISTS "Users can upload own avatar" ON storage.objects;
-CREATE POLICY "Users can upload own avatar"
-  ON storage.objects FOR INSERT
-  TO authenticated
-  WITH CHECK (
-    bucket_id = 'avatars'
-    AND (storage.foldername(name))[1] = auth.uid()::text
-  );
+-- SKIPPED: DROP POLICY IF EXISTS "Users can upload own avatar" ON storage.objects; (requires elevated privileges)
+-- SKIPPED: CREATE POLICY "Users can upload own avatar"
+-- SKIPPED:   ON storage.objects FOR INSERT
+-- SKIPPED:   TO authenticated
+-- SKIPPED:   WITH CHECK (
+-- SKIPPED:     bucket_id = 'avatars'
+-- SKIPPED:     AND (storage.foldername(name))[1] = auth.uid()::text
+-- SKIPPED:   );
 
 -- Policy: Authenticated users can update their own files
-DROP POLICY IF EXISTS "Users can update own avatar" ON storage.objects;
-CREATE POLICY "Users can update own avatar"
-  ON storage.objects FOR UPDATE
-  TO authenticated
-  USING (
-    bucket_id = 'avatars'
-    AND (storage.foldername(name))[1] = auth.uid()::text
-  )
-  WITH CHECK (
-    bucket_id = 'avatars'
-    AND (storage.foldername(name))[1] = auth.uid()::text
-  );
+-- SKIPPED: DROP POLICY IF EXISTS "Users can update own avatar" ON storage.objects; (requires elevated privileges)
+-- SKIPPED: CREATE POLICY "Users can update own avatar"
+-- SKIPPED:   ON storage.objects FOR UPDATE
+-- SKIPPED:   TO authenticated
+-- SKIPPED:   USING (
+-- SKIPPED:     bucket_id = 'avatars'
+-- SKIPPED:     AND (storage.foldername(name))[1] = auth.uid()::text
+-- SKIPPED:   )
+-- SKIPPED:   WITH CHECK (
+-- SKIPPED:     bucket_id = 'avatars'
+-- SKIPPED:     AND (storage.foldername(name))[1] = auth.uid()::text
+-- SKIPPED:   );
 
 -- Policy: Authenticated users can delete their own files
-DROP POLICY IF EXISTS "Users can delete own avatar" ON storage.objects;
-CREATE POLICY "Users can delete own avatar"
-  ON storage.objects FOR DELETE
-  TO authenticated
-  USING (
-    bucket_id = 'avatars'
-    AND (storage.foldername(name))[1] = auth.uid()::text
-  );
+-- SKIPPED: DROP POLICY IF EXISTS "Users can delete own avatar" ON storage.objects; (requires elevated privileges)
+-- SKIPPED: CREATE POLICY "Users can delete own avatar"
+-- SKIPPED:   ON storage.objects FOR DELETE
+-- SKIPPED:   TO authenticated
+-- SKIPPED:   USING (
+-- SKIPPED:     bucket_id = 'avatars'
+-- SKIPPED:     AND (storage.foldername(name))[1] = auth.uid()::text
+-- SKIPPED:   );
 
 -- Policy: Anyone can view avatars (public read)
-DROP POLICY IF EXISTS "Anyone can view avatars" ON storage.objects;
-CREATE POLICY "Anyone can view avatars"
-  ON storage.objects FOR SELECT
-  TO public
-  USING (bucket_id = 'avatars');
+-- SKIPPED: DROP POLICY IF EXISTS "Anyone can view avatars" ON storage.objects; (requires elevated privileges)
+-- SKIPPED: CREATE POLICY "Anyone can view avatars"
+-- SKIPPED:   ON storage.objects FOR SELECT
+-- SKIPPED:   TO public
+-- SKIPPED:   USING (bucket_id = 'avatars');
 
 -- BUCKET: content_assets (Recipe images, badges, etc.)
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
@@ -879,62 +882,65 @@ VALUES (
 )
 ON CONFLICT (id) DO NOTHING;
 
+-- NOTE: Storage policies must be configured via Supabase Dashboard
+-- Go to Storage > Policies to set up access control for this bucket
+
 -- Policy: Only coaches can upload content assets
-DROP POLICY IF EXISTS "Coaches can upload content assets" ON storage.objects;
-CREATE POLICY "Coaches can upload content assets"
-  ON storage.objects FOR INSERT
-  TO authenticated
-  WITH CHECK (
-    bucket_id = 'content_assets'
-    AND EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid()
-      AND role = 'coach'
-    )
-  );
+-- SKIPPED: DROP POLICY IF EXISTS "Coaches can upload content assets" ON storage.objects; (requires elevated privileges)
+-- SKIPPED: CREATE POLICY "Coaches can upload content assets"
+-- SKIPPED:   ON storage.objects FOR INSERT
+-- SKIPPED:   TO authenticated
+-- SKIPPED:   WITH CHECK (
+-- SKIPPED:     bucket_id = 'content_assets'
+-- SKIPPED:     AND EXISTS (
+-- SKIPPED:       SELECT 1 FROM public.profiles
+-- SKIPPED:       WHERE id = auth.uid()
+-- SKIPPED:       AND role = 'coach'
+-- SKIPPED:     )
+-- SKIPPED:   );
 
 -- Policy: Only coaches can update content assets
-DROP POLICY IF EXISTS "Coaches can update content assets" ON storage.objects;
-CREATE POLICY "Coaches can update content assets"
-  ON storage.objects FOR UPDATE
-  TO authenticated
-  USING (
-    bucket_id = 'content_assets'
-    AND EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid()
-      AND role = 'coach'
-    )
-  )
-  WITH CHECK (
-    bucket_id = 'content_assets'
-    AND EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid()
-      AND role = 'coach'
-    )
-  );
+-- SKIPPED: DROP POLICY IF EXISTS "Coaches can update content assets" ON storage.objects; (requires elevated privileges)
+-- SKIPPED: CREATE POLICY "Coaches can update content assets"
+-- SKIPPED:   ON storage.objects FOR UPDATE
+-- SKIPPED:   TO authenticated
+-- SKIPPED:   USING (
+-- SKIPPED:     bucket_id = 'content_assets'
+-- SKIPPED:     AND EXISTS (
+-- SKIPPED:       SELECT 1 FROM public.profiles
+-- SKIPPED:       WHERE id = auth.uid()
+-- SKIPPED:       AND role = 'coach'
+-- SKIPPED:     )
+-- SKIPPED:   )
+-- SKIPPED:   WITH CHECK (
+-- SKIPPED:     bucket_id = 'content_assets'
+-- SKIPPED:     AND EXISTS (
+-- SKIPPED:       SELECT 1 FROM public.profiles
+-- SKIPPED:       WHERE id = auth.uid()
+-- SKIPPED:       AND role = 'coach'
+-- SKIPPED:     )
+-- SKIPPED:   );
 
 -- Policy: Only coaches can delete content assets
-DROP POLICY IF EXISTS "Coaches can delete content assets" ON storage.objects;
-CREATE POLICY "Coaches can delete content assets"
-  ON storage.objects FOR DELETE
-  TO authenticated
-  USING (
-    bucket_id = 'content_assets'
-    AND EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid()
-      AND role = 'coach'
-    )
-  );
+-- SKIPPED: DROP POLICY IF EXISTS "Coaches can delete content assets" ON storage.objects; (requires elevated privileges)
+-- SKIPPED: CREATE POLICY "Coaches can delete content assets"
+-- SKIPPED:   ON storage.objects FOR DELETE
+-- SKIPPED:   TO authenticated
+-- SKIPPED:   USING (
+-- SKIPPED:     bucket_id = 'content_assets'
+-- SKIPPED:     AND EXISTS (
+-- SKIPPED:       SELECT 1 FROM public.profiles
+-- SKIPPED:       WHERE id = auth.uid()
+-- SKIPPED:       AND role = 'coach'
+-- SKIPPED:     )
+-- SKIPPED:   );
 
 -- Policy: Anyone can view content assets (public read)
-DROP POLICY IF EXISTS "Anyone can view content assets" ON storage.objects;
-CREATE POLICY "Anyone can view content assets"
-  ON storage.objects FOR SELECT
-  TO public
-  USING (bucket_id = 'content_assets');
+-- SKIPPED: DROP POLICY IF EXISTS "Anyone can view content assets" ON storage.objects; (requires elevated privileges)
+-- SKIPPED: CREATE POLICY "Anyone can view content assets"
+-- SKIPPED:   ON storage.objects FOR SELECT
+-- SKIPPED:   TO public
+-- SKIPPED:   USING (bucket_id = 'content_assets');
 
 -- ============================================================================
 -- END OF INITIAL SCHEMA
@@ -1496,11 +1502,11 @@ VALUES (
 )
 ON CONFLICT (id) DO NOTHING;
 
+-- NOTE: Storage policies must be configured via Supabase Dashboard
+-- Go to Storage > Policies to set up access control for this bucket
+
 -- Drop existing policies if they exist (for idempotent migrations)
-DROP POLICY IF EXISTS "Admins and coaches can upload videos" ON storage.objects;
-DROP POLICY IF EXISTS "Admins and coaches can update videos" ON storage.objects;
-DROP POLICY IF EXISTS "Admins and coaches can delete videos" ON storage.objects;
-DROP POLICY IF EXISTS "Anyone can view videos" ON storage.objects;
+-- SKIPPED: DROP POLICY IF EXISTS "Anyone can view videos" ON storage.objects; (requires elevated privileges)
 
 -- Policy: Only admins/coaches can upload videos
 CREATE POLICY "Admins and coaches can upload videos"
