@@ -5,8 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -98,7 +96,7 @@ export function ShoppingListGenerator({ userId }: ShoppingListGeneratorProps) {
       });
     }
 
-    setLists((data as ShoppingList[]) || []);
+    setLists((data as unknown as ShoppingList[]) || []);
     setLoading(false);
   }
 
@@ -394,10 +392,10 @@ export function ShoppingListGenerator({ userId }: ShoppingListGeneratorProps) {
                       {checkedCount > 0 && ` • ${checkedCount} checked`}
                     </p>
                   </div>
-                  <Badge variant="outline" className="text-xs border-radar-green text-radar-green">
+                  <span className="text-xs border border-radar-green text-radar-green px-2 py-1 rounded flex items-center">
                     <ShoppingCart className="h-3 w-3 mr-1" />
                     {itemCount}
-                  </Badge>
+                  </span>
                 </div>
               </CardHeader>
               <CardContent className="space-y-2">
@@ -442,8 +440,8 @@ export function ShoppingListGenerator({ userId }: ShoppingListGeneratorProps) {
                           </Button>
                         </div>
                       </div>
-                      <ScrollArea className="max-h-[500px]">
-                        <div className="space-y-4 py-4">
+                      <div className="max-h-[500px] overflow-y-auto">
+                        <div className="space-y-4 py-4 pr-2">
                           {Object.entries(groupIngredientsByCategory(list.ingredients)).map(
                             ([category, ingredients]) => (
                               <div key={category}>
@@ -491,7 +489,7 @@ export function ShoppingListGenerator({ userId }: ShoppingListGeneratorProps) {
                             )
                           )}
                         </div>
-                      </ScrollArea>
+                      </div>
                     </DialogContent>
                   </Dialog>
 

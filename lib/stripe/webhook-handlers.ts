@@ -141,8 +141,9 @@ export async function handleInvoicePaymentFailed(
 
   // Create in-app notification for failed payment
   try {
+    // Note: notifications table not in generated types yet
     const { error: notifError } = await supabaseAdmin
-      .from("notifications")
+      .from("notifications" as any)
       .insert({
         user_id: profile.id,
         type: "payment_failed",

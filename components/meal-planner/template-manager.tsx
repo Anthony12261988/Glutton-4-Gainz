@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -362,14 +360,14 @@ export function TemplateManager({ userId, onApplied }: TemplateManagerProps) {
                   </div>
                   <div className="flex gap-1">
                     {template.is_public && (
-                      <Badge variant="outline" className="text-xs border-radar-green text-radar-green">
+                      <span className="text-xs border border-radar-green text-radar-green px-2 py-0.5 rounded">
                         Public
-                      </Badge>
+                      </span>
                     )}
                     {isOwn && (
-                      <Badge variant="outline" className="text-xs border-high-vis text-high-vis">
+                      <span className="text-xs border border-high-vis text-high-vis px-2 py-0.5 rounded">
                         Mine
-                      </Badge>
+                      </span>
                     )}
                   </div>
                 </div>
@@ -416,8 +414,8 @@ export function TemplateManager({ userId, onApplied }: TemplateManagerProps) {
                           {template.description}
                         </DialogDescription>
                       </DialogHeader>
-                      <ScrollArea className="max-h-[400px]">
-                        <div className="space-y-4 py-4">
+                      <div className="max-h-[400px] overflow-y-auto">
+                        <div className="space-y-4 py-4 pr-2">
                           {Array.from(
                             new Set(template.meals.map((m) => m.day_offset))
                           ).sort((a, b) => a - b).map((dayOffset) => (
@@ -451,7 +449,7 @@ export function TemplateManager({ userId, onApplied }: TemplateManagerProps) {
                             </div>
                           ))}
                         </div>
-                      </ScrollArea>
+                      </div>
                     </DialogContent>
                   </Dialog>
 

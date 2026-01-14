@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   getMealPlansForWeek,
   assignMealToDay,
@@ -244,7 +243,7 @@ export function MealCalendar({ userId, recipes, onAddRecipe }: MealCalendarProps
             )}
           </CardHeader>
           <CardContent>
-            <ScrollArea className="h-[600px]">
+            <div className="h-[600px] overflow-y-auto pr-2">
               <div className="space-y-2">
                 {recipes.map((recipe) => (
                   <div
@@ -273,7 +272,7 @@ export function MealCalendar({ userId, recipes, onAddRecipe }: MealCalendarProps
                   </div>
                 ))}
               </div>
-            </ScrollArea>
+            </div>
           </CardContent>
         </Card>
 
