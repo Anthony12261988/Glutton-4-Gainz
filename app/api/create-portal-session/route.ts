@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe/stripe-client";
+import { getStripe } from "@/lib/stripe/stripe-client";
 import type { CookieOptions } from "@supabase/ssr";
 
 type CookieToSet = { name: string; value: string; options?: CookieOptions };
@@ -38,6 +38,7 @@ export async function POST() {
   }
 
   try {
+    const stripe = getStripe();
     // Find customer by email
     const customers = await stripe.customers.list({
       email: user.email,

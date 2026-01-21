@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe/stripe-client";
+import { getStripe } from "@/lib/stripe/stripe-client";
 import type { CookieOptions } from "@supabase/ssr";
 
 type CookieToSet = { name: string; value: string; options?: CookieOptions };
@@ -47,6 +47,7 @@ export async function POST() {
   }
 
   try {
+    const stripe = getStripe();
     // Create Checkout Session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
