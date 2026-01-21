@@ -1,6 +1,5 @@
 import Stripe from "stripe";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { stripe } from "./stripe-client";
 
 export async function handleCheckoutSessionCompleted(
   session: Stripe.Checkout.Session
