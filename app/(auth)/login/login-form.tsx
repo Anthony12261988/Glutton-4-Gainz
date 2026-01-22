@@ -14,7 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Mail, Lock, Chrome, Facebook } from "lucide-react";
+import { Shield, Mail, Lock } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import {
   TOAST_MESSAGES,
@@ -106,66 +106,6 @@ export function LoginForm() {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    try {
-      // Include invite token in redirect if present
-      const redirectUrl = inviteToken
-        ? `${window.location.origin}/auth/callback?invite=${inviteToken}`
-        : `${window.location.origin}/auth/callback`;
-
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: redirectUrl,
-        },
-      });
-
-      if (error) {
-        toast({
-          title: TOAST_MESSAGES.auth.loginFailed.title,
-          description: error.message,
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: TOAST_MESSAGES.auth.loginError.title,
-        description: TOAST_MESSAGES.auth.loginError.description,
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleFacebookLogin = async () => {
-    try {
-      // Include invite token in redirect if present
-      const redirectUrl = inviteToken
-        ? `${window.location.origin}/auth/callback?invite=${inviteToken}`
-        : `${window.location.origin}/auth/callback`;
-
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "facebook",
-        options: {
-          redirectTo: redirectUrl,
-        },
-      });
-
-      if (error) {
-        toast({
-          title: TOAST_MESSAGES.auth.loginFailed.title,
-          description: error.message,
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: TOAST_MESSAGES.auth.loginError.title,
-        description: TOAST_MESSAGES.auth.loginError.description,
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <div className="space-y-6">
       {/* Logo/Header */}
@@ -197,38 +137,6 @@ export function LoginForm() {
           <CardDescription>{PAGE_TITLES.login.description}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Google OAuth Button */}
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={handleGoogleLogin}
-            type="button"
-          >
-            <Chrome className="mr-2 h-4 w-4" />
-            {BUTTON_LABELS.continueWithGoogle}
-          </Button>
-
-          {/* Facebook OAuth Button */}
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={handleFacebookLogin}
-            type="button"
-          >
-            <Facebook className="mr-2 h-4 w-4" />
-            Continue with Facebook
-          </Button>
-
-          {/* Divider */}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-steel/50" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-gunmetal px-2 text-steel">Or</span>
-            </div>
-          </div>
-
           {/* Email/Password Form */}
           <form onSubmit={handleEmailLogin} className="space-y-4">
             <div className="space-y-2">
