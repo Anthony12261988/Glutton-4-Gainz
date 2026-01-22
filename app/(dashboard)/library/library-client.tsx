@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
+import { fetchSignedVideoUrl, isStorageVideoPath } from "@/lib/utils/video-url";
 import {
   Dialog,
   DialogContent,
@@ -72,6 +73,9 @@ export function WorkoutLibraryClient({
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null);
+  const [signedVideoUrls, setSignedVideoUrls] = useState<Record<string, string>>(
+    {}
+  );
 
   const filteredWorkouts = useMemo(() => {
     return workouts.filter((workout) => {
@@ -97,6 +101,51 @@ export function WorkoutLibraryClient({
     });
     return groups;
   }, [filteredWorkouts]);
+
+  useEffect(() => {
+    const resolveVideoUrls = async () => {
+      const storagePaths = workouts
+        .map((workout) => workout.video_url)
+        .filter((path): path is string => isStorageVideoPath(path));
+
+      if (storagePaths.length === 0) {
+        setSignedVideoUrls({});
+        return;
+      }
+
+      try {
+        const entries = await Promise.all(
+          storagePaths.map(async (path) => {
+            const signedUrl = await fetchSignedVideoUrl(path);
+            return [path, signedUrl] as const;
+          })
+        );
+
+        const resolved: Record<string, string> = {};
+        entries.forEach(([path, signedUrl]) => {
+          if (signedUrl) {
+            resolved[path] = signedUrl;
+          }
+        });
+        setSignedVideoUrls(resolved);
+      } catch (error) {
+        console.error("Failed to resolve workout video URLs:", error);
+      }
+    };
+
+    resolveVideoUrls();
+  }, [workouts]);
+
+  const getWatchUrl = (videoUrl?: string | null) => {
+    if (!videoUrl) return null;
+    if (isStorageVideoPath(videoUrl)) {
+      return signedVideoUrls[videoUrl] || null;
+    }
+    if (videoUrl.startsWith("http")) {
+      return videoUrl;
+    }
+    return `https://www.youtube.com/watch?v=${videoUrl}`;
+  };
 
   return (
     <div className="space-y-8 pb-20 md:pb-8">
@@ -264,9 +313,9 @@ export function WorkoutLibraryClient({
                         <Clock className="h-3 w-3" />
                         {new Date(workout.scheduled_date).toLocaleDateString()}
                       </div>
-                      {canAccess && workout.video_url && (
+                      {canAccess && getWatchUrl(workout.video_url) && (
                         <a
-                          href={workout.video_url}
+                          href={getWatchUrl(workout.video_url) as string}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 text-xs text-tactical-red hover:underline"
@@ -343,13 +392,13 @@ export function WorkoutLibraryClient({
               </DialogHeader>
 
               {/* Video Section */}
-              {selectedWorkout.video_url && (
+              {selectedWorkout.video_url && getWatchUrl(selectedWorkout.video_url) && (
                 <div className="mt-4">
                   <h4 className="font-heading text-sm font-bold uppercase text-muted-text mb-2">
                     VIDEO DEMONSTRATION
                   </h4>
                   <a
-                    href={selectedWorkout.video_url}
+                    href={getWatchUrl(selectedWorkout.video_url) as string}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 rounded-sm border border-tactical-red/30 bg-tactical-red/10 p-4 text-tactical-red hover:bg-tactical-red/20 transition-colors"
@@ -397,9 +446,9 @@ export function WorkoutLibraryClient({
 
               {/* Action Buttons */}
               <div className="mt-6 flex gap-3">
-                {selectedWorkout.video_url && (
+                {selectedWorkout.video_url && getWatchUrl(selectedWorkout.video_url) && (
                   <a
-                    href={selectedWorkout.video_url}
+                    href={getWatchUrl(selectedWorkout.video_url) as string}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1"

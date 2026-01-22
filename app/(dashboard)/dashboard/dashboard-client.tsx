@@ -17,6 +17,7 @@ import { MotivationalCorner } from "@/components/gamification/motivational-corne
 import { DossierPromptCard } from "@/components/gamification/dossier-prompt-card";
 import { fireWorkoutComplete } from "@/lib/utils/confetti";
 import Link from "next/link";
+import { fetchSignedVideoUrl, isStorageVideoPath } from "@/lib/utils/video-url";
 
 interface Recipe {
   id: string;
@@ -52,6 +53,7 @@ export default function DashboardClient({
   const [isCompleted, setIsCompleted] = useState(initialCompleted);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [resolvedVideoUrl, setResolvedVideoUrl] = useState<string | null>(null);
 
   // Badge notification state
   const [newBadges, setNewBadges] = useState<Badge[]>([]);
@@ -64,6 +66,29 @@ export default function DashboardClient({
       setShowBadgeNotification(true);
     }
   }, [newBadges, currentBadgeIndex]);
+
+  useEffect(() => {
+    const resolveVideo = async () => {
+      if (!todaysWorkout?.video_url) {
+        setResolvedVideoUrl(null);
+        return;
+      }
+
+      if (isStorageVideoPath(todaysWorkout.video_url)) {
+        try {
+          const signedUrl = await fetchSignedVideoUrl(todaysWorkout.video_url);
+          setResolvedVideoUrl(signedUrl ?? null);
+        } catch (error) {
+          console.error("Failed to resolve workout video URL:", error);
+          setResolvedVideoUrl(null);
+        }
+      } else {
+        setResolvedVideoUrl(todaysWorkout.video_url);
+      }
+    };
+
+    resolveVideo();
+  }, [todaysWorkout?.video_url]);
 
   const handleBadgeClose = () => {
     setShowBadgeNotification(false);
@@ -193,7 +218,7 @@ export default function DashboardClient({
             <MissionCard
               title={todaysWorkout.title}
               description={todaysWorkout.description}
-              videoUrl={todaysWorkout.video_url}
+              videoUrl={resolvedVideoUrl ?? undefined}
               exercises={todaysWorkout.sets_reps as Exercise[]}
               isCompleted={isCompleted}
               onComplete={!isCompleted ? () => setShowModal(true) : undefined}

@@ -26,24 +26,27 @@ export function IntroVideoModal({ userId, onComplete }: IntroVideoModalProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const supabase = createClient();
 
-  // Fetch video URLs from Supabase Storage
+  // Fetch signed URLs for video and poster
   useEffect(() => {
     const fetchVideoUrls = async () => {
       try {
-        // Get public URLs for the video and poster
-        const { data: videoData } = supabase.storage
-          .from("videos")
-          .getPublicUrl(INTRO_VIDEO_PATH);
+        const [videoRes, posterRes] = await Promise.all([
+          fetch(`/api/videos/signed-url?path=${encodeURIComponent(INTRO_VIDEO_PATH)}`),
+          fetch(`/api/videos/signed-url?path=${encodeURIComponent(INTRO_POSTER_PATH)}`),
+        ]);
 
-        const { data: posterData } = supabase.storage
-          .from("videos")
-          .getPublicUrl(INTRO_POSTER_PATH);
-
-        if (videoData?.publicUrl) {
-          setVideoUrl(videoData.publicUrl);
+        if (!videoRes.ok || !posterRes.ok) {
+          throw new Error("Failed to fetch signed URLs");
         }
-        if (posterData?.publicUrl) {
-          setPosterUrl(posterData.publicUrl);
+
+        const videoJson = await videoRes.json();
+        const posterJson = await posterRes.json();
+
+        if (videoJson.url) {
+          setVideoUrl(videoJson.url);
+        }
+        if (posterJson.url) {
+          setPosterUrl(posterJson.url);
         }
       } catch (error) {
         console.error("Error fetching video URLs:", error);
@@ -52,7 +55,7 @@ export function IntroVideoModal({ userId, onComplete }: IntroVideoModalProps) {
     };
 
     fetchVideoUrls();
-  }, [supabase.storage]);
+  }, []);
 
   // Allow skip after 5 seconds
   useEffect(() => {

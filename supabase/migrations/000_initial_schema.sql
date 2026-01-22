@@ -876,6 +876,7 @@ CREATE POLICY IF NOT EXISTS "Anyone can view content assets"
   TO public
   USING (bucket_id = 'content_assets');
 
+
 -- ============================================================================
 -- END OF INITIAL SCHEMA
 -- ============================================================================

@@ -36,6 +36,31 @@ const MissionCard = React.forwardRef<HTMLDivElement, MissionCardProps>(
     },
     ref
   ) => {
+    const getYouTubeId = (value?: string) => {
+      if (!value) return null
+
+      if (!value.startsWith('http') && !value.includes('/')) {
+        return value
+      }
+
+      try {
+        if (value.includes('youtu.be/')) {
+          return value.split('youtu.be/')[1]?.split(/[?&]/)[0] || null
+        }
+        if (value.includes('youtube.com')) {
+          const url = new URL(value)
+          return url.searchParams.get('v')
+        }
+      } catch {
+        return null
+      }
+
+      return null
+    }
+
+    const youTubeId = getYouTubeId(videoUrl)
+    const isVideoFileUrl = Boolean(videoUrl && !youTubeId)
+
     return (
       <Card
         ref={ref}
@@ -67,15 +92,25 @@ const MissionCard = React.forwardRef<HTMLDivElement, MissionCardProps>(
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {/* YouTube Video Embed */}
-          {videoUrl && (
+          {/* Video Preview */}
+          {videoUrl && youTubeId && (
             <div className="relative aspect-video overflow-hidden rounded-sm bg-camo-black">
               <iframe
-                src={`https://www.youtube.com/embed/${videoUrl}`}
+                src={`https://www.youtube.com/embed/${youTubeId}`}
                 title={title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
                 className="absolute inset-0 h-full w-full border-0"
+              />
+            </div>
+          )}
+          {videoUrl && isVideoFileUrl && (
+            <div className="relative aspect-video overflow-hidden rounded-sm bg-camo-black">
+              <video
+                className="absolute inset-0 h-full w-full"
+                src={videoUrl}
+                controls
+                playsInline
               />
             </div>
           )}

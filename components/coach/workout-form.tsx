@@ -15,8 +15,9 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Plus, Trash2, Save } from "lucide-react";
+import { Plus, Trash2, Save, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { uploadVideoAsset } from "@/lib/utils/image-upload";
 
 interface WorkoutFormProps {
   initialData?: any;
@@ -31,6 +32,7 @@ export function WorkoutForm({
   const supabase = createClient();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
 
   const [formData, setFormData] = useState({
     title: initialData?.title || "",
@@ -41,6 +43,8 @@ export function WorkoutForm({
       initialData?.scheduled_date || new Date().toISOString().split("T")[0],
     sets_reps: initialData?.sets_reps || [{ exercise: "", reps: "" }],
   });
+  const hasStoredVideo =
+    formData.video_url && formData.video_url.includes("/") && !formData.video_url.startsWith("http");
 
   const handleExerciseChange = (
     index: number,
@@ -107,6 +111,46 @@ export function WorkoutForm({
     }
   };
 
+  const handleVideoUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (!e.target.files || !e.target.files[0]) return;
+
+    const file = e.target.files[0];
+    if (!file.type.startsWith("video/")) {
+      toast({
+        title: "Invalid file",
+        description: "Please upload a video file (mp4, webm, ogg).",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setUploadingVideo(true);
+    try {
+      const ext = file.name.split(".").pop() || "mp4";
+      const fileId =
+        typeof crypto !== "undefined" && "randomUUID" in crypto
+          ? crypto.randomUUID()
+          : Math.random().toString(36).substring(2);
+      const path = `workouts/${fileId}.${ext}`;
+      await uploadVideoAsset(file, path);
+      setFormData({ ...formData, video_url: path });
+      toast({
+        title: "Success",
+        description: "Workout video uploaded and linked.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Upload failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setUploadingVideo(false);
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2">
@@ -167,16 +211,38 @@ export function WorkoutForm({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="video">Video URL (YouTube)</Label>
+          <Label htmlFor="video">Video URL (YouTube) or Uploaded Video</Label>
           <Input
             id="video"
             value={formData.video_url}
             onChange={(e) =>
               setFormData({ ...formData, video_url: e.target.value })
             }
-            placeholder="https://youtube.com/..."
+            placeholder="YouTube ID or https://youtube.com/..."
             className="bg-gunmetal border-steel/30"
           />
+          {hasStoredVideo && (
+            <p className="text-xs text-radar-green">
+              Linked storage video: {formData.video_url}
+            </p>
+          )}
+          <div className="flex items-center gap-2">
+            <Input
+              type="file"
+              accept="video/mp4,video/webm,video/ogg"
+              onChange={handleVideoUpload}
+              disabled={uploadingVideo}
+              className="hidden"
+              id="workout-video-upload"
+            />
+            <Label
+              htmlFor="workout-video-upload"
+              className="flex items-center justify-center px-4 py-2 bg-steel/20 hover:bg-steel/30 text-white rounded-sm cursor-pointer border border-steel/30"
+            >
+              <Upload className="mr-2 h-4 w-4" />
+              {uploadingVideo ? "Uploading..." : "Upload Video File"}
+            </Label>
+          </div>
         </div>
       </div>
 

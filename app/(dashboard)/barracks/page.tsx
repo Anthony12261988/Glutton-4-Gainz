@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import CoachDashboard from "./coach-dashboard";
-import { ShieldAlert, Dumbbell, ChefHat, ArrowRight } from "lucide-react";
+import { ShieldAlert, Dumbbell, ChefHat, ArrowRight, Video } from "lucide-react";
 import { CoachProfilePrompt } from "@/components/coach/coach-profile-prompt";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -262,7 +262,7 @@ export default async function BarracksPage() {
           <h3 className="font-heading text-lg font-bold uppercase text-high-vis mb-4">
             CONTENT MANAGEMENT
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <Link href="/barracks/content/workouts">
               <Button
                 variant="outline"
@@ -281,6 +281,16 @@ export default async function BarracksPage() {
                 <ChefHat className="h-5 w-5 text-tactical-red" />
                 <span>Manage Recipes</span>
                 <span className="text-xs text-muted-text">{recipeCount || 0} created</span>
+              </Button>
+            </Link>
+            <Link href="/barracks/content/videos">
+              <Button
+                variant="outline"
+                className="w-full border-steel/30 h-auto py-4 flex flex-col items-center gap-2"
+              >
+                <Video className="h-5 w-5 text-tactical-red" />
+                <span>Manage Videos</span>
+                <span className="text-xs text-muted-text">Intro + workouts</span>
               </Button>
             </Link>
             <Link href="/barracks/content/workouts/new">
