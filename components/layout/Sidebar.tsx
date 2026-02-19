@@ -168,6 +168,17 @@ export function Sidebar({
               <p className="text-xs text-muted-text">Tactical Fitness</p>
             </div>
           </Link>
+          <p className="mt-2 text-[10px] uppercase tracking-wide text-steel">
+            Powered by{" "}
+            <Link
+              href="https://prvmalfitness.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-tactical-red hover:text-red-300 transition-colors"
+            >
+              Prvmal Fitness
+            </Link>
+          </p>
         </div>
 
         {/* Navigation Items */}
@@ -219,6 +230,17 @@ export function Sidebar({
           </form>
           <p className="text-center text-xs text-muted-text">
             © 2025 Glutton4Gainz
+          </p>
+          <p className="text-center text-[10px] uppercase tracking-wide text-steel">
+            Powered by{" "}
+            <Link
+              href="https://prvmalfitness.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-tactical-red hover:text-red-300 transition-colors"
+            >
+              Prvmal Fitness
+            </Link>
           </p>
         </div>
       </div>

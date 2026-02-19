@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Glutton4Gainz | Stop Exercising. Start Training.",
+  title: "Glutton4Gainz | Powered by Prvmal Fitness",
   description:
     "A tier-based military fitness platform. Complete daily missions, rank up from Recruit to General, and dominate the leaderboard.",
   keywords: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     "Glutton4Gainz",
   ],
   openGraph: {
-    title: "Glutton4Gainz – Your Mission Starts Now.",
+    title: "Glutton4Gainz – Powered by Prvmal Fitness",
     description:
       "Join the elite tactical fitness platform that treats every workout like a mandatory mission.",
     url: "https://glutton4gainz.com",
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Glutton4Gainz – Your Mission Starts Now",
+    title: "Glutton4Gainz – Powered by Prvmal Fitness",
     description: "Join the elite tactical fitness platform that treats every workout like a mandatory mission.",
     images: ['/social/twitter-image.jpg'],
   },
@@ -156,6 +156,17 @@ export default function Home() {
           <h1 className="mb-4 text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
             YOUR MISSION STARTS NOW.
           </h1>
+          <p className="mb-3 text-xs font-heading uppercase tracking-[0.2em] text-steel">
+            Powered by{" "}
+            <Link
+              href="https://prvmalfitness.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-tactical-red hover:text-red-300 transition-colors"
+            >
+              Prvmal Fitness
+            </Link>
+          </p>
           <p className="mb-8 max-w-2xl text-lg text-muted-text">
             Motivation is fleeting. Discipline is forever. Join the elite tactical
             fitness platform that treats every workout like a mandatory mission.
@@ -421,6 +432,17 @@ export default function Home() {
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-8 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-semibold">GLUTTON4GAINZ © 2024.</p>
+            <p className="mt-1 text-[11px] uppercase tracking-wide text-steel">
+              Powered by{" "}
+              <Link
+                href="https://prvmalfitness.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-tactical-red hover:text-red-300 transition-colors"
+              >
+                Prvmal Fitness
+              </Link>
+            </p>
             <p className="text-xs uppercase tracking-wide text-muted-text">
               DISCIPLINE. STRENGTH. HONOR.
             </p>

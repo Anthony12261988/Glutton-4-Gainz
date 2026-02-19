@@ -139,6 +139,17 @@ export function LoginForm() {
         <h1 className="font-heading text-3xl font-bold uppercase tracking-wider text-tactical-red">
           GLUTTON4GAINZ
         </h1>
+        <p className="mt-1 text-[11px] uppercase tracking-wide text-steel">
+          Powered by{" "}
+          <Link
+            href="https://prvmalfitness.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-tactical-red hover:text-red-300 transition-colors"
+          >
+            Prvmal Fitness
+          </Link>
+        </p>
         <p className="mt-2 text-sm text-muted-text">
           {PAGE_TITLES.login.subtitle}
         </p>

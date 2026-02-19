@@ -8,7 +8,7 @@ import { PostHogProvider } from "@/components/analytics/posthog-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Glutton4Gainz - Military Fitness Training",
+  title: "Glutton4Gainz | Powered by Prvmal Fitness",
   description:
     "A tactical approach to fitness. Complete missions, earn ranks, dominate your goals.",
   manifest: "/manifest.json",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     title: "G4G",
   },
   openGraph: {
-    title: "Glutton4Gainz – Your Mission Starts Now",
+    title: "Glutton4Gainz – Powered by Prvmal Fitness",
     description: "Join the elite tactical fitness platform that treats every workout like a mandatory mission.",
     url: "https://glutton4gainz.com",
     siteName: "Glutton4Gainz",
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Glutton4Gainz – Your Mission Starts Now",
+    title: "Glutton4Gainz – Powered by Prvmal Fitness",
     description: "Join the elite tactical fitness platform that treats every workout like a mandatory mission.",
     images: ['/social/twitter-image.jpg'],
   },
