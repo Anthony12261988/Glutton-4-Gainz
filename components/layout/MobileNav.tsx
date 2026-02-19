@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Crosshair, Utensils, BarChart3, Shield, Dumbbell, Zap, User, Users, Trophy } from "lucide-react";
+import { Crosshair, Utensils, BarChart3, Shield, Dumbbell, Zap, User, Users, Trophy, UserSearch } from "lucide-react";
 
 interface NavItem {
   href: string;
@@ -26,6 +26,12 @@ const userNavItems: NavItem[] = [
     href: "/formation",
     label: "Formation",
     icon: <Users className="h-5 w-5" />,
+  },
+  {
+    href: "/find-your-co",
+    label: "Find CO",
+    icon: <UserSearch className="h-5 w-5" />,
+    hideForCoach: true,
   },
   {
     href: "/rations",

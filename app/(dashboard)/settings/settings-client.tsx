@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,8 @@ import {
   ArrowLeft,
   Loader2,
   Lock,
+  MapPin,
+  Eye,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -26,6 +28,12 @@ import { ChangePasswordModal } from "@/components/auth/change-password-modal";
 interface SettingsClientProps {
   userId: string;
   profile: any;
+}
+
+interface LocationSuggestion {
+  label: string;
+  latitude: number;
+  longitude: number;
 }
 
 export function SettingsClient({ userId, profile }: SettingsClientProps) {
@@ -44,9 +52,79 @@ export function SettingsClient({ userId, profile }: SettingsClientProps) {
     specialties: profile?.specialties || "",
     certifications: profile?.certifications || "",
     years_experience: profile?.years_experience || "",
+    location: profile?.location || "",
+    is_public: profile?.is_public ?? false,
   });
 
   const [previewUrl, setPreviewUrl] = useState(profile?.avatar_url || "");
+  const [locationSuggestions, setLocationSuggestions] = useState<
+    LocationSuggestion[]
+  >([]);
+  const [loadingLocationSuggestions, setLoadingLocationSuggestions] =
+    useState(false);
+  const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
+  const [selectedLocation, setSelectedLocation] =
+    useState<LocationSuggestion | null>(
+      profile?.location && profile?.latitude != null && profile?.longitude != null
+        ? {
+            label: profile.location,
+            latitude: Number(profile.latitude),
+            longitude: Number(profile.longitude),
+          }
+        : null
+    );
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!isCoach) return;
+    const query = formData.location.trim();
+
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+      debounceRef.current = null;
+    }
+
+    if (query.length < 2 || !showLocationSuggestions) {
+      setLocationSuggestions([]);
+      setLoadingLocationSuggestions(false);
+      return;
+    }
+
+    setLoadingLocationSuggestions(true);
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(
+          `/api/location-suggest?q=${encodeURIComponent(query)}&limit=6`
+        );
+        if (!res.ok) throw new Error("Failed to fetch location suggestions");
+        const data: LocationSuggestion[] = await res.json();
+        setLocationSuggestions(data);
+      } catch {
+        setLocationSuggestions([]);
+      } finally {
+        setLoadingLocationSuggestions(false);
+      }
+    }, 250);
+
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, [formData.location, isCoach, showLocationSuggestions]);
+
+  const handleLocationInputChange = (value: string) => {
+    setFormData({ ...formData, location: value });
+    setSelectedLocation(null);
+    setShowLocationSuggestions(true);
+  };
+
+  const handleLocationSelect = (suggestion: LocationSuggestion) => {
+    setFormData({ ...formData, location: suggestion.label });
+    setSelectedLocation(suggestion);
+    setLocationSuggestions([]);
+    setShowLocationSuggestions(false);
+  };
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -122,12 +200,53 @@ export function SettingsClient({ userId, profile }: SettingsClientProps) {
 
       // Add coach-specific fields only if user is a coach
       if (isCoach) {
+        const normalizedLocation = formData.location.trim();
         updateData.bio = formData.bio;
         updateData.specialties = formData.specialties;
         updateData.certifications = formData.certifications;
         updateData.years_experience = formData.years_experience
           ? parseInt(formData.years_experience)
           : null;
+        updateData.is_public = formData.is_public;
+        updateData.location = normalizedLocation || null;
+
+        // Geocode location text → lat/lng if a location was entered
+        if (normalizedLocation) {
+          let hasGeocodedCoords = false;
+          if (selectedLocation && selectedLocation.label === normalizedLocation) {
+            updateData.latitude = selectedLocation.latitude;
+            updateData.longitude = selectedLocation.longitude;
+            hasGeocodedCoords = true;
+          } else {
+            try {
+              const geoRes = await fetch(
+                `/api/location-suggest?q=${encodeURIComponent(normalizedLocation)}&limit=1`
+              );
+              if (geoRes.ok) {
+                const geoData: LocationSuggestion[] = await geoRes.json();
+                if (geoData?.[0]) {
+                  updateData.latitude = geoData[0].latitude;
+                  updateData.longitude = geoData[0].longitude;
+                  updateData.location = geoData[0].label;
+                  setFormData((prev) => ({ ...prev, location: geoData[0].label }));
+                  setSelectedLocation(geoData[0]);
+                  hasGeocodedCoords = true;
+                }
+              }
+            } catch {
+              // Geocoding failed silently
+            }
+          }
+
+          // Prevent stale coordinates from a previous location.
+          if (!hasGeocodedCoords) {
+            updateData.latitude = null;
+            updateData.longitude = null;
+          }
+        } else {
+          updateData.latitude = null;
+          updateData.longitude = null;
+        }
       }
 
       const { error } = await supabase
@@ -354,6 +473,85 @@ export function SettingsClient({ userId, profile }: SettingsClientProps) {
                       className="bg-gunmetal border-steel/30"
                     />
                   </div>
+                </div>
+
+                {/* Base of Operations */}
+                <div className="space-y-2">
+                  <Label htmlFor="location" className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-tactical-red" />
+                    Base of Operations
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="location"
+                      value={formData.location}
+                      onFocus={() => setShowLocationSuggestions(true)}
+                      onBlur={() =>
+                        setTimeout(() => setShowLocationSuggestions(false), 120)
+                      }
+                      onChange={(e) => handleLocationInputChange(e.target.value)}
+                      placeholder="Type your city, state, or zip..."
+                      className="bg-gunmetal border-steel/30"
+                    />
+                    {showLocationSuggestions &&
+                      (loadingLocationSuggestions ||
+                        locationSuggestions.length > 0) && (
+                        <div className="absolute z-20 mt-1 max-h-56 w-full overflow-y-auto rounded-sm border border-steel/40 bg-camo-black shadow-2xl">
+                          {loadingLocationSuggestions && (
+                            <div className="px-3 py-2 text-xs text-steel">
+                              Scanning AO...
+                            </div>
+                          )}
+                          {!loadingLocationSuggestions &&
+                            locationSuggestions.map((suggestion) => (
+                              <button
+                                key={`${suggestion.label}-${suggestion.latitude}-${suggestion.longitude}`}
+                                type="button"
+                                onMouseDown={(e) => e.preventDefault()}
+                                onClick={() => handleLocationSelect(suggestion)}
+                                className="block w-full border-b border-steel/20 px-3 py-2 text-left text-sm text-high-vis hover:bg-gunmetal last:border-b-0"
+                              >
+                                {suggestion.label}
+                              </button>
+                            ))}
+                        </div>
+                      )}
+                  </div>
+                  <p className="text-xs text-steel">
+                    Start typing and select a verified location for accurate AO mapping
+                  </p>
+                </div>
+
+                {/* CO Finder visibility toggle */}
+                <div className="flex items-start gap-4 rounded-sm border border-steel/30 p-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Eye className="h-4 w-4 text-tactical-red" />
+                      <span className="font-heading text-sm font-bold uppercase tracking-wide text-high-vis">
+                        List Me as Available CO
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-text">
+                      Allow soldiers to discover your profile in Find Your CO
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={formData.is_public}
+                    onClick={() =>
+                      setFormData({ ...formData, is_public: !formData.is_public })
+                    }
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tactical-red ${
+                      formData.is_public ? "bg-tactical-red" : "bg-steel/40"
+                    }`}
+                  >
+                    <span
+                      className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-lg transition-transform ${
+                        formData.is_public ? "translate-x-5" : "translate-x-0"
+                      }`}
+                    />
+                  </button>
                 </div>
               </CardContent>
             </Card>

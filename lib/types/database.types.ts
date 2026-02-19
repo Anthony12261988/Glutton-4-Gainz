@@ -716,6 +716,8 @@ export type Database = {
           available_equipment: string[] | null
           avatar_url: string | null
           banned: boolean
+          bio: string | null
+          certifications: string | null
           coach_id: string | null
           created_at: string
           current_streak: number
@@ -729,21 +731,29 @@ export type Database = {
           id: string
           injuries_limitations: string | null
           intro_video_watched: boolean | null
+          is_public: boolean | null
           last_active: string
+          latitude: number | null
+          location: string | null
+          longitude: number | null
           onboarding_completed: boolean | null
           preferred_duration: number | null
           role: string
+          specialties: string | null
           stripe_customer_id: string | null
           target_weight: number | null
           tier: string
           updated_at: string
           workout_days_per_week: number | null
           xp: number
+          years_experience: number | null
         }
         Insert: {
           available_equipment?: string[] | null
           avatar_url?: string | null
           banned?: boolean
+          bio?: string | null
+          certifications?: string | null
           coach_id?: string | null
           created_at?: string
           current_streak?: number
@@ -757,21 +767,29 @@ export type Database = {
           id: string
           injuries_limitations?: string | null
           intro_video_watched?: boolean | null
+          is_public?: boolean | null
           last_active?: string
+          latitude?: number | null
+          location?: string | null
+          longitude?: number | null
           onboarding_completed?: boolean | null
           preferred_duration?: number | null
           role?: string
+          specialties?: string | null
           stripe_customer_id?: string | null
           target_weight?: number | null
           tier?: string
           updated_at?: string
           workout_days_per_week?: number | null
           xp?: number
+          years_experience?: number | null
         }
         Update: {
           available_equipment?: string[] | null
           avatar_url?: string | null
           banned?: boolean
+          bio?: string | null
+          certifications?: string | null
           coach_id?: string | null
           created_at?: string
           current_streak?: number
@@ -785,16 +803,22 @@ export type Database = {
           id?: string
           injuries_limitations?: string | null
           intro_video_watched?: boolean | null
+          is_public?: boolean | null
           last_active?: string
+          latitude?: number | null
+          location?: string | null
+          longitude?: number | null
           onboarding_completed?: boolean | null
           preferred_duration?: number | null
           role?: string
+          specialties?: string | null
           stripe_customer_id?: string | null
           target_weight?: number | null
           tier?: string
           updated_at?: string
           workout_days_per_week?: number | null
           xp?: number
+          years_experience?: number | null
         }
         Relationships: [
           {

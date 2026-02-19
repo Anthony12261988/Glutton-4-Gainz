@@ -33,6 +33,7 @@ export function LoginForm() {
   // Get invite token from URL if present
   const inviteToken = searchParams.get("invite");
   const inviteEmail = searchParams.get("email");
+  const redirectTo = searchParams.get("redirect");
 
   const [email, setEmail] = useState(inviteEmail || "");
   const [password, setPassword] = useState("");
@@ -91,7 +92,9 @@ export function LoginForm() {
             router.push("/dashboard");
           }
         } else {
-          router.push("/dashboard");
+          const safeRedirect =
+            redirectTo && redirectTo.startsWith("/") ? redirectTo : null;
+          router.push(safeRedirect ?? "/dashboard");
         }
         router.refresh();
       }
@@ -105,6 +108,17 @@ export function LoginForm() {
       setLoading(false);
     }
   };
+
+  const signupHref = (() => {
+    const params = new URLSearchParams();
+    if (inviteToken) params.set("invite", inviteToken);
+    if (inviteEmail) params.set("email", inviteEmail);
+    if (redirectTo && redirectTo.startsWith("/")) {
+      params.set("redirect", redirectTo);
+    }
+    const query = params.toString();
+    return query ? `/signup?${query}` : "/signup";
+  })();
 
   return (
     <div className="space-y-6">
@@ -202,13 +216,7 @@ export function LoginForm() {
       <div className="text-center text-sm text-muted-text">
         {NAV_LINKS.newRecruit}{" "}
         <Link
-          href={
-            inviteToken
-              ? `/signup?invite=${inviteToken}&email=${encodeURIComponent(
-                  inviteEmail || ""
-                )}`
-              : "/signup"
-          }
+          href={signupHref}
           className="font-bold text-tactical-red hover:underline"
         >
           {NAV_LINKS.signUpLink}

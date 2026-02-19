@@ -167,6 +167,16 @@ export default function Home() {
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="border-tactical-red/60 text-tactical-red hover:bg-tactical-red/10"
+            >
+              <Link href="/find-your-co" className="w-full sm:w-auto">
+                FIND YOUR CO
+              </Link>
+            </Button>
             <Button asChild variant="outline" size="lg" className="border-steel text-high-vis hover:bg-gunmetal">
               <Link href="#features" className="w-full sm:w-auto">
                 RECON THE APP
@@ -283,9 +293,14 @@ export default function Home() {
               in one tactical dashboard.
             </p>
           </div>
-          <Button asChild variant="outline" className="border-steel text-high-vis">
-            <Link href="/login">ALREADY ENLISTED? ENTER HQ</Link>
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button asChild variant="outline" className="border-tactical-red/60 text-tactical-red hover:bg-tactical-red/10">
+              <Link href="/find-your-co">BROWSE CO ROSTER</Link>
+            </Button>
+            <Button asChild variant="outline" className="border-steel text-high-vis">
+              <Link href="/login">ALREADY ENLISTED? ENTER HQ</Link>
+            </Button>
+          </div>
         </div>
         <div className="grid gap-6 lg:grid-cols-2">
           {featureCards.map((feature) => (

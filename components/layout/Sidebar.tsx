@@ -16,6 +16,7 @@ import {
   User,
   Users,
   Trophy,
+  UserSearch,
 } from "lucide-react";
 
 interface NavItem {
@@ -38,6 +39,12 @@ const userNavItems: NavItem[] = [
     href: "/formation",
     label: "Formation",
     icon: <Users className="h-5 w-5" />,
+  },
+  {
+    href: "/find-your-co",
+    label: "Find CO",
+    icon: <UserSearch className="h-5 w-5" />,
+    hideForCoach: true,
   },
   {
     href: "/rations",
